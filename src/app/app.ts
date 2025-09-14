@@ -1,5 +1,3 @@
-import { RouterOutlet } from '@angular/router';
-// apple-health-dashboard.component.ts
 import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -183,7 +181,7 @@ export class App implements OnInit, OnDestroy {
       this.animatedValues.steps = Math.floor(target * progress);
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        // requestAnimationFrame(animate);
       }
     };
 
