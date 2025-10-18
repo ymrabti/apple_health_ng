@@ -1,6 +1,4 @@
-import { Component, signal, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 interface HealthData {
   date: string;
@@ -22,13 +20,12 @@ interface Stats {
 }
 
 @Component({
-  selector: 'health-root',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './app.html',
-  styleUrls: ['./app.scss']
+  selector: 'health-dashboard',
+  imports: [],
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.scss'
 })
-export class App implements OnInit, OnDestroy {
+export class Dashboard implements OnInit, OnDestroy {
   dateRange: string = '7d';
   selectedView: string = 'daily';
   views: string[] = ['daily', 'weekly', 'trends'];
