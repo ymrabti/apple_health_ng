@@ -1,0 +1,157 @@
+<div class="verify-container">
+    <div class="verification-card" role="region" aria-live="polite">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1 class="main-title">Email Verification</h1>
+                <p class="subtitle">Health Analytics account verification</p>
+            </div>
+            
+            <div class="status-indicator" [ngClass]="getStatusClass()">
+                <div class="status-icon-container">
+                    <svg *ngIf="state === VerifyState.Success" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <svg *ngIf="state === VerifyState.Error" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <line x1="15" y1="9" x2="9" y2="15" stroke-width="2"/>
+                        <line x1="9" y1="9" x2="15" y2="15" stroke-width="2"/>
+                    </svg>
+                    <svg *ngIf="state === VerifyState.Loading || state === VerifyState.Idle || state === VerifyState.NoToken" 
+                         class="status-icon loading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 12a9 9 0 11-9-9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="content-section">
+            <!-- Loading State -->
+            <div *ngIf="state === VerifyState.Loading" class="verification-state loading-state">
+                <div class="loading-animation">
+                    <div class="pulse-loader">
+                        <div class="pulse-dot" [style.animation-delay]="'0ms'"></div>
+                        <div class="pulse-dot" [style.animation-delay]="'200ms'"></div>
+                        <div class="pulse-dot" [style.animation-delay]="'400ms'"></div>
+                    </div>
+                </div>
+                <h2 class="state-title">Verifying your email</h2>
+                <p class="state-message">{{ message }}</p>
+            </div>
+
+            <!-- Success State -->
+            <div *ngIf="state === VerifyState.Success" class="verification-state success-state" aria-live="assertive">
+                <div class="success-animation">
+                    <div class="checkmark-container">
+                        <svg class="checkmark" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark-check" fill="none" d="m16 26 6 6 12-12"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="state-title">{{ message }}</h2>
+                <p class="state-message">Your email has been successfully verified. You can now access your Health Analytics dashboard.</p>
+                
+                <div class="action-buttons">
+                    <button class="btn primary-btn" (click)="openApp()">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Continue to Dashboard
+                    </button>
+                    <button class="btn secondary-btn" (click)="router.navigateByUrl('/')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M19 12H5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Back to Home
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="state === VerifyState.Error" class="verification-state error-state" aria-live="assertive">
+                <div class="error-animation">
+                    <div class="error-icon-container">
+                        <svg class="error-icon" viewBox="0 0 52 52">
+                            <circle class="error-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="error-cross" fill="none" d="M16 16l20 20M36 16l-20 20"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="state-title">Verification Failed</h2>
+                <p class="state-message">{{ message }}</p>
+                
+                <div class="action-buttons">
+                    <button class="btn primary-btn" (click)="retry()">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M1 4v6h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3.51 15a9 9 0 102.13-9.36L1 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Try Again
+                    </button>
+                    <button class="btn secondary-btn" (click)="contactSupport()">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Contact Support
+                    </button>
+                </div>
+            </div>
+
+            <!-- No Token State -->
+            <div *ngIf="state === VerifyState.NoToken" class="verification-state no-token-state" aria-live="polite">
+                <div class="warning-animation">
+                    <div class="warning-icon-container">
+                        <svg class="warning-icon" viewBox="0 0 52 52">
+                            <circle class="warning-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="warning-exclamation" fill="none" d="M26 18v8M26 34h.01"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="state-title">No Token Found</h2>
+                <p class="state-message">We couldn't find a verification token in the link. Please try clicking the email link again or request a new verification email.</p>
+                
+                <div class="action-buttons">
+                    <button class="btn primary-btn" (click)="goResend()">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="22,6 12,13 2,6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Resend Verification
+                    </button>
+                    <button class="btn secondary-btn" (click)="router.navigateByUrl('/')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M19 12H5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-section">
+            <div class="footer-content">
+                <p class="footer-text">Secure verification powered by Health Analytics</p>
+                <div class="security-badges">
+                    <span class="security-badge">
+                        <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Secure
+                    </span>
+                    <span class="security-badge">
+                        <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Verified
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

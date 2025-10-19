@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 interface HealthData {
   date: string;
@@ -18,12 +19,11 @@ interface Stats {
   min: number;
   total: number;
 }
-
 @Component({
-  selector: 'health-dashboard',
-  imports: [],
+  selector: 'app-dashboard',
+  standalone: false,
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss'
+  styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit, OnDestroy {
   dateRange: string = '7d';
@@ -44,7 +44,7 @@ export class Dashboard implements OnInit, OnDestroy {
     { label: 'Very Active', value: 85, color: '#10B981' },
     { label: 'Active', value: 65, color: '#F59E0B' },
     { label: 'Light Activity', value: 45, color: '#6B7280' },
-    { label: 'Sedentary', value: 25, color: '#EF4444' }
+    { label: 'Sedentary', value: 25, color: '#EF4444' },
   ];
 
   ngOnInit() {
@@ -73,7 +73,7 @@ export class Dashboard implements OnInit, OnDestroy {
         calories: Math.floor(Math.random() * 800) + 1800,
         distance: parseFloat((Math.random() * 3 + 5).toFixed(1)),
         weight: parseFloat((Math.random() * 2 + 68).toFixed(1)),
-        fatLoss: parseFloat((Math.random() * 0.2 + 0.1).toFixed(2))
+        fatLoss: parseFloat((Math.random() * 0.2 + 0.1).toFixed(2)),
       });
     }
     this.healthData = data;
@@ -99,7 +99,7 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   calculateStats(field: keyof HealthData): Stats {
-    const values = this.filteredData.map(d => Number(d[field]));
+    const values = this.filteredData.map((d) => Number(d[field]));
     const sorted = [...values].sort((a, b) => a - b);
 
     return {
@@ -108,7 +108,7 @@ export class Dashboard implements OnInit, OnDestroy {
       median: sorted[Math.floor(sorted.length / 2)],
       max: Math.max(...values),
       min: Math.min(...values),
-      total: parseFloat(values.reduce((a, b) => a + b, 0).toFixed(1))
+      total: parseFloat(values.reduce((a, b) => a + b, 0).toFixed(1)),
     };
   }
 
@@ -131,16 +131,21 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getStatsByField(field: string): Stats {
     switch (field) {
-      case 'steps': return this.stepsStats;
-      case 'calories': return this.caloriesStats;
-      case 'distance': return this.distanceStats;
-      case 'weight': return this.weightStats;
-      default: return this.stepsStats;
+      case 'steps':
+        return this.stepsStats;
+      case 'calories':
+        return this.caloriesStats;
+      case 'distance':
+        return this.distanceStats;
+      case 'weight':
+        return this.weightStats;
+      default:
+        return this.stepsStats;
     }
   }
 
   getMaxValue(field: keyof HealthData): number {
-    return Math.max(...this.filteredData.map(d => Number(d[field])));
+    return Math.max(...this.filteredData.map((d) => Number(d[field])));
   }
 
   getDistanceProgress(): number {
@@ -152,11 +157,11 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   getMinWeight(): number {
-    return Math.min(...this.getRecentData().map(d => d.weight));
+    return Math.min(...this.getRecentData().map((d) => d.weight));
   }
 
   getMaxWeight(): number {
-    return Math.max(...this.getRecentData().map(d => d.weight));
+    return Math.max(...this.getRecentData().map((d) => d.weight));
   }
 
   getGoalAchievement(): number {
