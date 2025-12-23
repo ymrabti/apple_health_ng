@@ -93,6 +93,13 @@ export class AuthService {
         });
     }
 
+    refreshToken(): Observable<{ access: { token: string; expires: string } }> {
+        return this.http.post<{ access: { token: string; expires: string } }>(
+            `${AUTH_API_BASE}/refresh-token`, {},
+            { withCredentials: true }
+        );
+    }
+
     signOut(): void {
         this.tokens.clearToken();
     }
