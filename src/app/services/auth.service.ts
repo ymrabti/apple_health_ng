@@ -19,39 +19,38 @@ export interface SignUpPayload {
     password: string;
 }
 interface AuthResponse {
-  user: User;
-  tokens: Tokens;
+    user: User;
+    tokens: Tokens;
 }
 
 interface Tokens {
-  access: Access;
-  refresh: Access;
+    access: Access;
+    refresh: Access;
 }
 
 interface Access {
-  token: string;
-  expires: string;
+    token: string;
+    expires: string;
 }
 
 interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  userName: string;
-  gender: string;
-  email: string;
-  password: string;
-  role: string;
-  fcm: null;
-  photo: string;
-  phoneNumber: null;
-  isPhoneVerified: boolean;
-  isEmailVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
+    id: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    userName: string;
+    gender: string;
+    email: string;
+    password: string;
+    role: string;
+    fcm: null;
+    photo: string;
+    phoneNumber: null;
+    isPhoneVerified: boolean;
+    isEmailVerified: boolean;
+    createdAt: string;
+    updatedAt: string;
 }
-
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -71,11 +70,13 @@ export class AuthService {
         if (token) this.tokens.setToken(token);
     }
 
-    startOAuth(provider: string, redirectUri: string): Observable<{ url: string }> {
+    startOAuth(provider: string): Observable<{ url: string }> {
         return this.http.get<{ url: string }>(
             `${OAUTH_AUTHORIZE_BASE}/OAuth/callback/authenticate`,
             {
-                params: new HttpParams().set('provider', provider).set('redirect_uri', redirectUri),
+                params: new HttpParams().set('provider', provider),
+                withCredentials: true,
+                observe: 'body',
             }
         );
     }
