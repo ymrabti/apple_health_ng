@@ -1,0 +1,25 @@
+.oauth-status {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.card {
+  width: 100%; max-width: 420px;
+  background: rgba(17, 24, 39, 0.5);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  border-radius: 1rem;
+  padding: 1.5rem; text-align:center;
+}
+.spinner {
+  width: 32px; height: 32px; margin: 0 auto 1rem;
+  border: 3px solid rgba(34,211,238,.3);
+  border-top-color: #22d3ee;
+  border-radius: 9999px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+h3 { color:#d1d5db; margin:0; }
+.error { margin-top:.5rem; color:#ef4444; font-size:.875rem; }
