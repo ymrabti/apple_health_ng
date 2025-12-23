@@ -5,6 +5,7 @@ import { Dashboard } from './dashboard/dashboard';
 import { Signin } from './auth/signin/signin';
 import { Signup } from './auth/signup/signup';
 import { OauthCallback } from './auth/oauth-callback/oauth-callback';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
   {
     path: 'home',
     component: Dashboard,
+    canActivate: [AuthGuard],
   },
   {
     path: '',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService, SignInPayload } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-signin',
@@ -14,7 +14,7 @@ export class Signin {
   loading = false;
   error: string | null = null;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
 
   submit() {
     if (!this.username || !this.password) {
@@ -27,7 +27,8 @@ export class Signin {
     this.auth.signIn(payload).subscribe({
       next: (res) => {
         this.auth.saveTokenFromResponse(res);
-        this.router.navigateByUrl('/home');
+        const redirect = this.route.snapshot.queryParamMap.get('redirect') || '/home';
+        this.router.navigateByUrl(redirect);
       },
       error: (err) => {
         this.error = err?.error?.message || 'Sign in failed';

@@ -18,11 +18,40 @@ export interface SignUpPayload {
     email: string;
     password: string;
 }
-
-export interface AuthResponse {
-    token: string;
-    user?: { id: string; name: string; email: string };
+interface AuthResponse {
+  user: User;
+  tokens: Tokens;
 }
+
+interface Tokens {
+  access: Access;
+  refresh: Access;
+}
+
+interface Access {
+  token: string;
+  expires: string;
+}
+
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  userName: string;
+  gender: string;
+  email: string;
+  password: string;
+  role: string;
+  fcm: null;
+  photo: string;
+  phoneNumber: null;
+  isPhoneVerified: boolean;
+  isEmailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -37,7 +66,9 @@ export class AuthService {
     }
 
     saveTokenFromResponse(res: AuthResponse): void {
-        if (res?.token) this.tokens.setToken(res.token);
+        const token = res.tokens?.access?.token;
+        console.log(res);
+        if (token) this.tokens.setToken(token);
     }
 
     startOAuth(provider: string, redirectUri: string): Observable<{ url: string }> {
