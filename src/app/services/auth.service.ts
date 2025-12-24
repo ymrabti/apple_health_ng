@@ -23,7 +23,7 @@ interface AuthResponse {
     tokens: Tokens;
 }
 
-interface Tokens {
+export interface Tokens {
     access: Access;
     refresh: Access;
 }
@@ -66,8 +66,10 @@ export class AuthService {
 
     saveTokenFromResponse(res: AuthResponse): void {
         const token = res.tokens?.access?.token;
-        console.log(res);
-        if (token) this.tokens.setToken(token);
+        if (token) {
+            this.tokens.setToken(token);
+            this.tokens.saveTokens(res.tokens);
+        }
     }
 
     startOAuth(provider: string): Observable<{ url: string }> {
@@ -93,9 +95,25 @@ export class AuthService {
         });
     }
 
-    refreshToken(): Observable<{ access: { token: string; expires: string } }> {
-        return this.http.post<{ access: { token: string; expires: string } }>(
-            `${AUTH_API_BASE}/refresh-token`, {},
+    getAccessTokenExp(): number | null {
+        const token = this.tokens.getTokens();
+        if (!token) return null;
+        try {
+            const decoded = token.access;
+            return Math.floor(new Date(decoded.expires).getTime() / 1000); // in seconds
+        } catch (error) {
+            return null;
+        }
+    }
+
+    refreshToken(): Observable<Tokens> {
+        const tokens = this.tokens.getTokens();
+        const refreshToken = tokens?.refresh.token;
+        return this.http.post<Tokens>(
+            `${AUTH_API_BASE}/refresh-token`,
+            {
+                refreshToken: refreshToken,
+            },
             { withCredentials: true }
         );
     }
