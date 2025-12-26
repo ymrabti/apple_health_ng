@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 interface HealthData {
   date: string;
@@ -46,6 +48,8 @@ export class Dashboard implements OnInit, OnDestroy {
     { label: 'Light Activity', value: 45, color: '#6B7280' },
     { label: 'Sedentary', value: 25, color: '#EF4444' },
   ];
+
+  constructor(private auth: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.generateHealthData();
@@ -196,5 +200,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
   onCardLeave(cardType: string) {
     // Remove hover effects if needed
+  }
+
+  logout() {
+    this.auth.signOut();
+    this.router.navigate(['/signin'], { queryParams: { redirect: '/home' } });
   }
 }

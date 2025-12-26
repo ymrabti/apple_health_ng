@@ -60,7 +60,6 @@ export class AuthGuard implements CanActivate {
 
         // Refresh access token 1 minute before it expires; clamp to a sensible minimum
         const timeoutAccessMs = Math.max(expaMs - nowMs - 60_000, 5_000);
-        console.log(timeoutAccessMs / 1000 / 60, 'minutes until access token refresh');
 
         if (this.refreshTimeout) {
             clearTimeout(this.refreshTimeout);
