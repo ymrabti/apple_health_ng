@@ -39,32 +39,51 @@ export class AuthGuard implements CanActivate {
     }
 
     startTokenRefreshWatcher() {
-        const exp = this.auth.getAccessTokenExp();
-        if (!exp) return;
+        const expa = this.auth.getAccessTokenExp();
+        const expr = this.auth.getRefreshTokenExp();
 
-        const now = Math.floor(Date.now() / 1000); // current time in seconds
-        const timeout = (exp - now - 60) * 1000; // refresh 1 min before expiry
+        if (expa == null || expr == null) {
+            this.auth.signOut();
+            return;
+        }
+
+        const nowMs = Date.now();
+        const toMs = (exp: number) => (exp > 1e12 ? exp : exp * 1000);
+        const expaMs = toMs(expa);
+        const exprMs = toMs(expr);
+
+        // If refresh token is expired, sign out immediately (no navigation from here)
+        if (exprMs <= nowMs) {
+            this.auth.signOut();
+            return;
+        }
+
+        // Refresh access token 1 minute before it expires; clamp to a sensible minimum
+        const timeoutAccessMs = Math.max(expaMs - nowMs - 60_000, 5_000);
+        console.log(timeoutAccessMs / 1000 / 60, 'minutes until access token refresh');
 
         if (this.refreshTimeout) {
             clearTimeout(this.refreshTimeout);
+            this.refreshTimeout = null;
         }
 
-        if (timeout > 0) {
-            this.refreshTimeout = setTimeout(() => {
-                this.auth.refreshToken().subscribe({
-                    next: (tokens) => {
-                        this.tokens.setToken(tokens.access.token);
-                        this.tokens.saveTokens(tokens);
-                        this.startTokenRefreshWatcher(); // reset watcher
-                    },
-                    error: (err) => {
-                        console.error('Token refresh failed', err);
-                        this.auth.signOut(); // or redirect to login
-                    },
-                });
-            }, timeout);
-        } else {
-            this.auth.signOut(); // token already expired
-        }
+        this.refreshTimeout = setTimeout(() => {
+            this.auth.refreshToken().subscribe({
+                next: (newTokens) => {
+                    this.tokens.setToken(newTokens.access.token);
+                    this.tokens.saveTokens(newTokens);
+                    if (this.refreshTimeout) {
+                        clearTimeout(this.refreshTimeout);
+                        this.refreshTimeout = null;
+                    }
+                    this.startTokenRefreshWatcher();
+                    console.log('Token refreshed successfully', new Date());
+                },
+                error: (err) => {
+                    console.error('Token refresh failed', err);
+                    this.auth.signOut();
+                },
+            });
+        }, timeoutAccessMs);
     }
 }

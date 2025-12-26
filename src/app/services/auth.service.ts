@@ -100,7 +100,18 @@ export class AuthService {
         if (!token) return null;
         try {
             const decoded = token.access;
-            return Math.floor(new Date(decoded.expires).getTime() / 1000); // in seconds
+            return Math.floor(new Date(decoded.expires).getTime() / 1000); // convert to seconds
+        } catch (error) {
+            return null;
+        }
+    }
+
+    getRefreshTokenExp(): number | null {
+        const token = this.tokens.getTokens();
+        if (!token) return null;
+        try {
+            const decoded = token.refresh;
+            return Math.floor(new Date(decoded.expires).getTime() / 1000); // convert to seconds
         } catch (error) {
             return null;
         }
@@ -110,7 +121,7 @@ export class AuthService {
         const tokens = this.tokens.getTokens();
         const refreshToken = tokens?.refresh.token;
         return this.http.post<Tokens>(
-            `${AUTH_API_BASE}/refresh-token`,
+            `${AUTH_API_BASE}/refresh-tokens`,
             {
                 refreshToken: refreshToken,
             },
