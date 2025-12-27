@@ -39,6 +39,11 @@
                 <div class="logout-section">
                     <button class="logout-btn" (click)="logout()">Logout</button>
                 </div>
+
+                <!-- API Health Status -->
+                <div class="api-status" *ngIf="apiHealthy !== null" [class.ok]="apiHealthy" [class.bad]="apiHealthy === false">
+                    {{ apiHealthy ? 'API: OK' : 'API: Unreachable' }}
+                </div>
             </div>
         </div>
 
@@ -253,28 +258,30 @@
             <div class="chart-container">
                 <div class="chart-header">
                     <h3 class="chart-title">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor">
-                            <polyline
-                                points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
                         </svg>
-                        Steps Trend
+                        {{ getChartTitle('steps') }}
                     </h3>
-                    <div class="chart-info">Total: {{ stepsStats.total |
-                        number:'1.0-0' }}</div>
+                    <div class="chart-info">
+                        <ng-container [ngSwitch]="selectedView">
+                            <span *ngSwitchCase="'weekly'">Total: {{ stepsStats.total | number:'1.0-0' }}</span>
+                            <span *ngSwitchCase="'trends'">Avg: {{ stepsStats.average | number:'1.0-0' }}</span>
+                            <span *ngSwitchDefault>Total: {{ stepsStats.total | number:'1.0-0' }}</span>
+                        </ng-container>
+                    </div>
                 </div>
                 <div class="simple-chart">
                     <div class="chart-bars">
-                        <div *ngFor="let data of filteredData; let i = index"
-                            class="chart-bar steps-bar"
-                            [style.height.%]="(data.steps / getMaxValue('steps')) * 100"
-                            [style.animation-delay.ms]="i * 100">
+                        <div *ngFor="let pt of getStepsChartData(); let i = index"
+                             class="chart-bar steps-bar"
+                             [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100"
+                             [style.animation-delay.ms]="i * 100">
                         </div>
                     </div>
                     <div class="chart-labels">
-                        <span *ngFor="let data of filteredData"
-                            class="chart-label">
-                            {{ data.displayDate }}
+                        <span *ngFor="let pt of getStepsChartData()" class="chart-label">
+                            {{ pt.label }}
                         </span>
                     </div>
                 </div>
@@ -284,28 +291,30 @@
             <div class="chart-container">
                 <div class="chart-header">
                     <h3 class="chart-title">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor">
-                            <polygon
-                                points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
                         </svg>
-                        Calories Burned
+                        {{ getChartTitle('calories') }}
                     </h3>
-                    <div class="chart-info">Avg: {{ caloriesStats.average }}
-                        kcal/day</div>
+                    <div class="chart-info">
+                        <ng-container [ngSwitch]="selectedView">
+                            <span *ngSwitchCase="'weekly'">Total: {{ caloriesStats.total | number:'1.0-0' }} kcal</span>
+                            <span *ngSwitchCase="'trends'">Avg: {{ caloriesStats.average | number:'1.0-0' }} kcal/day</span>
+                            <span *ngSwitchDefault>Avg: {{ caloriesStats.average | number:'1.0-0' }} kcal/day</span>
+                        </ng-container>
+                    </div>
                 </div>
                 <div class="simple-chart">
                     <div class="chart-bars">
-                        <div *ngFor="let data of filteredData; let i = index"
-                            class="chart-bar calories-bar"
-                            [style.height.%]="(data.calories / getMaxValue('calories')) * 100"
-                            [style.animation-delay.ms]="i * 100">
+                        <div *ngFor="let pt of getCaloriesChartData(); let i = index"
+                             class="chart-bar calories-bar"
+                             [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100"
+                             [style.animation-delay.ms]="i * 100">
                         </div>
                     </div>
                     <div class="chart-labels">
-                        <span *ngFor="let data of filteredData"
-                            class="chart-label">
-                            {{ data.displayDate }}
+                        <span *ngFor="let pt of getCaloriesChartData()" class="chart-label">
+                            {{ pt.label }}
                         </span>
                     </div>
                 </div>

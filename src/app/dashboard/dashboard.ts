@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { HealthService } from '../services/health.service';
+import { formatDate } from './utils/date';
 
 interface HealthData {
   date: string;
@@ -20,6 +22,11 @@ interface Stats {
   max: number;
   min: number;
   total: number;
+}
+
+interface ChartPoint {
+  label: string;
+  value: number;
 }
 @Component({
   selector: 'app-dashboard',
@@ -42,6 +49,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
   animatedValues = { steps: 0 };
 
+  // API health state
+  apiHealthy: boolean | null = null;
+  apiMessage: string = '';
+
   activityLevels = [
     { label: 'Very Active', value: 85, color: '#10B981' },
     { label: 'Active', value: 65, color: '#F59E0B' },
@@ -49,49 +60,157 @@ export class Dashboard implements OnInit, OnDestroy {
     { label: 'Sedentary', value: 25, color: '#EF4444' },
   ];
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private health: HealthService) {}
 
   ngOnInit() {
-    this.generateHealthData();
-    this.updateFilteredData();
-    this.calculateAllStats();
-    this.animateStepsValue();
+    // Check backend connectivity (requires authentication)
+    this.health.check().subscribe({
+      next: (res) => {
+        this.apiHealthy = typeof res === 'string' ? res.toUpperCase().includes('OK') : false;
+        this.apiMessage = res || '';
+      },
+      error: (err) => {
+        this.apiHealthy = false;
+        this.apiMessage = (err?.error as string) || 'Unavailable';
+      },
+    });
+
+    this.fetchDataForCurrentRange();
   }
 
   ngOnDestroy() {
     // Clean up any subscriptions or intervals
   }
 
-  generateHealthData() {
-    const data: HealthData[] = [];
-    const today = new Date();
+  private fetchDataForCurrentRange() {
+    const days = parseInt(this.dateRange.replace('d', ''));
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - (days - 1));
 
-    for (let i = 29; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
+    const dateFrom = formatDate(start); // YYYY-MM-DD
+    const dateTo = formatDate(end);
 
-      data.push({
-        date: date.toISOString().split('T')[0],
-        displayDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        steps: Math.floor(Math.random() * 5000) + 8000,
-        calories: Math.floor(Math.random() * 800) + 1800,
-        distance: parseFloat((Math.random() * 3 + 5).toFixed(1)),
-        weight: parseFloat((Math.random() * 2 + 68).toFixed(1)),
-        fatLoss: parseFloat((Math.random() * 0.2 + 0.1).toFixed(2)),
-      });
-    }
-    this.healthData = data;
+    this.health.getDailySummaries(dateFrom, dateTo).subscribe({
+      next: (res) => {
+        const items = Array.isArray(res.items) ? res.items : [];
+        // Map backend records to UI HealthData
+        const mapped: HealthData[] = items
+          .map((it: any) => {
+            const d = new Date(it.date);
+            const displayDate = d.toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+            });
+            const steps = Number(it.steps) || 0;
+            const distance = Number(it.distance) || 0;
+            const active = Number(it.active) || 0;
+            const basal = Number(it.basal) || 0;
+            const calories = active + basal;
+            return {
+              date: formatDate(d),
+              displayDate,
+              steps,
+              calories,
+              distance,
+              weight: 0, // not provided by daily summaries; keep placeholder
+              fatLoss: 0,
+            } as HealthData;
+          })
+          .sort((a, b) => (a.date < b.date ? -1 : 1));
+
+        this.healthData = mapped;
+        this.filteredData = mapped;
+        this.calculateAllStats();
+        this.animateStepsValue();
+      },
+      error: (err) => {
+        console.error('Failed to load daily summaries', err);
+        this.healthData = [];
+        this.filteredData = [];
+        this.calculateAllStats();
+      },
+    });
   }
 
   onDateRangeChange() {
-    this.updateFilteredData();
-    this.calculateAllStats();
-    this.animateStepsValue();
+    this.fetchDataForCurrentRange();
   }
 
   updateFilteredData() {
-    const days = parseInt(this.dateRange.replace('d', ''));
-    this.filteredData = this.healthData.slice(-days);
+    this.filteredData = this.healthData;
+  }
+
+  // Chart helpers responding to selectedView and dateRange
+  private chunkByWeeks(list: HealthData[]): HealthData[][] {
+    if (!list.length) return [];
+    const chunks: HealthData[][] = [];
+    for (let i = 0; i < list.length; i += 7) {
+      chunks.push(list.slice(i, i + 7));
+    }
+    return chunks;
+  }
+
+  private movingAverage(list: number[], window = 7): number[] {
+    if (!list.length) return [];
+    const out: number[] = [];
+    for (let i = 0; i < list.length; i++) {
+      const start = Math.max(0, i - window + 1);
+      const slice = list.slice(start, i + 1);
+      const avg = slice.reduce((a, b) => a + b, 0) / slice.length;
+      out.push(Number(avg.toFixed(1)));
+    }
+    return out;
+  }
+
+  getStepsChartData(): ChartPoint[] {
+    const data = this.filteredData;
+    if (this.selectedView === 'weekly') {
+      return this.chunkByWeeks(data).map((week, idx) => ({
+        label: `Week ${idx + 1}`,
+        value: week.reduce((sum, d) => sum + Number(d.steps || 0), 0),
+      }));
+    }
+    if (this.selectedView === 'trends') {
+      const values = data.map((d) => Number(d.steps || 0));
+      const avgs = this.movingAverage(values, 7);
+      return data.map((d, i) => ({ label: d.displayDate, value: avgs[i] }));
+    }
+    // daily
+    return data.map((d) => ({ label: d.displayDate, value: Number(d.steps || 0) }));
+  }
+
+  getCaloriesChartData(): ChartPoint[] {
+    const data = this.filteredData;
+    if (this.selectedView === 'weekly') {
+      return this.chunkByWeeks(data).map((week, idx) => ({
+        label: `Week ${idx + 1}`,
+        value: week.reduce((sum, d) => sum + Number(d.calories || 0), 0),
+      }));
+    }
+    if (this.selectedView === 'trends') {
+      const values = data.map((d) => Number(d.calories || 0));
+      const avgs = this.movingAverage(values, 7);
+      return data.map((d, i) => ({ label: d.displayDate, value: avgs[i] }));
+    }
+    // daily
+    return data.map((d) => ({ label: d.displayDate, value: Number(d.calories || 0) }));
+  }
+
+  getChartTitle(kind: 'steps' | 'calories'): string {
+    if (this.selectedView === 'weekly') {
+      return kind === 'steps' ? 'Weekly Steps' : 'Weekly Calories';
+    }
+    if (this.selectedView === 'trends') {
+      return kind === 'steps' ? '7-day Steps Avg' : '7-day Calories Avg';
+    }
+    return kind === 'steps' ? 'Steps Trend' : 'Calories Burned';
+  }
+
+  getMaxChartValue(kind: 'steps' | 'calories'): number {
+    const arr = kind === 'steps' ? this.getStepsChartData() : this.getCaloriesChartData();
+    if (!arr.length) return 0;
+    return Math.max(...arr.map((p) => Number(p.value || 0)));
   }
 
   setSelectedView(view: string) {
