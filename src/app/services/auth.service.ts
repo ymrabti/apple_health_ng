@@ -33,6 +33,12 @@ interface Access {
     expires: string;
 }
 
+export interface GlobalSummaryStats {
+    sumDistance: number;
+    goalAchievements: number;
+    daysTracked: number;
+}
+
 interface User {
     id: string;
     firstName: string;

@@ -39,11 +39,6 @@
                 <div class="logout-section">
                     <button class="logout-btn" (click)="logout()">Logout</button>
                 </div>
-
-                <!-- API Health Status -->
-                <div class="api-status" *ngIf="apiHealthy !== null" [class.ok]="apiHealthy" [class.bad]="apiHealthy === false">
-                    {{ apiHealthy ? 'API: OK' : 'API: Unreachable' }}
-                </div>
             </div>
         </div>
 
@@ -415,7 +410,7 @@
         <!-- Footer Stats -->
         <div class="footer-stats">
             <div class="footer-stat">
-                <div class="footer-value cyan">{{ filteredData.length }}</div>
+                <div class="footer-value cyan">{{ globalStats.daysTracked }}</div>
                 <div class="footer-label">Days Tracked</div>
             </div>
             <div class="footer-stat">
