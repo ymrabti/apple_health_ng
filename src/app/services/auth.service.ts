@@ -58,6 +58,24 @@ interface User {
     updatedAt: string;
 }
 
+export interface UserInfos {
+    id: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    biologicalSex: string;
+    bloodType: string;
+    fitzpatrickSkinType: string;
+    cardioFitnessMedicationsUse: string;
+    isEmailVerified: boolean;
+    email: string;
+    role: string;
+    weightInKilograms: number | null;
+    heightInCentimeters: number | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     constructor(private http: HttpClient, private tokens: TokenService) {}

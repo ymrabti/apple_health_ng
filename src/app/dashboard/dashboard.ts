@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService, GlobalSummaryStats } from '../services/auth.service';
+import { AuthService, GlobalSummaryStats, UserInfos } from '../services/auth.service';
 import { HealthService } from '../services/health.service';
 import { formatDate } from './utils/date';
 
@@ -36,12 +35,14 @@ type ChartType = 'column' | 'line' | 'area';
     styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit, OnDestroy {
+    private readonly KCAL_PER_KG = 7700;
     dateRange: string = '7d';
     selectedView: string = 'daily';
     views: string[] = ['daily', 'weekly', 'trends'];
 
     healthData: HealthData[] = [];
     filteredData: HealthData[] = [];
+    userInfo: UserInfos | null = null;
 
     stepsStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     caloriesStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
@@ -79,6 +80,16 @@ export class Dashboard implements OnInit, OnDestroy {
             },
             error: (err) => {
                 console.error('Failed to load global stats', err);
+            },
+        });
+        // Fetch user infos (weight/height)
+        this.health.getUserInfos().subscribe({
+            next: (info) => {
+                this.userInfo = (info as UserInfos) || null;
+                this.applyUserInfoToWeights();
+            },
+            error: (err) => {
+                console.error('Failed to load user infos', err);
             },
         });
         this.fetchDataForCurrentRange();
@@ -119,7 +130,7 @@ export class Dashboard implements OnInit, OnDestroy {
                             steps,
                             calories,
                             distance,
-                            weight: 0, // not provided by daily summaries; keep placeholder
+                            weight: 0, // not provided by daily summaries; will be filled later if available
                             fatLoss: 0,
                         } as HealthData;
                     })
@@ -127,6 +138,8 @@ export class Dashboard implements OnInit, OnDestroy {
 
                 this.healthData = mapped;
                 this.filteredData = mapped;
+                this.applyUserInfoToWeights();
+                this.recomputeFatLoss();
                 this.calculateAllStats();
                 this.animateStepsValue();
             },
@@ -145,6 +158,27 @@ export class Dashboard implements OnInit, OnDestroy {
 
     updateFilteredData() {
         this.filteredData = this.healthData;
+        this.recomputeFatLoss();
+    }
+
+    private applyUserInfoToWeights() {
+        if (!this.userInfo || !this.healthData.length) return;
+        const w = Number(this.userInfo?.weightInKilograms || this.userInfo.weightInKilograms || 0);
+        if (!w) return;
+        // Fill missing weight values in current range with the latest known weight
+        this.healthData = this.healthData.map((d) => ({ ...d, weight: d.weight || w }));
+        this.filteredData = this.filteredData.map((d) => ({ ...d, weight: d.weight || w }));
+        // Update weight stats current directly when available
+        this.weightStats.current = w;
+    }
+
+    private recomputeFatLoss() {
+        if (!this.filteredData?.length) return;
+        this.filteredData = this.filteredData.map((d) => {
+            const calories = Number(d.calories || 0);
+            const fatLoss = calories > 0 ? parseFloat((calories / this.KCAL_PER_KG).toFixed(3)) : 0;
+            return { ...d, fatLoss } as HealthData;
+        });
     }
 
     // Chart helpers responding to selectedView and dateRange
@@ -328,7 +362,7 @@ export class Dashboard implements OnInit, OnDestroy {
         const max = this.getMaxChartValue(kind) || 1;
         const value = Number(series[i]?.value ?? 0);
         const vPct = Math.min(100, Math.max(0, (value / max) * 100));
-        const top = Math.max(0, (svgRect.height * (1 - vPct / 100)) - 12);
+        const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
         const left = svgRect.left - wrapperRect.left + pctX * svgRect.width;
         const tgt = this.tooltip[kind];
         tgt.visible = true;
@@ -371,6 +405,7 @@ export class Dashboard implements OnInit, OnDestroy {
         this.caloriesStats = this.calculateStats('calories');
         this.distanceStats = this.calculateStats('distance');
         this.weightStats = this.calculateStats('weight');
+        this.fatLossStats = this.calculateStats('fatLoss');
     }
 
     getTrendPercentage(field: string): number {
@@ -416,6 +451,8 @@ export class Dashboard implements OnInit, OnDestroy {
                 return this.distanceStats;
             case 'weight':
                 return this.weightStats;
+            case 'fatLoss':
+                return this.fatLossStats;
             default:
                 return this.stepsStats;
         }
@@ -434,11 +471,35 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     getMinWeight(): number {
-        return Math.min(...this.getRecentData().map((d) => d.weight));
+        const recent = this.getRecentData().map((d) => Number(d.weight || 0));
+        let min = Math.min(...recent);
+        if (!isFinite(min) || isNaN(min)) {
+            const w = Number(
+                this.userInfo?.weightInKilograms || this.userInfo?.weightInKilograms || 0
+            );
+            return w ? w - 0.5 : 0;
+        }
+        return min;
     }
 
     getMaxWeight(): number {
-        return Math.max(...this.getRecentData().map((d) => d.weight));
+        const recent = this.getRecentData().map((d) => Number(d.weight || 0));
+        let max = Math.max(...recent);
+        if (!isFinite(max) || isNaN(max)) {
+            const w = Number(
+                this.userInfo?.weightInKilograms || this.userInfo?.weightInKilograms || 0
+            );
+            return w ? w + 0.5 : 1;
+        }
+        // Avoid zero range which breaks percent calc in template
+        const min = Math.min(...recent);
+        if (max === min) {
+            const base = Number(
+                this.userInfo?.weightInKilograms || this.userInfo?.weightInKilograms || max || 0
+            );
+            return base + 0.5;
+        }
+        return max;
     }
 
     getGoalAchievement(): number {
