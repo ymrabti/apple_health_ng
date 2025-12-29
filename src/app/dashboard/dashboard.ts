@@ -352,16 +352,17 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     calculateStats(field: keyof HealthData): Stats {
+        console.log(this.filteredData);
         const values = this.filteredData.map((d) => Number(d[field]));
         const sorted = [...values].sort((a, b) => a - b);
 
         return {
             current: values[values.length - 1] || 0,
-            average: parseFloat((values.reduce((a, b) => a + b, 0) / values.length).toFixed(1)),
-            median: sorted[Math.floor(sorted.length / 2)],
-            max: Math.max(...values),
-            min: Math.min(...values),
-            total: parseFloat(values.reduce((a, b) => a + b, 0).toFixed(1)),
+            average: parseFloat((values.reduce((a, b) => a + b, 0) / values.length).toFixed(2)),
+            median: parseFloat(sorted[Math.floor(sorted.length / 2)].toFixed(2)),
+            max: parseFloat(Math.max(...values).toFixed(2)),
+            min: parseFloat(Math.min(...values).toFixed(2)),
+            total: parseFloat(values.reduce((a, b) => a + b, 0).toFixed(2)),
         };
     }
 
@@ -373,18 +374,36 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     getTrendPercentage(field: string): number {
-        const stats = this.getStatsByField(field);
-        try {
-            return Math.abs(Math.floor(((stats.current - stats.average) / stats.average) * 100));
-        } catch (e) {
-            console.error('Error calculating trend percentage', e);
-            return 0;
+        // Special handling for weight: compare last two data points to avoid division by zero
+        if (field === 'weight') {
+            const recent = this.getRecentData();
+            if (!recent.length || recent.length < 2) return 0;
+            const prev = Number(recent[recent.length - 2]?.weight ?? 0);
+            const curr = Number(recent[recent.length - 1]?.weight ?? 0);
+            if (!prev) return 0;
+            const pct = ((curr - prev) / prev) * 100;
+            return Math.abs(Math.floor(pct));
         }
+
+        const stats = this.getStatsByField(field);
+        const avg = Number(stats.average || 0);
+        const curr = Number(stats.current || 0);
+        if (!avg) return 0;
+        return Math.abs(Math.floor(((curr - avg) / avg) * 100));
     }
 
     getTrendIndicator(field: string): string {
+        if (field === 'weight') {
+            const recent = this.getRecentData();
+            if (!recent.length || recent.length < 2) return '';
+            const prev = Number(recent[recent.length - 2]?.weight ?? 0);
+            const curr = Number(recent[recent.length - 1]?.weight ?? 0);
+            if (!prev || curr === prev) return '';
+            // Weight down is good (show '-') ; weight up is '+'
+            return curr < prev ? '-' : '+';
+        }
         const stats = this.getStatsByField(field);
-        return stats.current >= stats.average ? '+' : field === 'weight' ? '' : '+';
+        return stats.current >= stats.average ? '+' : '-';
     }
 
     getStatsByField(field: string): Stats {
