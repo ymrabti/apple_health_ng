@@ -546,7 +546,23 @@
             </div>
             <div class="footer-stat">
                 <div class="footer-value purple">{{ globalStats.healthGrade }}</div>
+                <div class="footer-label">Health Grade</div>
+            </div>
+            <div class="footer-stat">
+                <div class="footer-value purple">{{ globalStats.healthScore | number:'1.0-0' }}</div>
                 <div class="footer-label">Health Score</div>
+            </div>
+            <div class="footer-stat">
+                <div class="footer-value green">{{ globalStats.components.activityScore | number:'1.0-0' }}</div>
+                <div class="footer-label">Activity Score</div>
+            </div>
+            <div class="footer-stat">
+                <div class="footer-value cyan">{{ globalStats.components.stepsScore | number:'1.0-0' }}</div>
+                <div class="footer-label">Steps Score</div>
+            </div>
+            <div class="footer-stat">
+                <div class="footer-value orange">{{ globalStats.components.streakScore | number:'1.0-0' }}</div>
+                <div class="footer-label">Streak Score</div>
             </div>
         </div>
     </div>
