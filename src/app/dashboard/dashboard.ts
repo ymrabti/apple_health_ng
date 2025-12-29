@@ -28,6 +28,7 @@ interface ChartPoint {
     label: string;
     value: number;
 }
+type ChartType = 'column' | 'line' | 'area';
 @Component({
     selector: 'app-dashboard',
     standalone: false,
@@ -62,6 +63,12 @@ export class Dashboard implements OnInit, OnDestroy {
         { label: 'Sedentary', value: 25, color: '#EF4444' },
     ];
 
+    // Tooltip state for charts
+    tooltip = {
+        steps: { visible: false, label: '', value: 0, left: 0, top: 0 },
+        calories: { visible: false, label: '', value: 0, left: 0, top: 0 },
+    };
+
     constructor(private auth: AuthService, private router: Router, private health: HealthService) {}
 
     ngOnInit() {
@@ -85,7 +92,7 @@ export class Dashboard implements OnInit, OnDestroy {
         const days = parseInt(this.dateRange.replace('d', ''));
         const end = new Date();
         const start = new Date();
-        start.setDate(end.getDate() - (days * 6 - 1));
+        start.setDate(end.getDate() - (days - 1));
 
         const dateFrom = formatDate(start); // YYYY-MM-DD
         const dateTo = formatDate(end);
@@ -212,6 +219,130 @@ export class Dashboard implements OnInit, OnDestroy {
         return Math.max(...arr.map((p) => Number(p.value || 0)));
     }
 
+    // Limit label count to avoid overflow; keep ~12 labels and include last
+    getLabelPoints(kind: 'steps' | 'calories'): ChartPoint[] {
+        const src = kind === 'steps' ? this.getStepsChartData() : this.getCaloriesChartData();
+        const maxLabels = 12;
+        if (src.length <= maxLabels) return src;
+        const step = Math.ceil(src.length / maxLabels);
+        const sampled: ChartPoint[] = [];
+        for (let i = 0; i < src.length; i += step) {
+            sampled.push(src[i]);
+        }
+        // Ensure last label included
+        if (sampled[sampled.length - 1] !== src[src.length - 1]) {
+            sampled.push(src[src.length - 1]);
+        }
+        return sampled;
+    }
+
+    // Chart type state per chart
+    stepsChartType: ChartType = 'column';
+    caloriesChartType: ChartType = 'column';
+
+    setStepsChartType(t: ChartType) {
+        this.stepsChartType = t;
+    }
+    setCaloriesChartType(t: ChartType) {
+        this.caloriesChartType = t;
+    }
+
+    // SVG helpers for line/area charts (normalized to 0..100 viewBox)
+    private getSeries(kind: 'steps' | 'calories'): ChartPoint[] {
+        return kind === 'steps' ? this.getStepsChartData() : this.getCaloriesChartData();
+    }
+    private getXY(kind: 'steps' | 'calories'): Array<{ x: number; y: number }> {
+        const series = this.getSeries(kind);
+        const max = this.getMaxChartValue(kind) || 1;
+        const n = series.length;
+        if (n === 0) return [];
+        if (n === 1) {
+            const v = Math.min(100, Math.max(0, (series[0].value / max) * 100));
+            return [{ x: 0, y: 100 - v }];
+        }
+        return series.map((pt, i) => {
+            const x = (i / (n - 1)) * 100;
+            const v = Math.min(100, Math.max(0, (pt.value / max) * 100));
+            const y = 100 - v; // invert for SVG coordinate system
+            return { x, y };
+        });
+    }
+    getSvgLinePoints(kind: 'steps' | 'calories'): string {
+        const xy = this.getXY(kind);
+        return xy.map((p) => `${p.x},${p.y}`).join(' ');
+    }
+    getSvgAreaPoints(kind: 'steps' | 'calories'): string {
+        const xy = this.getXY(kind);
+        if (xy.length === 0) return '';
+        if (xy.length === 1) {
+            const p = xy[0];
+            return `0,100 ${p.x},${p.y} 0,100`;
+        }
+        const start = `0,100`;
+        const mid = xy.map((p) => `${p.x},${p.y}`).join(' ');
+        const end = `100,100`;
+        return `${start} ${mid} ${end}`;
+    }
+
+    // Stable identity for *ngFor to prevent re-render animations
+    trackByIdx(index: number, _item: unknown) {
+        return index;
+    }
+
+    // Tooltip handlers for column bars
+    showBarTooltip(kind: 'steps' | 'calories', idx: number, ev: MouseEvent) {
+        const series = this.getSeries(kind);
+        const barEl = ev.currentTarget as HTMLElement;
+        const bars = barEl.parentElement as HTMLElement; // .chart-bars
+        const wrapper = barEl.closest('.simple-chart') as HTMLElement; // positioned container
+        if (!bars || !wrapper) return;
+        const barRect = barEl.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const top = Math.max(0, barRect.top - wrapperRect.top - 12);
+        const left = barRect.left - wrapperRect.left + barEl.offsetWidth / 2;
+        const point = series[idx];
+        const tgt = this.tooltip[kind];
+        tgt.visible = true;
+        tgt.label = point?.label ?? '';
+        tgt.value = Number(point?.value ?? 0);
+        tgt.left = left;
+        tgt.top = top;
+    }
+
+    hideBarTooltip(kind: 'steps' | 'calories') {
+        const tgt = this.tooltip[kind];
+        tgt.visible = false;
+    }
+
+    // Tooltip for SVG charts (line/area)
+    onSvgMove(kind: 'steps' | 'calories', ev: MouseEvent) {
+        const series = this.getSeries(kind);
+        const svg = ev.currentTarget as SVGElement;
+        const wrapper = svg.closest('.simple-chart') as HTMLElement;
+        if (!wrapper || !series.length) return;
+        const svgRect = svg.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const relX = ev.clientX - svgRect.left;
+        const pctX = Math.min(1, Math.max(0, relX / svgRect.width));
+        const i = Math.round(pctX * (series.length - 1));
+        const max = this.getMaxChartValue(kind) || 1;
+        const value = Number(series[i]?.value ?? 0);
+        const vPct = Math.min(100, Math.max(0, (value / max) * 100));
+        const top = Math.max(0, (svgRect.height * (1 - vPct / 100)) - 12);
+        const left = svgRect.left - wrapperRect.left + pctX * svgRect.width;
+        const tgt = this.tooltip[kind];
+        tgt.visible = true;
+        tgt.label = series[i]?.label ?? '';
+        tgt.value = value;
+        tgt.left = left;
+        tgt.top = top;
+    }
+
+    onSvgLeave(kind: 'steps' | 'calories') {
+        const tgt = this.tooltip[kind];
+        tgt.visible = false;
+    }
+
     setSelectedView(view: string) {
         this.selectedView = view;
     }
@@ -243,8 +374,12 @@ export class Dashboard implements OnInit, OnDestroy {
 
     getTrendPercentage(field: string): number {
         const stats = this.getStatsByField(field);
-        console.log(stats);
-        return Math.abs(Math.floor(((stats.current - stats.average) / stats.average) * 100));
+        try {
+            return Math.abs(Math.floor(((stats.current - stats.average) / stats.average) * 100));
+        } catch (e) {
+            console.error('Error calculating trend percentage', e);
+            return 0;
+        }
     }
 
     getTrendIndicator(field: string): string {

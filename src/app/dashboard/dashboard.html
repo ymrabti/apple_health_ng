@@ -267,15 +267,69 @@
                     </div>
                 </div>
                 <div class="simple-chart">
-                    <div class="chart-bars">
-                        <div *ngFor="let pt of getStepsChartData(); let i = index"
-                             class="chart-bar steps-bar"
-                             [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100"
-                             [style.animation-delay.ms]="i * 100">
-                        </div>
+                    <!-- Chart type toggle for Steps -->
+                    <div class="view-toggle chart-type-toggle">
+                        <button class="view-btn" [class.active]="stepsChartType === 'column'" (click)="setStepsChartType('column')">Column</button>
+                        <button class="view-btn" [class.active]="stepsChartType === 'line'" (click)="setStepsChartType('line')">Line</button>
+                        <button class="view-btn" [class.active]="stepsChartType === 'area'" (click)="setStepsChartType('area')">Area</button>
                     </div>
+
+                    <ng-container [ngSwitch]="stepsChartType">
+                        <!-- Column chart -->
+                        <div *ngSwitchCase="'column'" class="chart-bars" (mouseleave)="hideBarTooltip('steps')">
+                            <div *ngFor="let pt of getStepsChartData(); let i = index; trackBy: trackByIdx"
+                                 class="chart-bar steps-bar"
+                                 [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100"
+                                 [style.animation-delay.ms]="i * 100"
+                                 (mouseenter)="showBarTooltip('steps', i, $event)">
+                            </div>
+                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip"
+                                 [style.left.px]="tooltip.steps.left"
+                                 [style.top.px]="tooltip.steps.top">
+                                <div class="tooltip-value">{{ tooltip.steps.value | number:'1.0-0' }}</div>
+                                <div class="tooltip-label">{{ tooltip.steps.label }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Line chart -->
+                        <div *ngSwitchCase="'line'" class="chart-line">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
+                                 (mousemove)="onSvgMove('steps', $event)" (mouseleave)="onSvgLeave('steps')">
+                                <polyline class="line-polyline" [attr.points]="getSvgLinePoints('steps')" />
+                            </svg>
+                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip"
+                                 [style.left.px]="tooltip.steps.left"
+                                 [style.top.px]="tooltip.steps.top">
+                                <div class="tooltip-value">{{ tooltip.steps.value | number:'1.0-0' }}</div>
+                                <div class="tooltip-label">{{ tooltip.steps.label }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Area chart -->
+                        <div *ngSwitchCase="'area'" class="chart-area">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
+                                 (mousemove)="onSvgMove('steps', $event)" (mouseleave)="onSvgLeave('steps')">
+                                <polygon class="area-polygon steps-area" [attr.points]="getSvgAreaPoints('steps')" />
+                            </svg>
+                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip"
+                                 [style.left.px]="tooltip.steps.left"
+                                 [style.top.px]="tooltip.steps.top">
+                                <div class="tooltip-value">{{ tooltip.steps.value | number:'1.0-0' }}</div>
+                                <div class="tooltip-label">{{ tooltip.steps.label }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Fallback -->
+                        <div *ngSwitchDefault class="chart-bars">
+                            <div *ngFor="let pt of getStepsChartData(); let i = index"
+                                 class="chart-bar steps-bar"
+                                 [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100"
+                                 [style.animation-delay.ms]="i * 100">
+                            </div>
+                        </div>
+                    </ng-container>
                     <div class="chart-labels">
-                        <span *ngFor="let pt of getStepsChartData()" class="chart-label">
+                        <span *ngFor="let pt of getLabelPoints('steps'); trackBy: trackByIdx" class="chart-label">
                             {{ pt.label }}
                         </span>
                     </div>
@@ -300,15 +354,69 @@
                     </div>
                 </div>
                 <div class="simple-chart">
-                    <div class="chart-bars">
-                        <div *ngFor="let pt of getCaloriesChartData(); let i = index"
-                             class="chart-bar calories-bar"
-                             [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100"
-                             [style.animation-delay.ms]="i * 100">
-                        </div>
+                    <!-- Chart type toggle for Calories -->
+                    <div class="view-toggle chart-type-toggle">
+                        <button class="view-btn" [class.active]="caloriesChartType === 'column'" (click)="setCaloriesChartType('column')">Column</button>
+                        <button class="view-btn" [class.active]="caloriesChartType === 'line'" (click)="setCaloriesChartType('line')">Line</button>
+                        <button class="view-btn" [class.active]="caloriesChartType === 'area'" (click)="setCaloriesChartType('area')">Area</button>
                     </div>
+
+                    <ng-container [ngSwitch]="caloriesChartType">
+                        <!-- Column chart -->
+                        <div *ngSwitchCase="'column'" class="chart-bars" (mouseleave)="hideBarTooltip('calories')">
+                            <div *ngFor="let pt of getCaloriesChartData(); let i = index; trackBy: trackByIdx"
+                                 class="chart-bar calories-bar"
+                                 [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100"
+                                 [style.animation-delay.ms]="i * 100"
+                                 (mouseenter)="showBarTooltip('calories', i, $event)">
+                            </div>
+                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip"
+                                 [style.left.px]="tooltip.calories.left"
+                                 [style.top.px]="tooltip.calories.top">
+                                <div class="tooltip-value">{{ tooltip.calories.value | number:'1.0-0' }}</div>
+                                <div class="tooltip-label">{{ tooltip.calories.label }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Line chart -->
+                        <div *ngSwitchCase="'line'" class="chart-line">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
+                                 (mousemove)="onSvgMove('calories', $event)" (mouseleave)="onSvgLeave('calories')">
+                                <polyline class="line-polyline calories-line" [attr.points]="getSvgLinePoints('calories')" />
+                            </svg>
+                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip"
+                                 [style.left.px]="tooltip.calories.left"
+                                 [style.top.px]="tooltip.calories.top">
+                                <div class="tooltip-value">{{ tooltip.calories.value | number:'1.0-0' }}</div>
+                                <div class="tooltip-label">{{ tooltip.calories.label }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Area chart -->
+                        <div *ngSwitchCase="'area'" class="chart-area">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
+                                 (mousemove)="onSvgMove('calories', $event)" (mouseleave)="onSvgLeave('calories')">
+                                <polygon class="area-polygon calories-area" [attr.points]="getSvgAreaPoints('calories')" />
+                            </svg>
+                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip"
+                                 [style.left.px]="tooltip.calories.left"
+                                 [style.top.px]="tooltip.calories.top">
+                                <div class="tooltip-value">{{ tooltip.calories.value | number:'1.0-0' }}</div>
+                                <div class="tooltip-label">{{ tooltip.calories.label }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Fallback -->
+                        <div *ngSwitchDefault class="chart-bars">
+                            <div *ngFor="let pt of getCaloriesChartData(); let i = index"
+                                 class="chart-bar calories-bar"
+                                 [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100"
+                                 [style.animation-delay.ms]="i * 100">
+                            </div>
+                        </div>
+                    </ng-container>
                     <div class="chart-labels">
-                        <span *ngFor="let pt of getCaloriesChartData()" class="chart-label">
+                        <span *ngFor="let pt of getLabelPoints('calories'); trackBy: trackByIdx" class="chart-label">
                             {{ pt.label }}
                         </span>
                     </div>
