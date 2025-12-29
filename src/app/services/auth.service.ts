@@ -37,6 +37,15 @@ export interface GlobalSummaryStats {
     sumDistance: number;
     goalAchievements: number;
     daysTracked: number;
+    healthScore: number;
+    healthGrade: string;
+    components: ScoreComponents;
+}
+
+export interface ScoreComponents {
+    activityScore: number;
+    stepsScore: number;
+    streakScore: number;
 }
 
 interface User {

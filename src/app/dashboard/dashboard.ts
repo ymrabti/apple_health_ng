@@ -63,6 +63,13 @@ export class Dashboard implements OnInit, OnDestroy {
         sumDistance: 0,
         goalAchievements: 0,
         daysTracked: 0,
+        healthScore: 0,
+        healthGrade: 'N/A',
+        components: {
+            activityScore: 0,
+            stepsScore: 0,
+            streakScore: 0,
+        },
     };
 
     activityLevels: ActivityLevel[] = [];
@@ -85,15 +92,6 @@ export class Dashboard implements OnInit, OnDestroy {
     constructor(private auth: AuthService, private router: Router, private health: HealthService) {}
 
     ngOnInit() {
-        // Fetch global stats
-        this.health.getFooterStats().subscribe({
-            next: (stats) => {
-                this.globalStats = stats;
-            },
-            error: (err) => {
-                console.error('Failed to load global stats', err);
-            },
-        });
         // Fetch user infos (weight/height)
         this.health.getUserInfos().subscribe({
             next: (info) => {
@@ -113,6 +111,16 @@ export class Dashboard implements OnInit, OnDestroy {
 
     private fetchDataForCurrentRange() {
         const { from: dateFrom, to: dateTo } = this.getDateRange();
+
+        // Fetch global stats
+        this.health.getFooterStats(dateFrom, dateTo).subscribe({
+            next: (stats) => {
+                this.globalStats = stats;
+            },
+            error: (err) => {
+                console.error('Failed to load global stats', err);
+            },
+        });
 
         this.health.getDailySummaries(dateFrom, dateTo).subscribe({
             next: (res) => {
@@ -501,17 +509,29 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     calculateStats(field: keyof HealthData): Stats {
-        const values = this.filteredData.map((d) => Number(d[field]));
+        const values = this.filteredData
+            .map((d) => Number(d[field]) || 0)
+            .filter((v) => Number.isFinite(v));
+        const n = values.length;
+        if (n === 0) {
+            return { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
+        }
+
         const sorted = [...values].sort((a, b) => a - b);
-        console.log(sorted[Math.floor(sorted.length / 2)]);
+        const total = sorted.reduce((a, b) => a + b, 0);
+        const average = total / n;
+        const median = n % 2 === 1 ? sorted[(n - 1) / 2] : (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
+        const max = sorted[n - 1];
+        const min = sorted[0];
+        const current = values[n - 1] || 0;
 
         return {
-            current: values[values.length - 1] || 0,
-            average: parseFloat((values.reduce((a, b) => a + b, 0) / values.length).toFixed(2)),
-            median: parseFloat(sorted[Math.floor(sorted.length / 2)].toFixed(2)),
-            max: parseFloat(Math.max(...values).toFixed(2)),
-            min: parseFloat(Math.min(...values).toFixed(2)),
-            total: parseFloat(values.reduce((a, b) => a + b, 0).toFixed(2)),
+            current,
+            average: parseFloat(average.toFixed(2)),
+            median: parseFloat(median.toFixed(2)),
+            max: parseFloat(max.toFixed(2)),
+            min: parseFloat(min.toFixed(2)),
+            total: parseFloat(total.toFixed(2)),
         };
     }
 

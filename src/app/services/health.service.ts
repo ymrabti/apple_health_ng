@@ -31,9 +31,14 @@ export class HealthService {
         );
     }
 
-    getFooterStats(): Observable<GlobalSummaryStats> {
+    getFooterStats(
+        dateFrom: string,
+        dateTo: string
+    ): Observable<GlobalSummaryStats> {
+        const params = new HttpParams().set('dateFrom', dateFrom).set('dateTo', dateTo);
         return this.http.get<GlobalSummaryStats>(
-            `${environment.apiBase}/apple-health/stats-summaries`
+            `${environment.apiBase}/apple-health/stats-summaries`,
+            { params }
         );
     }
 }
