@@ -55,8 +55,6 @@ export class Dashboard implements OnInit, OnDestroy {
         daysTracked: 0,
     };
 
-    animatedValues = { steps: 0 };
-
     activityLevels = [
         { label: 'Very Active', value: 85, color: '#10B981' },
         { label: 'Active', value: 65, color: '#F59E0B' },
@@ -386,7 +384,6 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     calculateStats(field: keyof HealthData): Stats {
-        console.log(this.filteredData);
         const values = this.filteredData.map((d) => Number(d[field]));
         const sorted = [...values].sort((a, b) => a - b);
 
@@ -410,16 +407,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
     getTrendPercentage(field: string): number {
         // Special handling for weight: compare last two data points to avoid division by zero
-        if (field === 'weight') {
-            const recent = this.getRecentData();
-            if (!recent.length || recent.length < 2) return 0;
-            const prev = Number(recent[recent.length - 2]?.weight ?? 0);
-            const curr = Number(recent[recent.length - 1]?.weight ?? 0);
-            if (!prev) return 0;
-            const pct = ((curr - prev) / prev) * 100;
-            return Math.abs(Math.floor(pct));
-        }
-
         const stats = this.getStatsByField(field);
         const avg = Number(stats.average || 0);
         const curr = Number(stats.current || 0);
@@ -428,15 +415,6 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     getTrendIndicator(field: string): string {
-        if (field === 'weight') {
-            const recent = this.getRecentData();
-            if (!recent.length || recent.length < 2) return '';
-            const prev = Number(recent[recent.length - 2]?.weight ?? 0);
-            const curr = Number(recent[recent.length - 1]?.weight ?? 0);
-            if (!prev || curr === prev) return '';
-            // Weight down is good (show '-') ; weight up is '+'
-            return curr < prev ? '-' : '+';
-        }
         const stats = this.getStatsByField(field);
         return stats.current >= stats.average ? '+' : '-';
     }
@@ -502,6 +480,31 @@ export class Dashboard implements OnInit, OnDestroy {
         return max;
     }
 
+    // Weight deltas based on current filtered range
+    getInitialWeight(): number {
+        // First non-zero weight in current filtered dataset
+        const first = this.filteredData.find((d) => Number(d.weight || 0) > 0);
+        const w = Number(first?.weight || 0);
+        if (w) return parseFloat(w.toFixed(1));
+        const fallback = Number(
+            this.userInfo?.weightInKilograms || this.userInfo?.weightInKilograms || 0
+        );
+        return parseFloat((fallback || 0).toFixed(1));
+    }
+
+    getWeightLossKg(): number {
+        const currentLoss = this.caloriesStats.total / this.KCAL_PER_KG;
+        const loss = currentLoss; // positive when weight decreased
+        return parseFloat((loss || 0).toFixed(1));
+    }
+
+    getWeightLossPct(): number {
+        const initial = this.getInitialWeight();
+        if (!initial) return 0;
+        const pct = (this.getWeightLossKg() / initial) * 100;
+        return parseFloat((pct || 0).toFixed(2));
+    }
+
     getGoalAchievement(): number {
         return (
             Math.floor((this.globalStats.goalAchievements / this.globalStats.daysTracked) * 100) ||
@@ -521,7 +524,6 @@ export class Dashboard implements OnInit, OnDestroy {
         const animate = () => {
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            this.animatedValues.steps = Math.floor(target * progress);
 
             if (progress < 1) {
                 // requestAnimationFrame(animate);

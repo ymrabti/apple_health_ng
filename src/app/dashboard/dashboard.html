@@ -66,7 +66,7 @@
 
                 <div class="card-content">
                     <div class="main-value">
-                        <span class="value-number">{{ animatedValues.steps |
+                        <span class="value-number">{{ stepsStats.current |
                             number }}</span>
                     </div>
 
@@ -89,6 +89,11 @@
                         <div class="stat-row">
                             <span class="stat-label">Min:</span>
                             <span class="stat-value">{{ stepsStats.min |
+                                number:'1.0-0' }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">{{ stepsStats.total |
                                 number:'1.0-0' }}</span>
                         </div>
                     </div>
@@ -139,6 +144,11 @@
                         <div class="stat-row">
                             <span class="stat-label">Min:</span>
                             <span class="stat-value">{{ caloriesStats.min |
+                                number:'1.0-0' }}{{' kcal'}}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">{{ caloriesStats.total |
                                 number:'1.0-0' }}{{' kcal'}}</span>
                         </div>
                     </div>
@@ -193,6 +203,11 @@
                             <span class="stat-value">{{ distanceStats.min
                                 }}{{' km'}}</span>
                         </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">{{ distanceStats.total
+                                }}{{' km'}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -210,7 +225,7 @@
                         <h3 class="card-title">Weight</h3>
                     </div>
                     <div class="trend-badge weight-trend">
-                        {{ getTrendIndicator('weight') }}{{ getTrendPercentage('weight') }}%
+                        -{{ getWeightLossPct() }}%
                     </div>
                 </div>
 
@@ -223,24 +238,12 @@
 
                     <div class="stats-details">
                         <div class="stat-row">
-                            <span class="stat-label">Avg:</span>
-                            <span class="stat-value">{{ weightStats.average
-                                }}{{' kg'}}</span>
+                            <span class="stat-label">Initial:</span>
+                            <span class="stat-value">{{ getInitialWeight() }}{{' kg'}}</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">Max:</span>
-                            <span class="stat-value">{{ weightStats.max
-                                }}{{' kg'}}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Med:</span>
-                            <span class="stat-value">{{ weightStats.median
-                                }}{{' kg'}}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Min:</span>
-                            <span class="stat-value">{{ weightStats.min
-                                }}{{' kg'}}</span>
+                            <span class="stat-label">Loss:</span>
+                            <span class="stat-value">{{ getWeightLossKg() }}{{' kg' }} </span>
                         </div>
                     </div>
                 </div>
@@ -479,7 +482,7 @@
                     </div>
                     <div class="weight-stat">
                         <span class="stat-label">Change</span>
-                        <span class="stat-value success">-0.8{{' kg'}}</span>
+                            <span class="stat-value" [class.success]="getWeightLossKg() > 0" [class.error]="getWeightLossKg() < 0">{{ getWeightLossKg() }}{{' kg'}}</span>
                     </div>
                 </div>
             </div>
