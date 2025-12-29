@@ -319,7 +319,7 @@
 }
 
 .card-title {
-    color: #d1d5db;
+    color: var(--text-primary);
     font-weight: 500;
     margin: 0;
 }
@@ -364,7 +364,7 @@
         }
 
         .unit {
-            color: #9ca3af;
+            color: var(--text-secondary);
             font-size: 0.875rem;
             padding-bottom: 0.25rem;
         }
@@ -382,11 +382,11 @@
         }
 
         .stat-label {
-            color: #6b7280;
+            color: var(--text-muted);
         }
 
         .stat-value {
-            color: #d1d5db;
+            color: var(--text-primary);
         }
     }
 }
@@ -428,7 +428,7 @@
     gap: 0.5rem;
     font-size: 1.25rem;
     font-weight: 600;
-    color: white;
+    color: var(--text-heading);
     margin: 0;
 
     .icon {
@@ -440,7 +440,7 @@
 
 .chart-info {
     font-size: 0.875rem;
-    color: #9ca3af;
+    color: var(--text-secondary);
 }
 
 .simple-chart {
@@ -499,7 +499,7 @@
 
         .chart-label {
             font-size: 0.75rem;
-            color: #6b7280;
+            color: var(--text-muted);
             transform: rotate(-45deg);
             transform-origin: center;
         }
@@ -542,7 +542,7 @@
     gap: 0.5rem;
     font-size: 1.25rem;
     font-weight: 600;
-    color: white;
+    color: var(--text-heading);
     margin: 0 0 1.5rem 0;
 
     .icon {
@@ -577,13 +577,28 @@
     .progress-value {
         font-size: 1.5rem;
         font-weight: 700;
-        color: white;
+        color: var(--text-heading);
     }
 
     .progress-label {
-        color: #9ca3af;
+        color: var(--text-secondary);
         font-size: 0.875rem;
     }
+    .progress-sub {
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+    .progress-insights {
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+    .progress-insights .up { color: #10b981; }
+    .progress-insights .down { color: #ef4444; }
 }
 
 // Weight Chart
@@ -633,11 +648,11 @@
         flex: 1;
 
         .stat-label {
-            color: #9ca3af;
+            color: var(--text-secondary);
         }
 
         .stat-value {
-            color: white;
+            color: var(--text-primary);
             font-weight: 600;
 
             &.success {
@@ -664,11 +679,11 @@
         font-size: 0.875rem;
 
         .activity-label {
-            color: #9ca3af;
+            color: var(--text-secondary);
         }
 
         .activity-value {
-            color: white;
+            color: var(--text-primary);
         }
     }
 
@@ -735,7 +750,7 @@
     }
 
     .footer-label {
-        color: #9ca3af;
+        color: var(--text-secondary);
         font-size: 0.875rem;
     }
 }

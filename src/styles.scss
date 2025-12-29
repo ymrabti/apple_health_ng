@@ -8,3 +8,28 @@ body {
 	padding: 0;
 	box-sizing: border-box;
 }
+
+/* Typography color system */
+:root {
+	--text-heading: #ffffff;      /* prominent headings on dark bg */
+	--text-primary: #e5e7eb;      /* main body text (gray-200) */
+	--text-secondary: #9ca3af;    /* subdued labels (gray-400) */
+	--text-muted: #6b7280;        /* muted captions (gray-500) */
+}
+
+body {
+	color: var(--text-primary);
+	background-color: #000; /* ensure dark base matches dashboard */
+}
+
+h1, h2, h3, .title, .main-title, .chart-title, .analytics-title {
+	color: var(--text-heading);
+}
+
+p, small, .subtitle, .footer-label, .progress-label, .chart-info, .activity-label, .stat-label {
+	color: var(--text-secondary);
+}
+
+.muted, .chart-label {
+	color: var(--text-muted);
+}

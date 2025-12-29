@@ -458,9 +458,23 @@
                         </div>
                     </div>
                     <div class="progress-text">
-                        <div class="progress-value">{{ distanceStats.current
-                            }}km</div>
-                        <div class="progress-label">Today's Distance</div>
+                        <div class="progress-value">
+                            {{ distanceStats.current | number:'1.1-1' }}
+                            <span class="unit">km</span>
+                        </div>
+                        <div class="progress-label">Today</div>
+                        <div class="progress-sub">
+                            Avg: {{ distanceStats.average | number:'1.1-1' }} km •
+                            Total: {{ distanceStats.total | number:'1.1-1' }} km
+                        </div>
+                        <div class="progress-insights">
+                            <span>Best: {{ distanceStats.max | number:'1.1-1' }} km</span>
+                            <span>Min: {{ distanceStats.min | number:'1.1-1' }} km</span>
+                            <span [class.up]="distanceStats.current >= distanceStats.average" [class.down]="distanceStats.current < distanceStats.average">
+                                Trend: {{ (((distanceStats.current - distanceStats.average) / (distanceStats.average || 1)) * 100) | number:'1.0-0' }}%
+                            </span>
+                            <span>Days: {{ filteredData.length }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -488,8 +502,9 @@
                     <div class="weight-stat">
                         <span class="stat-label">Current</span>
                         <span class="stat-value">{{ weightStats.current
-                            }}{{' kg'}}</span>
+                            }}{{' kg '}}</span>
                     </div>
+                    {{' \t'}}
                     <div class="weight-stat">
                         <span class="stat-label">Change</span>
                             <span class="stat-value" [class.success]="getWeightLossKg() > 0" [class.error]="getWeightLossKg() < 0">{{ getWeightLossKg() }}{{' kg'}}</span>
