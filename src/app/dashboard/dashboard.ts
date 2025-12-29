@@ -12,6 +12,8 @@ interface HealthData {
     distance: number;
     weight: number;
     fatLoss: number;
+    activeCalories?: number;
+    basalCalories?: number;
 }
 
 interface Stats {
@@ -26,6 +28,11 @@ interface Stats {
 interface ChartPoint {
     label: string;
     value: number;
+}
+interface ActivityLevel {
+    label: string;
+    value: number; // percentage 0..100
+    color: string;
 }
 type ChartType = 'column' | 'line' | 'area';
 @Component({
@@ -43,6 +50,9 @@ export class Dashboard implements OnInit, OnDestroy {
     healthData: HealthData[] = [];
     filteredData: HealthData[] = [];
     userInfo: UserInfos | null = null;
+    // Custom date range inputs (YYYY-MM-DD)
+    customFrom: string | null = null;
+    customTo: string | null = null;
 
     stepsStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     caloriesStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
@@ -55,12 +65,16 @@ export class Dashboard implements OnInit, OnDestroy {
         daysTracked: 0,
     };
 
-    activityLevels = [
-        { label: 'Very Active', value: 85, color: '#10B981' },
-        { label: 'Active', value: 65, color: '#F59E0B' },
-        { label: 'Light Activity', value: 45, color: '#6B7280' },
-        { label: 'Sedentary', value: 25, color: '#EF4444' },
-    ];
+    activityLevels: ActivityLevel[] = [];
+    activityLevelsAll: ActivityLevel[] = [];
+
+    // Colors for activity levels
+    private readonly activityColors = {
+        very: '#10B981',
+        active: '#F59E0B',
+        light: '#6B7280',
+        sedentary: '#EF4444',
+    };
 
     // Tooltip state for charts
     tooltip = {
@@ -98,13 +112,7 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     private fetchDataForCurrentRange() {
-        const days = parseInt(this.dateRange.replace('d', ''));
-        const end = new Date();
-        const start = new Date();
-        start.setDate(end.getDate() - (days - 1));
-
-        const dateFrom = formatDate(start); // YYYY-MM-DD
-        const dateTo = formatDate(end);
+        const { from: dateFrom, to: dateTo } = this.getDateRange();
 
         this.health.getDailySummaries(dateFrom, dateTo).subscribe({
             next: (res) => {
@@ -130,6 +138,8 @@ export class Dashboard implements OnInit, OnDestroy {
                             distance,
                             weight: 0, // not provided by daily summaries; will be filled later if available
                             fatLoss: 0,
+                            activeCalories: active,
+                            basalCalories: basal,
                         } as HealthData;
                     })
                     .sort((a, b) => (a.date < b.date ? -1 : 1));
@@ -138,6 +148,9 @@ export class Dashboard implements OnInit, OnDestroy {
                 this.filteredData = mapped;
                 this.applyUserInfoToWeights();
                 this.recomputeFatLoss();
+                // Compute activity summaries for filtered and all data
+                this.activityLevels = this.computeActivityLevels(this.filteredData);
+                this.activityLevelsAll = this.computeActivityLevels(this.healthData);
                 this.calculateAllStats();
                 this.animateStepsValue();
             },
@@ -151,12 +164,77 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     onDateRangeChange() {
+        // Defer until custom dates are set
+        if (this.dateRange === 'custom') {
+            return;
+        }
         this.fetchDataForCurrentRange();
     }
 
     updateFilteredData() {
         this.filteredData = this.healthData;
         this.recomputeFatLoss();
+        this.activityLevels = this.computeActivityLevels(this.filteredData);
+        this.activityLevelsAll = this.computeActivityLevels(this.healthData);
+    }
+
+    // Compute from/to based on selected dateRange
+    private getDateRange(): { from: string; to: string } {
+        const today = new Date();
+        const to = formatDate(today);
+        let fromDate: Date | null = null;
+
+        switch (this.dateRange) {
+            case 'all': {
+                return { from: '1970-01-01', to };
+            }
+            case 'year': {
+                fromDate = new Date(today.getFullYear(), 0, 1);
+                break;
+            }
+            case 'month': {
+                fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                break;
+            }
+            case 'week': {
+                const day = today.getDay(); // 0=Sun, 1=Mon
+                const diffToMonday = (day + 6) % 7; // days since Monday
+                fromDate = new Date(today);
+                fromDate.setDate(today.getDate() - diffToMonday);
+                break;
+            }
+            case 'custom': {
+                // Use provided custom dates or fallback to last 7 days
+                if (this.customFrom && this.customTo) {
+                    const f = new Date(this.customFrom);
+                    const t = new Date(this.customTo);
+                    // Ensure ordering
+                    if (f > t) {
+                        return { from: formatDate(t), to: formatDate(f) };
+                    }
+                    return { from: formatDate(f), to: formatDate(t) };
+                }
+                const end = today;
+                const start = new Date();
+                start.setDate(end.getDate() - 6);
+                return { from: formatDate(start), to };
+            }
+            default: {
+                // Expect formats like '7d', '14d', '30d'
+                const days = parseInt(this.dateRange.replace('d', '')) || 7;
+                const start = new Date();
+                start.setDate(today.getDate() - (days - 1));
+                return { from: formatDate(start), to };
+            }
+        }
+        const from = formatDate(fromDate!);
+        return { from, to };
+    }
+
+    applyCustomRange() {
+        if (!this.customFrom || !this.customTo) return;
+        this.dateRange = 'custom';
+        this.fetchDataForCurrentRange();
     }
 
     private applyUserInfoToWeights() {
@@ -177,6 +255,45 @@ export class Dashboard implements OnInit, OnDestroy {
             const fatLoss = calories > 0 ? parseFloat((calories / this.KCAL_PER_KG).toFixed(3)) : 0;
             return { ...d, fatLoss } as HealthData;
         });
+    }
+
+    // Compute activity summary levels from a dataset
+    private computeActivityLevels(data: HealthData[]): ActivityLevel[] {
+        const n = data?.length || 0;
+        if (!n) {
+            return [
+                { label: 'Very Active', value: 0, color: this.activityColors.very },
+                { label: 'Active', value: 0, color: this.activityColors.active },
+                { label: 'Light Activity', value: 0, color: this.activityColors.light },
+                { label: 'Sedentary', value: 0, color: this.activityColors.sedentary },
+            ];
+        }
+
+        // Normalize scores using max across dataset
+        const maxSteps = Math.max(...data.map((d) => Number(d.steps || 0)), 0);
+        const maxDist = Math.max(...data.map((d) => Number(d.distance || 0)), 0);
+        const maxActive = Math.max(...data.map((d) => Number(d.activeCalories || 0)), 0);
+
+        const buckets = { very: 0, active: 0, light: 0, sedentary: 0 };
+        for (const d of data) {
+            const stepsNorm = maxSteps ? Number(d.steps || 0) / maxSteps : 0;
+            const distNorm = maxDist ? Number(d.distance || 0) / maxDist : 0;
+            const actNorm = maxActive ? Number(d.activeCalories || 0) / maxActive : 0;
+            // Weighted composite score [0..100]
+            const score = (0.5 * stepsNorm + 0.3 * distNorm + 0.2 * actNorm) * 100;
+            if (score >= 70) buckets.very++;
+            else if (score >= 50) buckets.active++;
+            else if (score >= 30) buckets.light++;
+            else buckets.sedentary++;
+        }
+
+        const toPct = (count: number) => Math.round((count / n) * 100);
+        return [
+            { label: 'Very Active', value: toPct(buckets.very), color: this.activityColors.very },
+            { label: 'Active', value: toPct(buckets.active), color: this.activityColors.active },
+            { label: 'Light Activity', value: toPct(buckets.light), color: this.activityColors.light },
+            { label: 'Sedentary', value: toPct(buckets.sedentary), color: this.activityColors.sedentary },
+        ];
     }
 
     // Chart helpers responding to selectedView and dateRange
@@ -386,6 +503,7 @@ export class Dashboard implements OnInit, OnDestroy {
     calculateStats(field: keyof HealthData): Stats {
         const values = this.filteredData.map((d) => Number(d[field]));
         const sorted = [...values].sort((a, b) => a - b);
+        console.log(sorted[Math.floor(sorted.length / 2)]);
 
         return {
             current: values[values.length - 1] || 0,
