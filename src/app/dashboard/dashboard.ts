@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, GlobalSummaryStats, UserInfos } from '../services/auth.service';
 import { HealthService } from '../services/health.service';
+import { SeoService } from '../services/seo.service';
 import { formatDate } from './utils/date';
 
 interface HealthData {
@@ -108,9 +109,15 @@ export class Dashboard implements OnInit, OnDestroy {
         metricGoal: { visible: false, label: '', achieved: 0, goal: 0, left: 0, top: 0 },
     };
 
-    constructor(private auth: AuthService, private router: Router, private health: HealthService) {}
+    constructor(private auth: AuthService, private router: Router, private health: HealthService, private seo: SeoService) {}
 
     ngOnInit() {
+        // Page-specific SEO
+        this.seo.apply({
+            title: 'Dashboard – Personalized Health Analytics',
+            description: 'View your Apple Health trends including steps, calories, distance and goals.',
+            type: 'website',
+        });
         // Fetch user infos (weight/height)
         this.health.getUserInfos().subscribe({
             next: (info) => {

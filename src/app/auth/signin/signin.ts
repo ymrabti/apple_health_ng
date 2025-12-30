@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService, SignInPayload } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-signin',
@@ -8,13 +9,21 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './signin.scss',
   standalone: false,
 })
-export class Signin {
+export class Signin implements OnInit {
   username = '';
   password = '';
   loading = false;
   error: string | null = null;
 
-  constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
+  constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute, private seo: SeoService) {}
+
+  ngOnInit() {
+    this.seo.apply({
+      title: 'Sign In – AppleHealth Social',
+      description: 'Sign in to access your Apple Health analytics dashboard and track progress.',
+      type: 'website',
+    });
+  }
 
   submit() {
     if (!this.username || !this.password) {

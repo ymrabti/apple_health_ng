@@ -1,0 +1,5 @@
+# robots.txt for AppleHealth Social
+User-agent: *
+Disallow: /oauth/callback
+
+Sitemap: /sitemap.xml

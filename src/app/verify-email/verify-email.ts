@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, take } from 'rxjs/operators';
 import { EmailVerificationService } from '../email-verification';
+import { SeoService } from '../services/seo.service';
 
 type VerifyResult = { success: boolean; message?: string };
 
@@ -39,10 +40,17 @@ export class VerifyEmail implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     public router: Router,
-    private service: EmailVerificationService
+    private service: EmailVerificationService,
+    private seo: SeoService
   ) {}
 
   ngOnInit(): void {
+    // Page-specific SEO
+    this.seo.apply({
+      title: 'Verify Email – AppleHealth Social',
+      description: 'Verify your email to secure your account and access the dashboard.',
+      type: 'website',
+    });
     // Add a small delay to let the initial animation play
     setTimeout(() => {
       this.startVerification();
