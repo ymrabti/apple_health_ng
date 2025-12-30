@@ -301,6 +301,9 @@
     .calories-line {
         stroke: #f59e0b;
     }
+    /* Achieved vs Goal chart colors */
+    .achieved-line { stroke: #22d3ee; }
+    .goal-line { stroke: #10b981; }
     .steps-area {
         fill: rgba(34, 211, 238, 0.25);
     }
@@ -346,8 +349,8 @@
         color: var(--text-secondary);
     }
     .metric-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 0.3rem; }
-    .metric-legend .legend-item.achieved .dot { background: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); }
-    .metric-legend .legend-item.goal .dot { background: #6b7280; }
+    .metric-legend .legend-item.achieved .dot { background: #22d3ee; box-shadow: 0 0 6px rgba(34, 211, 238, 0.5); }
+    .metric-legend .legend-item.goal .dot { background: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); }
 .icon-section {
     display: flex;
     align-items: center;
@@ -556,6 +559,8 @@
     .chart-tooltip .swatch { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.35rem; }
     .chart-tooltip .swatch.active { background: #f59e0b; }
     .chart-tooltip .swatch.basal { background: #6b7280; }
+    .chart-tooltip .swatch.achieved { background: #22d3ee; }
+    .chart-tooltip .swatch.goal { background: #10b981; }
 
     .chart-bar {
         flex: 1;
@@ -650,8 +655,6 @@
 }
 .calories-donut::after {
     content: '';
-        .achieved-line { stroke: #10b981; }
-        .goal-line { stroke: #6b7280; }
     position: absolute;
     inset: 18px;
     border-radius: 50%;
