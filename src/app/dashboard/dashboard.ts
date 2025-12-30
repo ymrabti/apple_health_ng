@@ -104,8 +104,8 @@ export class Dashboard implements OnInit, OnDestroy {
     tooltip = {
         steps: { visible: false, label: '', value: 0, left: 0, top: 0 },
         calories: { visible: false, label: '', value: 0, left: 0, top: 0 },
-            activeBasal: { visible: false, label: '', active: 0, basal: 0, left: 0, top: 0 },
-            metricGoal: { visible: false, label: '', achieved: 0, goal: 0, left: 0, top: 0 },
+        activeBasal: { visible: false, label: '', active: 0, basal: 0, left: 0, top: 0 },
+        metricGoal: { visible: false, label: '', achieved: 0, goal: 0, left: 0, top: 0 },
     };
 
     constructor(private auth: AuthService, private router: Router, private health: HealthService) {}
@@ -123,6 +123,8 @@ export class Dashboard implements OnInit, OnDestroy {
         });
         this.fetchDataForCurrentRange();
     }
+    // Merged full-width chart view toggler
+    mergedChartView: 'activeBasal' | 'metricGoal' = 'activeBasal';
 
     ngOnDestroy() {
         // Clean up any subscriptions or intervals
@@ -342,8 +344,16 @@ export class Dashboard implements OnInit, OnDestroy {
         return [
             { label: 'Very Active', value: toPct(buckets.very), color: this.activityColors.very },
             { label: 'Active', value: toPct(buckets.active), color: this.activityColors.active },
-            { label: 'Light Activity', value: toPct(buckets.light), color: this.activityColors.light },
-            { label: 'Sedentary', value: toPct(buckets.sedentary), color: this.activityColors.sedentary },
+            {
+                label: 'Light Activity',
+                value: toPct(buckets.light),
+                color: this.activityColors.light,
+            },
+            {
+                label: 'Sedentary',
+                value: toPct(buckets.sedentary),
+                color: this.activityColors.sedentary,
+            },
         ];
     }
 
@@ -431,9 +441,7 @@ export class Dashboard implements OnInit, OnDestroy {
     private getDualMax(): number {
         const arr = this.getActiveBasalChartData();
         if (!arr.length) return 0;
-        return Math.max(
-            ...arr.map((p) => Math.max(Number(p.active || 0), Number(p.basal || 0)))
-        );
+        return Math.max(...arr.map((p) => Math.max(Number(p.active || 0), Number(p.basal || 0))));
     }
 
     private getXYActiveBasal(which: 'active' | 'basal'): Array<{ x: number; y: number }> {
@@ -565,7 +573,8 @@ export class Dashboard implements OnInit, OnDestroy {
         const barRect = barEl.getBoundingClientRect();
         const wrapperRect = wrapper.getBoundingClientRect();
         const top = Math.max(0, barRect.top - wrapperRect.top - 12);
-        const left = barRect.left - wrapperRect.left + barEl.offsetWidth / 2;
+        const left =
+            barRect.left - wrapperRect.left + barEl.offsetWidth / 2 + (wrapper.scrollLeft || 0);
         const point = series[idx];
         const tgt = this.tooltip[kind];
         tgt.visible = true;
@@ -595,7 +604,8 @@ export class Dashboard implements OnInit, OnDestroy {
         const value = Number(series[i]?.value ?? 0);
         const vPct = Math.min(100, Math.max(0, (value / max) * 100));
         const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
-        const left = svgRect.left - wrapperRect.left + pctX * svgRect.width;
+        const left =
+            svgRect.left - wrapperRect.left + pctX * svgRect.width + (wrapper.scrollLeft || 0);
         const tgt = this.tooltip[kind];
         tgt.visible = true;
         tgt.label = series[i]?.label ?? '';
@@ -628,7 +638,8 @@ export class Dashboard implements OnInit, OnDestroy {
             Math.min(100, Math.max(0, (b / max) * 100))
         );
         const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
-        const left = svgRect.left - wrapperRect.left + pctX * svgRect.width;
+        const left =
+            svgRect.left - wrapperRect.left + pctX * svgRect.width + (wrapper.scrollLeft || 0);
         const tgt = this.tooltip.activeBasal;
         tgt.visible = true;
         tgt.label = series[i]?.label ?? '';
@@ -647,6 +658,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
     getViewButtonClass(view: string): string {
         return `view-btn ${this.selectedView === view ? 'active' : ''}`;
+    }
+
+    setMergedChartView(view: 'activeBasal' | 'metricGoal') {
+        this.mergedChartView = view;
     }
 
     calculateStats(field: keyof HealthData): Stats {
@@ -811,8 +826,14 @@ export class Dashboard implements OnInit, OnDestroy {
 
     // Active Energy vs Goal over current range
     getActiveEnergyGoalTotals(): { burned: number; goal: number; pct: number } {
-        const burned = this.activitySummaries.reduce((s, d) => s + Number(d.activeEnergyBurned || 0), 0);
-        const goal = this.activitySummaries.reduce((s, d) => s + Number(d.activeEnergyBurnedGoal || 0), 0);
+        const burned = this.activitySummaries.reduce(
+            (s, d) => s + Number(d.activeEnergyBurned || 0),
+            0
+        );
+        const goal = this.activitySummaries.reduce(
+            (s, d) => s + Number(d.activeEnergyBurnedGoal || 0),
+            0
+        );
         const pct = goal ? (burned / goal) * 100 : 0;
         return {
             burned: Math.round(burned),
@@ -822,24 +843,40 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     // Metric vs Goal chart (Energy/Move/Exercise/Stand)
-    selectedActivityMetric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours' = 'activeEnergyBurned';
-    setSelectedActivityMetric(m: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours') {
+    selectedActivityMetric:
+        | 'activeEnergyBurned'
+        | 'appleMoveTime'
+        | 'appleExerciseTime'
+        | 'appleStandHours' = 'activeEnergyBurned';
+    setSelectedActivityMetric(
+        m: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
+    ) {
         this.selectedActivityMetric = m;
     }
-    private getMetricGoalKey(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): keyof ActivitySummary {
+    private getMetricGoalKey(
+        metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
+    ): keyof ActivitySummary {
         switch (metric) {
-            case 'activeEnergyBurned': return 'activeEnergyBurnedGoal';
-            case 'appleMoveTime': return 'appleMoveTimeGoal';
-            case 'appleExerciseTime': return 'appleExerciseTimeGoal';
-            case 'appleStandHours': return 'appleStandHoursGoal';
+            case 'activeEnergyBurned':
+                return 'activeEnergyBurnedGoal';
+            case 'appleMoveTime':
+                return 'appleMoveTimeGoal';
+            case 'appleExerciseTime':
+                return 'appleExerciseTimeGoal';
+            case 'appleStandHours':
+                return 'appleStandHoursGoal';
         }
     }
-    getMetricUnit(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): string {
+    getMetricUnit(
+        metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
+    ): string {
         if (metric === 'activeEnergyBurned') return 'kcal';
         if (metric === 'appleStandHours') return 'h';
         return 'min';
     }
-    getMetricGoalChartData(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): Array<{ label: string; achieved: number; goal: number }> {
+    getMetricGoalChartData(
+        metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
+    ): Array<{ label: string; achieved: number; goal: number }> {
         const data = this.activitySummaries;
         const goalKey = this.getMetricGoalKey(metric);
         if (this.selectedView === 'weekly') {
@@ -856,9 +893,15 @@ export class Dashboard implements OnInit, OnDestroy {
             const gg = this.movingAverage(gol, 7);
             return data.map((d, i) => ({ label: d.date, achieved: aa[i], goal: gg[i] }));
         }
-        return data.map((d) => ({ label: d.date, achieved: Number((d as any)[metric] || 0), goal: Number((d as any)[goalKey] || 0) }));
+        return data.map((d) => ({
+            label: d.date,
+            achieved: Number((d as any)[metric] || 0),
+            goal: Number((d as any)[goalKey] || 0),
+        }));
     }
-    private getMetricGoalMax(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): number {
+    private getMetricGoalMax(
+        metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
+    ): number {
         const arr = this.getMetricGoalChartData(metric);
         if (!arr.length) return 0;
         return Math.max(...arr.map((p) => Math.max(Number(p.achieved || 0), Number(p.goal || 0))));
@@ -884,7 +927,10 @@ export class Dashboard implements OnInit, OnDestroy {
         return xy.map((p) => `${p.x},${p.y}`).join(' ');
     }
     getMetricGoalLabelPoints(): ChartPoint[] {
-        const src = this.getMetricGoalChartData(this.selectedActivityMetric).map((d) => ({ label: d.label, value: 0 }));
+        const src = this.getMetricGoalChartData(this.selectedActivityMetric).map((d) => ({
+            label: d.label,
+            value: 0,
+        }));
         const maxLabels = 12;
         if (src.length <= maxLabels) return src;
         const step = Math.ceil(src.length / maxLabels);
@@ -911,7 +957,8 @@ export class Dashboard implements OnInit, OnDestroy {
             Math.min(100, Math.max(0, (g / max) * 100))
         );
         const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
-        const left = svgRect.left - wrapperRect.left + pctX * svgRect.width;
+        const left =
+            svgRect.left - wrapperRect.left + pctX * svgRect.width + (wrapper.scrollLeft || 0);
         const tgt = this.tooltip.metricGoal;
         tgt.visible = true;
         tgt.label = series[i]?.label ?? '';

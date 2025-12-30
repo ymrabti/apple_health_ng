@@ -407,33 +407,41 @@
                 </div>
             </div>
 
-            <!-- Active vs Basal (Full Width) -->
+            <!-- Merged Full-Width Chart: Active vs Basal | Achieved vs Goal -->
             <div class="chart-container span-2">
                 <div class="chart-header">
                     <h3 class="chart-title">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
-
-                            </polygon>
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
                         </svg>
-                        Active vs Basal Calories
-                    </h3>
-                    <div class="chart-info">
-                        <ng-container *ngIf="getCaloriesSplitTotals() as split">
-                            Active: {{ split.active | number:'1.0-0' }} kcal • Basal: {{ split.basal | number:'1.0-0' }} kcal
+                        <ng-container [ngSwitch]="mergedChartView">
+                            <span *ngSwitchCase="'activeBasal'">Active vs Basal Calories</span>
+                            <span *ngSwitchCase="'metricGoal'">Achieved vs Goal</span>
                         </ng-container>
+                    </h3>
+                    <div class="view-toggle chart-type-toggle">
+                        <button class="view-btn" [class.active]="mergedChartView === 'activeBasal'" (click)="setMergedChartView('activeBasal')">Active/Basal</button>
+                        <button class="view-btn" [class.active]="mergedChartView === 'metricGoal'" (click)="setMergedChartView('metricGoal')">Achieved/Goal</button>
                     </div>
                 </div>
-                <div class="simple-chart">
+                <div class="chart-info">
+                    <ng-container [ngSwitch]="mergedChartView">
+                        <ng-container *ngSwitchCase="'activeBasal'">
+                            <ng-container *ngIf="getCaloriesSplitTotals() as split">
+                                Active: {{ split.active | number:'1.0-0' }} kcal • Basal: {{ split.basal | number:'1.0-0' }} kcal
+                            </ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'metricGoal'">
+                            Metric: {{ selectedActivityMetric }} • Unit: {{ getMetricUnit(selectedActivityMetric) }}
+                        </ng-container>
+                    </ng-container>
+                </div>
+
+                <!-- Active vs Basal content -->
+                <div class="simple-chart" *ngIf="mergedChartView === 'activeBasal'">
                     <div class="dual-legend">
-                        <span class="legend-item active">
-                            <span class="dot">
-
-                            </span>Active</span>
-                        <span class="legend-item basal">
-                            <span class="dot">
-
-                            </span>Basal</span>
+                        <span class="legend-item active"><span class="dot"></span>Active</span>
+                        <span class="legend-item basal"><span class="dot"></span>Basal</span>
                     </div>
                     <div class="chart-line">
                         <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMoveDual($event)" (mouseleave)="onSvgLeaveDual()">
@@ -442,48 +450,17 @@
                         </svg>
                         <div *ngIf="tooltip.activeBasal.visible" class="chart-tooltip" [style.left.px]="tooltip.activeBasal.left" [style.top.px]="tooltip.activeBasal.top">
                             <div class="tooltip-label">{{ tooltip.activeBasal.label }}</div>
-                            <div>
-                                <span class="swatch active">
-
-                                </span>{{ tooltip.activeBasal.active | number:'1.0-0' }} kcal
-                            </div>
-                            <div>
-                                <span class="swatch basal">
-
-                                </span>{{ tooltip.activeBasal.basal | number:'1.0-0' }} kcal
-                            </div>
+                            <div><span class="swatch active"></span>{{ tooltip.activeBasal.active | number:'1.0-0' }} kcal</div>
+                            <div><span class="swatch basal"></span>{{ tooltip.activeBasal.basal | number:'1.0-0' }} kcal</div>
                         </div>
                     </div>
                     <div class="chart-labels">
-                        <span *ngFor="let pt of getActiveBasalLabelPoints(); trackBy: trackByIdx" class="chart-label">
-                            {{ pt.label }}
-                        </span>
+                        <span *ngFor="let pt of getActiveBasalLabelPoints(); trackBy: trackByIdx" class="chart-label">{{ pt.label }}</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- Achieved vs Goal (Activity Metrics) -->
-            <div class="chart-container span-2">
-                <div class="chart-header">
-                    <h3 class="chart-title">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <line x1="12" y1="20" x2="12" y2="10">
-
-                            </line>
-                            <line x1="18" y1="20" x2="18" y2="4">
-
-                            </line>
-                            <line x1="6" y1="20" x2="6" y2="16">
-
-                            </line>
-                        </svg>
-                        Achieved vs Goal
-                    </h3>
-                    <div class="chart-info">
-                        Metric: {{ selectedActivityMetric }} • Unit: {{ getMetricUnit(selectedActivityMetric) }}
-                    </div>
-                </div>
-                <div class="simple-chart">
+                <!-- Achieved vs Goal content -->
+                <div class="simple-chart" *ngIf="mergedChartView === 'metricGoal'">
                     <div class="view-toggle chart-type-toggle" style="margin-bottom: 0.5rem;">
                         <button class="view-btn" [class.active]="selectedActivityMetric === 'activeEnergyBurned'" (click)="setSelectedActivityMetric('activeEnergyBurned')">Energy</button>
                         <button class="view-btn" [class.active]="selectedActivityMetric === 'appleMoveTime'" (click)="setSelectedActivityMetric('appleMoveTime')">Move</button>
@@ -491,14 +468,8 @@
                         <button class="view-btn" [class.active]="selectedActivityMetric === 'appleStandHours'" (click)="setSelectedActivityMetric('appleStandHours')">Stand</button>
                     </div>
                     <div class="metric-legend">
-                        <span class="legend-item achieved">
-                            <span class="dot">
-
-                            </span>Achieved</span>
-                        <span class="legend-item goal">
-                            <span class="dot">
-
-                            </span>Goal</span>
+                        <span class="legend-item achieved"><span class="dot"></span>Achieved</span>
+                        <span class="legend-item goal"><span class="dot"></span>Goal</span>
                     </div>
                     <div class="chart-line">
                         <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMoveMetricGoal($event)" (mouseleave)="onSvgLeaveMetricGoal()">
@@ -507,22 +478,12 @@
                         </svg>
                         <div *ngIf="tooltip.metricGoal.visible" class="chart-tooltip" [style.left.px]="tooltip.metricGoal.left" [style.top.px]="tooltip.metricGoal.top">
                             <div class="tooltip-label">{{ tooltip.metricGoal.label }}</div>
-                            <div>
-                                <span class="swatch achieved">
-
-                                </span>Achieved: {{ tooltip.metricGoal.achieved | number:'1.0-0' }} {{ getMetricUnit(selectedActivityMetric) }}
-                            </div>
-                            <div>
-                                <span class="swatch goal">
-
-                                </span>Goal: {{ tooltip.metricGoal.goal | number:'1.0-0' }} {{ getMetricUnit(selectedActivityMetric) }}
-                            </div>
+                            <div><span class="swatch achieved"></span>Achieved: {{ tooltip.metricGoal.achieved | number:'1.0-0' }} {{ getMetricUnit(selectedActivityMetric) }}</div>
+                            <div><span class="swatch goal"></span>Goal: {{ tooltip.metricGoal.goal | number:'1.0-0' }} {{ getMetricUnit(selectedActivityMetric) }}</div>
                         </div>
                     </div>
                     <div class="chart-labels">
-                        <span *ngFor="let pt of getMetricGoalLabelPoints(); trackBy: trackByIdx" class="chart-label">
-                            {{ pt.label }}
-                        </span>
+                        <span *ngFor="let pt of getMetricGoalLabelPoints(); trackBy: trackByIdx" class="chart-label">{{ pt.label }}</span>
                     </div>
                 </div>
             </div>
