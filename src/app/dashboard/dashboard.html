@@ -32,9 +32,9 @@
                         <option value="custom">Custom range…</option>
                     </select>
                     <div class="custom-range" *ngIf="dateRange === 'custom'">
-                        <input type="date" [(ngModel)]="customFrom" class="date-input" />
-                        <input type="date" [(ngModel)]="customTo" class="date-input" />
-                        <button class="view-btn" (click)="applyCustomRange()">Apply</button>
+                        <input type="date" [(ngModel)]="customFrom" class="date-input" aria-label="From date" />
+                        <input type="date" [(ngModel)]="customTo" class="date-input" aria-label="To date" />
+                        <button class="view-btn" (click)="applyCustomRange()" [disabled]="!customFrom || !customTo || customFrom > customTo">Apply</button>
                     </div>
                 </div>
 
