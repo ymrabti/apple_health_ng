@@ -29,10 +29,26 @@ interface ChartPoint {
     label: string;
     value: number;
 }
+interface DualChartPoint {
+    label: string;
+    active: number;
+    basal: number;
+}
 interface ActivityLevel {
     label: string;
     value: number; // percentage 0..100
     color: string;
+}
+interface ActivitySummary {
+    date: string;
+    activeEnergyBurned: number;
+    activeEnergyBurnedGoal: number;
+    appleMoveTime: number;
+    appleMoveTimeGoal: number;
+    appleExerciseTime: number;
+    appleExerciseTimeGoal: number;
+    appleStandHours: number;
+    appleStandHoursGoal: number;
 }
 type ChartType = 'column' | 'line' | 'area';
 @Component({
@@ -74,6 +90,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
     activityLevels: ActivityLevel[] = [];
     activityLevelsAll: ActivityLevel[] = [];
+    activitySummaries: ActivitySummary[] = [];
 
     // Colors for activity levels
     private readonly activityColors = {
@@ -87,6 +104,8 @@ export class Dashboard implements OnInit, OnDestroy {
     tooltip = {
         steps: { visible: false, label: '', value: 0, left: 0, top: 0 },
         calories: { visible: false, label: '', value: 0, left: 0, top: 0 },
+            activeBasal: { visible: false, label: '', active: 0, basal: 0, left: 0, top: 0 },
+            metricGoal: { visible: false, label: '', achieved: 0, goal: 0, left: 0, top: 0 },
     };
 
     constructor(private auth: AuthService, private router: Router, private health: HealthService) {}
@@ -167,6 +186,30 @@ export class Dashboard implements OnInit, OnDestroy {
                 this.healthData = [];
                 this.filteredData = [];
                 this.calculateAllStats();
+            },
+        });
+
+        // Fetch activity summaries (Move/Exercise/Stand) including active energy goal
+        this.health.getActivitySummaries(dateFrom, dateTo).subscribe({
+            next: (res) => {
+                const items = Array.isArray(res.items) ? res.items : [];
+                this.activitySummaries = items
+                    .map((it: any) => ({
+                        date: String(it.dateComponents || it.date || ''),
+                        activeEnergyBurned: Number(it.activeEnergyBurned || 0),
+                        activeEnergyBurnedGoal: Number(it.activeEnergyBurnedGoal || 0),
+                        appleMoveTime: Number(it.appleMoveTime || 0),
+                        appleMoveTimeGoal: Number(it.appleMoveTimeGoal || 0),
+                        appleExerciseTime: Number(it.appleExerciseTime || 0),
+                        appleExerciseTimeGoal: Number(it.appleExerciseTimeGoal || 0),
+                        appleStandHours: Number(it.appleStandHours || 0),
+                        appleStandHoursGoal: Number(it.appleStandHoursGoal || 0),
+                    }))
+                    .sort((a, b) => (a.date < b.date ? -1 : 1));
+            },
+            error: (err) => {
+                console.error('Failed to load activity summaries', err);
+                this.activitySummaries = [];
             },
         });
     }
@@ -305,9 +348,9 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     // Chart helpers responding to selectedView and dateRange
-    private chunkByWeeks(list: HealthData[]): HealthData[][] {
+    private chunkByWeeks<T>(list: T[]): T[][] {
         if (!list.length) return [];
-        const chunks: HealthData[][] = [];
+        const chunks: T[][] = [];
         for (let i = 0; i < list.length; i += 7) {
             chunks.push(list.slice(i, i + 7));
         }
@@ -358,6 +401,72 @@ export class Dashboard implements OnInit, OnDestroy {
         }
         // daily
         return data.map((d) => ({ label: d.displayDate, value: Number(d.calories || 0) }));
+    }
+
+    // Active vs Basal calories dual series
+    getActiveBasalChartData(): DualChartPoint[] {
+        const data = this.filteredData;
+        if (this.selectedView === 'weekly') {
+            return this.chunkByWeeks(data).map((week, idx) => ({
+                label: `Week ${idx + 1}`,
+                active: week.reduce((s, d) => s + Number(d.activeCalories || 0), 0),
+                basal: week.reduce((s, d) => s + Number(d.basalCalories || 0), 0),
+            }));
+        }
+        if (this.selectedView === 'trends') {
+            const a = data.map((d) => Number(d.activeCalories || 0));
+            const b = data.map((d) => Number(d.basalCalories || 0));
+            const aa = this.movingAverage(a, 7);
+            const bb = this.movingAverage(b, 7);
+            return data.map((d, i) => ({ label: d.displayDate, active: aa[i], basal: bb[i] }));
+        }
+        // daily
+        return data.map((d) => ({
+            label: d.displayDate,
+            active: Number(d.activeCalories || 0),
+            basal: Number(d.basalCalories || 0),
+        }));
+    }
+
+    private getDualMax(): number {
+        const arr = this.getActiveBasalChartData();
+        if (!arr.length) return 0;
+        return Math.max(
+            ...arr.map((p) => Math.max(Number(p.active || 0), Number(p.basal || 0)))
+        );
+    }
+
+    private getXYActiveBasal(which: 'active' | 'basal'): Array<{ x: number; y: number }> {
+        const series = this.getActiveBasalChartData();
+        const max = this.getDualMax() || 1;
+        const n = series.length;
+        if (n === 0) return [];
+        if (n === 1) {
+            const v = Math.min(100, Math.max(0, (series[0][which] / max) * 100));
+            return [{ x: 0, y: 100 - v }];
+        }
+        return series.map((pt, i) => {
+            const x = (i / (n - 1)) * 100;
+            const v = Math.min(100, Math.max(0, ((pt[which] as number) / max) * 100));
+            const y = 100 - v;
+            return { x, y };
+        });
+    }
+    getSvgLinePointsActiveBasal(which: 'active' | 'basal'): string {
+        const xy = this.getXYActiveBasal(which);
+        return xy.map((p) => `${p.x},${p.y}`).join(' ');
+    }
+
+    // Labels sampling for dual chart
+    getActiveBasalLabelPoints(): ChartPoint[] {
+        const src = this.getActiveBasalChartData().map((d) => ({ label: d.label, value: 0 }));
+        const maxLabels = 12;
+        if (src.length <= maxLabels) return src;
+        const step = Math.ceil(src.length / maxLabels);
+        const sampled: ChartPoint[] = [];
+        for (let i = 0; i < src.length; i += step) sampled.push(src[i]);
+        if (sampled[sampled.length - 1] !== src[src.length - 1]) sampled.push(src[src.length - 1]);
+        return sampled;
     }
 
     getChartTitle(kind: 'steps' | 'calories'): string {
@@ -498,6 +607,38 @@ export class Dashboard implements OnInit, OnDestroy {
     onSvgLeave(kind: 'steps' | 'calories') {
         const tgt = this.tooltip[kind];
         tgt.visible = false;
+    }
+
+    // Tooltip for dual series chart
+    onSvgMoveDual(ev: MouseEvent) {
+        const series = this.getActiveBasalChartData();
+        const svg = ev.currentTarget as SVGElement;
+        const wrapper = svg.closest('.simple-chart') as HTMLElement;
+        if (!wrapper || !series.length) return;
+        const svgRect = svg.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const relX = ev.clientX - svgRect.left;
+        const pctX = Math.min(1, Math.max(0, relX / svgRect.width));
+        const i = Math.round(pctX * (series.length - 1));
+        const max = this.getDualMax() || 1;
+        const a = Number(series[i]?.active ?? 0);
+        const b = Number(series[i]?.basal ?? 0);
+        const vPct = Math.max(
+            Math.min(100, Math.max(0, (a / max) * 100)),
+            Math.min(100, Math.max(0, (b / max) * 100))
+        );
+        const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
+        const left = svgRect.left - wrapperRect.left + pctX * svgRect.width;
+        const tgt = this.tooltip.activeBasal;
+        tgt.visible = true;
+        tgt.label = series[i]?.label ?? '';
+        tgt.active = a;
+        tgt.basal = b;
+        tgt.left = left;
+        tgt.top = top;
+    }
+    onSvgLeaveDual() {
+        this.tooltip.activeBasal.visible = false;
     }
 
     setSelectedView(view: string) {
@@ -652,6 +793,135 @@ export class Dashboard implements OnInit, OnDestroy {
 
     getTotalDistance(): number {
         return Math.round(this.globalStats.sumDistance * 10) / 10 || 0;
+    }
+
+    // Active vs Basal calories split over the current filtered range
+    getCaloriesSplitTotals(): { active: number; basal: number; total: number; activePct: number } {
+        const a = this.filteredData.reduce((s, d) => s + Number(d.activeCalories || 0), 0);
+        const b = this.filteredData.reduce((s, d) => s + Number(d.basalCalories || 0), 0);
+        const total = a + b;
+        const activePct = total ? (a / total) * 100 : 0;
+        return {
+            active: Math.round(a),
+            basal: Math.round(b),
+            total: Math.round(total),
+            activePct: parseFloat(activePct.toFixed(1)),
+        };
+    }
+
+    // Active Energy vs Goal over current range
+    getActiveEnergyGoalTotals(): { burned: number; goal: number; pct: number } {
+        const burned = this.activitySummaries.reduce((s, d) => s + Number(d.activeEnergyBurned || 0), 0);
+        const goal = this.activitySummaries.reduce((s, d) => s + Number(d.activeEnergyBurnedGoal || 0), 0);
+        const pct = goal ? (burned / goal) * 100 : 0;
+        return {
+            burned: Math.round(burned),
+            goal: Math.round(goal),
+            pct: parseFloat(pct.toFixed(1)),
+        };
+    }
+
+    // Metric vs Goal chart (Energy/Move/Exercise/Stand)
+    selectedActivityMetric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours' = 'activeEnergyBurned';
+    setSelectedActivityMetric(m: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours') {
+        this.selectedActivityMetric = m;
+    }
+    private getMetricGoalKey(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): keyof ActivitySummary {
+        switch (metric) {
+            case 'activeEnergyBurned': return 'activeEnergyBurnedGoal';
+            case 'appleMoveTime': return 'appleMoveTimeGoal';
+            case 'appleExerciseTime': return 'appleExerciseTimeGoal';
+            case 'appleStandHours': return 'appleStandHoursGoal';
+        }
+    }
+    getMetricUnit(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): string {
+        if (metric === 'activeEnergyBurned') return 'kcal';
+        if (metric === 'appleStandHours') return 'h';
+        return 'min';
+    }
+    getMetricGoalChartData(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): Array<{ label: string; achieved: number; goal: number }> {
+        const data = this.activitySummaries;
+        const goalKey = this.getMetricGoalKey(metric);
+        if (this.selectedView === 'weekly') {
+            return this.chunkByWeeks(data).map((week, idx) => ({
+                label: `Week ${idx + 1}`,
+                achieved: week.reduce((s, d) => s + Number((d as any)[metric] || 0), 0),
+                goal: week.reduce((s, d) => s + Number((d as any)[goalKey] || 0), 0),
+            }));
+        }
+        if (this.selectedView === 'trends') {
+            const ach = data.map((d) => Number((d as any)[metric] || 0));
+            const gol = data.map((d) => Number((d as any)[goalKey] || 0));
+            const aa = this.movingAverage(ach, 7);
+            const gg = this.movingAverage(gol, 7);
+            return data.map((d, i) => ({ label: d.date, achieved: aa[i], goal: gg[i] }));
+        }
+        return data.map((d) => ({ label: d.date, achieved: Number((d as any)[metric] || 0), goal: Number((d as any)[goalKey] || 0) }));
+    }
+    private getMetricGoalMax(metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'): number {
+        const arr = this.getMetricGoalChartData(metric);
+        if (!arr.length) return 0;
+        return Math.max(...arr.map((p) => Math.max(Number(p.achieved || 0), Number(p.goal || 0))));
+    }
+    private getXYMetricGoal(which: 'achieved' | 'goal'): Array<{ x: number; y: number }> {
+        const series = this.getMetricGoalChartData(this.selectedActivityMetric);
+        const max = this.getMetricGoalMax(this.selectedActivityMetric) || 1;
+        const n = series.length;
+        if (n === 0) return [];
+        if (n === 1) {
+            const v = Math.min(100, Math.max(0, ((series[0] as any)[which] / max) * 100));
+            return [{ x: 0, y: 100 - v }];
+        }
+        return series.map((pt, i) => {
+            const x = (i / (n - 1)) * 100;
+            const v = Math.min(100, Math.max(0, (((pt as any)[which] as number) / max) * 100));
+            const y = 100 - v;
+            return { x, y };
+        });
+    }
+    getSvgLinePointsMetricGoal(which: 'achieved' | 'goal'): string {
+        const xy = this.getXYMetricGoal(which);
+        return xy.map((p) => `${p.x},${p.y}`).join(' ');
+    }
+    getMetricGoalLabelPoints(): ChartPoint[] {
+        const src = this.getMetricGoalChartData(this.selectedActivityMetric).map((d) => ({ label: d.label, value: 0 }));
+        const maxLabels = 12;
+        if (src.length <= maxLabels) return src;
+        const step = Math.ceil(src.length / maxLabels);
+        const sampled: ChartPoint[] = [];
+        for (let i = 0; i < src.length; i += step) sampled.push(src[i]);
+        if (sampled[sampled.length - 1] !== src[src.length - 1]) sampled.push(src[src.length - 1]);
+        return sampled;
+    }
+    onSvgMoveMetricGoal(ev: MouseEvent) {
+        const series = this.getMetricGoalChartData(this.selectedActivityMetric);
+        const svg = ev.currentTarget as SVGElement;
+        const wrapper = svg.closest('.simple-chart') as HTMLElement;
+        if (!wrapper || !series.length) return;
+        const svgRect = svg.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const relX = ev.clientX - svgRect.left;
+        const pctX = Math.min(1, Math.max(0, relX / svgRect.width));
+        const i = Math.round(pctX * (series.length - 1));
+        const max = this.getMetricGoalMax(this.selectedActivityMetric) || 1;
+        const a = Number(series[i]?.achieved ?? 0);
+        const g = Number(series[i]?.goal ?? 0);
+        const vPct = Math.max(
+            Math.min(100, Math.max(0, (a / max) * 100)),
+            Math.min(100, Math.max(0, (g / max) * 100))
+        );
+        const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
+        const left = svgRect.left - wrapperRect.left + pctX * svgRect.width;
+        const tgt = this.tooltip.metricGoal;
+        tgt.visible = true;
+        tgt.label = series[i]?.label ?? '';
+        tgt.achieved = a;
+        tgt.goal = g;
+        tgt.left = left;
+        tgt.top = top;
+    }
+    onSvgLeaveMetricGoal() {
+        this.tooltip.metricGoal.visible = false;
     }
 
     animateStepsValue() {

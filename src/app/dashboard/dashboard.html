@@ -12,16 +12,20 @@
             <!-- Controls -->
             <div class="controls-section">
                 <div class="date-selector">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor">
-                        <rect x="3" y="4" width="18" height="18" rx="2"
-                            ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2">
+                        </rect>
+                        <line x1="16" y1="2" x2="16" y2="6">
+
+                        </line>
+                        <line x1="8" y1="2" x2="8" y2="6">
+
+                        </line>
+                        <line x1="3" y1="10" x2="21" y2="10">
+
+                        </line>
                     </svg>
-                    <select [(ngModel)]="dateRange"
-                        (change)="onDateRangeChange()" class="select-input">
+                    <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="select-input">
                         <option value="7d">Last 7 days</option>
                         <option value="14d">Last 14 days</option>
                         <option value="30d">Last 30 days</option>
@@ -39,9 +43,7 @@
                 </div>
 
                 <div class="view-toggle">
-                    <button *ngFor="let view of views"
-                        [class]="getViewButtonClass(view)"
-                        (click)="setSelectedView(view)">
+                    <button *ngFor="let view of views" [class]="getViewButtonClass(view)" (click)="setSelectedView(view)">
                         {{ view | titlecase }}
                     </button>
                 </div>
@@ -54,16 +56,13 @@
 
         <!-- Daily Stats Cards -->
         <div class="stats-grid">
-            <div class="stat-card steps-card"
-                (mouseenter)="onCardHover('steps')"
-                (mouseleave)="onCardLeave('steps')">
+            <div class="stat-card steps-card" (mouseenter)="onCardHover('steps')" (mouseleave)="onCardLeave('steps')">
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container steps-icon">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor">
-                                <polyline
-                                    points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
+                                </polyline>
                             </svg>
                         </div>
                         <h3 class="card-title">Steps</h3>
@@ -114,10 +113,9 @@
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container calories-icon">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor">
-                                <polygon
-                                    points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
+                                </polygon>
                             </svg>
                         </div>
                         <h3 class="card-title">Calories</h3>
@@ -169,11 +167,11 @@
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container distance-icon">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor">
-                                <circle cx="12" cy="10" r="3"></circle>
-                                <path
-                                    d="m12 21.7-.4-.8a13.5 13.5 0 0 1-2.9-8.9c0-7.4 6-13.4 13.4-13.4S35.5 4.6 35.5 12c0 3.4-1.3 6.6-2.9 8.9l-.4.8Z">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="12" cy="10" r="3">
+
+                                </circle>
+                                <path d="m12 21.7-.4-.8a13.5 13.5 0 0 1-2.9-8.9c0-7.4 6-13.4 13.4-13.4S35.5 4.6 35.5 12c0 3.4-1.3 6.6-2.9 8.9l-.4.8Z">
                                 </path>
                             </svg>
                         </div>
@@ -226,10 +224,9 @@
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container weight-icon">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor">
-                                <polyline
-                                    points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
+                                </polyline>
                             </svg>
                         </div>
                         <h3 class="card-title">Weight</h3>
@@ -267,7 +264,9 @@
                 <div class="chart-header">
                     <h3 class="chart-title">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
+
+                            </polyline>
                         </svg>
                         {{ getChartTitle('steps') }}
                     </h3>
@@ -290,15 +289,9 @@
                     <ng-container [ngSwitch]="stepsChartType">
                         <!-- Column chart -->
                         <div *ngSwitchCase="'column'" class="chart-bars" (mouseleave)="hideBarTooltip('steps')">
-                            <div *ngFor="let pt of getStepsChartData(); let i = index; trackBy: trackByIdx"
-                                 class="chart-bar steps-bar"
-                                 [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100"
-                                 [style.animation-delay.ms]="i * 100"
-                                 (mouseenter)="showBarTooltip('steps', i, $event)">
+                            <div *ngFor="let pt of getStepsChartData(); let i = index; trackBy: trackByIdx" class="chart-bar steps-bar" [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100" [style.animation-delay.ms]="i * 100" (mouseenter)="showBarTooltip('steps', i, $event)">
                             </div>
-                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip"
-                                 [style.left.px]="tooltip.steps.left"
-                                 [style.top.px]="tooltip.steps.top">
+                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip" [style.left.px]="tooltip.steps.left" [style.top.px]="tooltip.steps.top">
                                 <div class="tooltip-value">{{ tooltip.steps.value | number:'1.0-0' }}</div>
                                 <div class="tooltip-label">{{ tooltip.steps.label }}</div>
                             </div>
@@ -306,13 +299,10 @@
 
                         <!-- Line chart -->
                         <div *ngSwitchCase="'line'" class="chart-line">
-                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-                                 (mousemove)="onSvgMove('steps', $event)" (mouseleave)="onSvgLeave('steps')">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMove('steps', $event)" (mouseleave)="onSvgLeave('steps')">
                                 <polyline class="line-polyline" [attr.points]="getSvgLinePoints('steps')" />
                             </svg>
-                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip"
-                                 [style.left.px]="tooltip.steps.left"
-                                 [style.top.px]="tooltip.steps.top">
+                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip" [style.left.px]="tooltip.steps.left" [style.top.px]="tooltip.steps.top">
                                 <div class="tooltip-value">{{ tooltip.steps.value | number:'1.0-0' }}</div>
                                 <div class="tooltip-label">{{ tooltip.steps.label }}</div>
                             </div>
@@ -320,13 +310,10 @@
 
                         <!-- Area chart -->
                         <div *ngSwitchCase="'area'" class="chart-area">
-                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-                                 (mousemove)="onSvgMove('steps', $event)" (mouseleave)="onSvgLeave('steps')">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMove('steps', $event)" (mouseleave)="onSvgLeave('steps')">
                                 <polygon class="area-polygon steps-area" [attr.points]="getSvgAreaPoints('steps')" />
                             </svg>
-                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip"
-                                 [style.left.px]="tooltip.steps.left"
-                                 [style.top.px]="tooltip.steps.top">
+                            <div *ngIf="tooltip.steps.visible" class="chart-tooltip" [style.left.px]="tooltip.steps.left" [style.top.px]="tooltip.steps.top">
                                 <div class="tooltip-value">{{ tooltip.steps.value | number:'1.0-0' }}</div>
                                 <div class="tooltip-label">{{ tooltip.steps.label }}</div>
                             </div>
@@ -334,10 +321,7 @@
 
                         <!-- Fallback -->
                         <div *ngSwitchDefault class="chart-bars">
-                            <div *ngFor="let pt of getStepsChartData(); let i = index"
-                                 class="chart-bar steps-bar"
-                                 [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100"
-                                 [style.animation-delay.ms]="i * 100">
+                            <div *ngFor="let pt of getStepsChartData(); let i = index" class="chart-bar steps-bar" [style.height.%]="(pt.value / getMaxChartValue('steps')) * 100" [style.animation-delay.ms]="i * 100">
                             </div>
                         </div>
                     </ng-container>
@@ -354,7 +338,9 @@
                 <div class="chart-header">
                     <h3 class="chart-title">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
+
+                            </polygon>
                         </svg>
                         {{ getChartTitle('calories') }}
                     </h3>
@@ -377,15 +363,9 @@
                     <ng-container [ngSwitch]="caloriesChartType">
                         <!-- Column chart -->
                         <div *ngSwitchCase="'column'" class="chart-bars" (mouseleave)="hideBarTooltip('calories')">
-                            <div *ngFor="let pt of getCaloriesChartData(); let i = index; trackBy: trackByIdx"
-                                 class="chart-bar calories-bar"
-                                 [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100"
-                                 [style.animation-delay.ms]="i * 100"
-                                 (mouseenter)="showBarTooltip('calories', i, $event)">
+                            <div *ngFor="let pt of getCaloriesChartData(); let i = index; trackBy: trackByIdx" class="chart-bar calories-bar" [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100" [style.animation-delay.ms]="i * 100" (mouseenter)="showBarTooltip('calories', i, $event)">
                             </div>
-                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip"
-                                 [style.left.px]="tooltip.calories.left"
-                                 [style.top.px]="tooltip.calories.top">
+                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip" [style.left.px]="tooltip.calories.left" [style.top.px]="tooltip.calories.top">
                                 <div class="tooltip-value">{{ tooltip.calories.value | number:'1.0-0' }}</div>
                                 <div class="tooltip-label">{{ tooltip.calories.label }}</div>
                             </div>
@@ -393,13 +373,10 @@
 
                         <!-- Line chart -->
                         <div *ngSwitchCase="'line'" class="chart-line">
-                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-                                 (mousemove)="onSvgMove('calories', $event)" (mouseleave)="onSvgLeave('calories')">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMove('calories', $event)" (mouseleave)="onSvgLeave('calories')">
                                 <polyline class="line-polyline calories-line" [attr.points]="getSvgLinePoints('calories')" />
                             </svg>
-                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip"
-                                 [style.left.px]="tooltip.calories.left"
-                                 [style.top.px]="tooltip.calories.top">
+                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip" [style.left.px]="tooltip.calories.left" [style.top.px]="tooltip.calories.top">
                                 <div class="tooltip-value">{{ tooltip.calories.value | number:'1.0-0' }}</div>
                                 <div class="tooltip-label">{{ tooltip.calories.label }}</div>
                             </div>
@@ -407,13 +384,10 @@
 
                         <!-- Area chart -->
                         <div *ngSwitchCase="'area'" class="chart-area">
-                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-                                 (mousemove)="onSvgMove('calories', $event)" (mouseleave)="onSvgLeave('calories')">
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMove('calories', $event)" (mouseleave)="onSvgLeave('calories')">
                                 <polygon class="area-polygon calories-area" [attr.points]="getSvgAreaPoints('calories')" />
                             </svg>
-                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip"
-                                 [style.left.px]="tooltip.calories.left"
-                                 [style.top.px]="tooltip.calories.top">
+                            <div *ngIf="tooltip.calories.visible" class="chart-tooltip" [style.left.px]="tooltip.calories.left" [style.top.px]="tooltip.calories.top">
                                 <div class="tooltip-value">{{ tooltip.calories.value | number:'1.0-0' }}</div>
                                 <div class="tooltip-label">{{ tooltip.calories.label }}</div>
                             </div>
@@ -421,10 +395,7 @@
 
                         <!-- Fallback -->
                         <div *ngSwitchDefault class="chart-bars">
-                            <div *ngFor="let pt of getCaloriesChartData(); let i = index"
-                                 class="chart-bar calories-bar"
-                                 [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100"
-                                 [style.animation-delay.ms]="i * 100">
+                            <div *ngFor="let pt of getCaloriesChartData(); let i = index" class="chart-bar calories-bar" [style.height.%]="(pt.value / getMaxChartValue('calories')) * 100" [style.animation-delay.ms]="i * 100">
                             </div>
                         </div>
                     </ng-container>
@@ -435,66 +406,176 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Active vs Basal (Full Width) -->
+            <div class="chart-container span-2">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
+
+                            </polygon>
+                        </svg>
+                        Active vs Basal Calories
+                    </h3>
+                    <div class="chart-info">
+                        <ng-container *ngIf="getCaloriesSplitTotals() as split">
+                            Active: {{ split.active | number:'1.0-0' }} kcal • Basal: {{ split.basal | number:'1.0-0' }} kcal
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="simple-chart">
+                    <div class="dual-legend">
+                        <span class="legend-item active">
+                            <span class="dot">
+
+                            </span>Active</span>
+                        <span class="legend-item basal">
+                            <span class="dot">
+
+                            </span>Basal</span>
+                    </div>
+                    <div class="chart-line">
+                        <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMoveDual($event)" (mouseleave)="onSvgLeaveDual()">
+                            <polyline class="line-polyline active-line" [attr.points]="getSvgLinePointsActiveBasal('active')" />
+                            <polyline class="line-polyline basal-line" [attr.points]="getSvgLinePointsActiveBasal('basal')" />
+                        </svg>
+                        <div *ngIf="tooltip.activeBasal.visible" class="chart-tooltip" [style.left.px]="tooltip.activeBasal.left" [style.top.px]="tooltip.activeBasal.top">
+                            <div class="tooltip-label">{{ tooltip.activeBasal.label }}</div>
+                            <div>
+                                <span class="swatch active">
+
+                                </span>{{ tooltip.activeBasal.active | number:'1.0-0' }} kcal
+                            </div>
+                            <div>
+                                <span class="swatch basal">
+
+                                </span>{{ tooltip.activeBasal.basal | number:'1.0-0' }} kcal
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-labels">
+                        <span *ngFor="let pt of getActiveBasalLabelPoints(); trackBy: trackByIdx" class="chart-label">
+                            {{ pt.label }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achieved vs Goal (Activity Metrics) -->
+            <div class="chart-container span-2">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="12" y1="20" x2="12" y2="10">
+
+                            </line>
+                            <line x1="18" y1="20" x2="18" y2="4">
+
+                            </line>
+                            <line x1="6" y1="20" x2="6" y2="16">
+
+                            </line>
+                        </svg>
+                        Achieved vs Goal
+                    </h3>
+                    <div class="chart-info">
+                        Metric: {{ selectedActivityMetric }} • Unit: {{ getMetricUnit(selectedActivityMetric) }}
+                    </div>
+                </div>
+                <div class="simple-chart">
+                    <div class="view-toggle chart-type-toggle" style="margin-bottom: 0.5rem;">
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'activeEnergyBurned'" (click)="setSelectedActivityMetric('activeEnergyBurned')">Energy</button>
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleMoveTime'" (click)="setSelectedActivityMetric('appleMoveTime')">Move</button>
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleExerciseTime'" (click)="setSelectedActivityMetric('appleExerciseTime')">Exercise</button>
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleStandHours'" (click)="setSelectedActivityMetric('appleStandHours')">Stand</button>
+                    </div>
+                    <div class="metric-legend">
+                        <span class="legend-item achieved">
+                            <span class="dot">
+
+                            </span>Achieved</span>
+                        <span class="legend-item goal">
+                            <span class="dot">
+
+                            </span>Goal</span>
+                    </div>
+                    <div class="chart-line">
+                        <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" (mousemove)="onSvgMoveMetricGoal($event)" (mouseleave)="onSvgLeaveMetricGoal()">
+                            <polyline class="line-polyline achieved-line" [attr.points]="getSvgLinePointsMetricGoal('achieved')" />
+                            <polyline class="line-polyline goal-line" [attr.points]="getSvgLinePointsMetricGoal('goal')" />
+                        </svg>
+                        <div *ngIf="tooltip.metricGoal.visible" class="chart-tooltip" [style.left.px]="tooltip.metricGoal.left" [style.top.px]="tooltip.metricGoal.top">
+                            <div class="tooltip-label">{{ tooltip.metricGoal.label }}</div>
+                            <div>
+                                <span class="swatch achieved">
+
+                                </span>Achieved: {{ tooltip.metricGoal.achieved | number:'1.0-0' }} {{ getMetricUnit(selectedActivityMetric) }}
+                            </div>
+                            <div>
+                                <span class="swatch goal">
+
+                                </span>Goal: {{ tooltip.metricGoal.goal | number:'1.0-0' }} {{ getMetricUnit(selectedActivityMetric) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-labels">
+                        <span *ngFor="let pt of getMetricGoalLabelPoints(); trackBy: trackByIdx" class="chart-label">
+                            {{ pt.label }}
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Advanced Analytics -->
         <div class="analytics-grid">
-            <!-- Distance Progress -->
+            <!-- Active Energy Goal -->
             <div class="analytics-card">
                 <h3 class="analytics-title">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor">
-                        <circle cx="12" cy="10" r="3"></circle>
-                        <path
-                            d="m12 21.7-.4-.8a13.5 13.5 0 0 1-2.9-8.9c0-7.4 6-13.4 13.4-13.4S35.5 4.6 35.5 12c0 3.4-1.3 6.6-2.9 8.9l-.4.8Z">
-                        </path>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
+
+                        </polygon>
                     </svg>
-                    Distance Progress
+                    Active Energy Goal
                 </h3>
-                <div class="radial-progress">
-                    <div class="progress-circle">
-                        <div class="progress-fill"
-                            [style.--progress]="getDistanceProgress() + '%'">
+                <ng-container *ngIf="getActiveEnergyGoalTotals() as goal">
+                    <div class="calories-split">
+                        <div class="calories-donut" [style.--p]="goal.pct + '%'">
+                            <div class="donut-center">
+                                <div class="donut-value">{{ goal.pct | number:'1.0-0' }}%</div>
+                                <div class="donut-sub">of Goal</div>
+                            </div>
+                        </div>
+                        <div class="split-stats">
+                            <div class="split-row">
+                                <span class="dot active">
+
+                                </span> Burned: {{ goal.burned | number:'1.0-0' }} kcal
+                            </div>
+                            <div class="split-row">
+                                <span class="dot goal">
+
+                                </span> Goal: {{ goal.goal | number:'1.0-0' }} kcal
+                            </div>
                         </div>
                     </div>
-                    <div class="progress-text">
-                        <div class="progress-value">
-                            {{ distanceStats.current | number:'1.1-1' }}
-                            <span class="unit">km</span>
-                        </div>
-                        <div class="progress-label">Today</div>
-                        <div class="progress-sub">
-                            Avg: {{ distanceStats.average | number:'1.1-1' }} km •
-                            Total: {{ distanceStats.total | number:'1.1-1' }} km
-                        </div>
-                        <div class="progress-insights">
-                            <span>Best: {{ distanceStats.max | number:'1.1-1' }} km</span>
-                            <span>Min: {{ distanceStats.min | number:'1.1-1' }} km</span>
-                            <span [class.up]="distanceStats.current >= distanceStats.average" [class.down]="distanceStats.current < distanceStats.average">
-                                Trend: {{ (((distanceStats.current - distanceStats.average) / (distanceStats.average || 1)) * 100) | number:'1.0-0' }}%
-                            </span>
-                            <span>Days: {{ filteredData.length }}</span>
-                        </div>
-                    </div>
-                </div>
+                </ng-container>
             </div>
 
             <!-- Weight Tracking -->
             <div class="analytics-card">
                 <h3 class="analytics-title">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor">
-                        <polyline
-                            points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
+                        </polyline>
                     </svg>
                     Weight Tracking
                 </h3>
                 <div class="weight-chart">
                     <div class="weight-line">
-                        <div *ngFor="let data of getRecentData(); let i = index"
-                            class="weight-point"
-                            [style.left.%]="(i / (getRecentData().length - 1)) * 100"
-                            [style.bottom.%]="((data.weight - getMinWeight()) / (getMaxWeight() - getMinWeight())) * 100">
+                        <div *ngFor="let data of getRecentData(); let i = index" class="weight-point" [style.left.%]="(i / (getRecentData().length - 1)) * 100" [style.bottom.%]="((data.weight - getMinWeight()) / (getMaxWeight() - getMinWeight())) * 100">
                         </div>
                     </div>
                 </div>
@@ -507,7 +588,7 @@
                     {{' \t'}}
                     <div class="weight-stat">
                         <span class="stat-label">Change</span>
-                            <span class="stat-value" [class.success]="getWeightLossKg() > 0" [class.error]="getWeightLossKg() < 0">{{ getWeightLossKg() }}{{' kg'}}</span>
+                        <span class="stat-value" [class.success]="getWeightLossKg() > 0" [class.error]="getWeightLossKg() < 0">{{ getWeightLossKg() }}{{' kg'}}</span>
                     </div>
                 </div>
             </div>
@@ -515,17 +596,21 @@
             <!-- Activity Summary -->
             <div class="analytics-card">
                 <h3 class="analytics-title">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor">
-                        <line x1="12" y1="20" x2="12" y2="10"></line>
-                        <line x1="18" y1="20" x2="18" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="16"></line>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="12" y1="20" x2="12" y2="10">
+
+                        </line>
+                        <line x1="18" y1="20" x2="18" y2="4">
+
+                        </line>
+                        <line x1="6" y1="20" x2="6" y2="16">
+
+                        </line>
                     </svg>
                     Activity Summary
                 </h3>
                 <div class="activity-bars">
-                    <div *ngFor="let activity of activityLevels"
-                        class="activity-row">
+                    <div *ngFor="let activity of activityLevels" class="activity-row">
                         <div class="activity-info">
                             <span class="activity-label">{{ activity.label
                                 }}</span>
@@ -533,9 +618,7 @@
                                 }}%</span>
                         </div>
                         <div class="activity-bar-container">
-                            <div class="activity-bar"
-                                [style.width.%]="activity.value"
-                                [style.background-color]="activity.color">
+                            <div class="activity-bar" [style.width.%]="activity.value" [style.background-color]="activity.color">
                             </div>
                         </div>
                     </div>
