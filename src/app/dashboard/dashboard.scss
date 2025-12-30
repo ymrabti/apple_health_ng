@@ -584,10 +584,12 @@
 }
 
 .simple-chart {
+    /* create breathing room for labels below charts */
+    padding-bottom: 0.5rem;
     .chart-bars {
         display: flex;
         align-items: flex-end;
-        gap: 0.25rem;
+        gap: 1.25rem;
         height: 200px;
         margin-bottom: 1rem;
         overflow-x: auto;
@@ -658,21 +660,23 @@
 
     .chart-labels {
         display: flex;
-        justify-content: flex-start;
-        gap: 0.25rem;
-        overflow-x: auto;
-        overflow-y: visible; /* allow rotated labels to show */
-        min-height: 2.25rem; /* space for 45deg rotated text */
-        padding-top: 0.25rem;
+        justify-content: space-between; /* spread labels across full width */
+        gap: 0;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        min-height: 2.75rem; /* extra space for rotated text */
+        padding: 0.25rem 0 0.25rem;
 
         .chart-label {
             display: inline-block;
             font-size: 0.75rem;
             color: var(--text-muted);
-            transform: rotate(-45deg);
-            transform-origin: left top;
-            /* Match bar width for alignment */
-            flex: 0 0 clamp(3px, 1.2vw, 14px);
+            transform: rotate(-30deg) translate(-40px);
+            transform-origin: left bottom;
+            /* Expand evenly across the available width */
+            flex: 1 1 0;
+            min-width: 0;
+            text-align: center;
             white-space: nowrap;
         }
     }
