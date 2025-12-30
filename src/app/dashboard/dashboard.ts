@@ -853,6 +853,17 @@ export class Dashboard implements OnInit, OnDestroy {
     ) {
         this.selectedActivityMetric = m;
     }
+    // Weekly Rings grid (7 rows per week)
+    selectedRingMetric:
+        | 'activeEnergyBurned'
+        | 'appleMoveTime'
+        | 'appleExerciseTime'
+        | 'appleStandHours' = 'appleMoveTime';
+    setSelectedRingMetric(
+        m: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
+    ) {
+        this.selectedRingMetric = m;
+    }
     private getMetricGoalKey(
         metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
     ): keyof ActivitySummary {
@@ -873,6 +884,23 @@ export class Dashboard implements OnInit, OnDestroy {
         if (metric === 'activeEnergyBurned') return 'kcal';
         if (metric === 'appleStandHours') return 'h';
         return 'min';
+    }
+    getWeeklyRingColumns(
+        metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
+    ): Array<Array<{ pct: number }>> {
+        const data = this.activitySummaries || [];
+        const goalKey = this.getMetricGoalKey(metric);
+        const weeks = this.chunkByWeeks(data);
+        return weeks.map((week) => {
+            const days = week.map((d) => {
+                const ach = Number((d as any)[metric] || 0);
+                const goal = Number((d as any)[goalKey] || 0);
+                const pct = goal ? Math.min(100, Math.max(0, (ach / goal) * 100)) : 0;
+                return { pct: parseFloat(pct.toFixed(1)) };
+            });
+            while (days.length < 7) days.push({ pct: 0 });
+            return days.slice(0, 7);
+        });
     }
     getMetricGoalChartData(
         metric: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
