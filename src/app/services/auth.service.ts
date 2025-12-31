@@ -14,9 +14,13 @@ export interface SignInPayload {
 }
 
 export interface SignUpPayload {
-    name: string;
     email: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
     password: string;
+    confirmPassword: string;
+    photo?: File;
 }
 interface AuthResponse {
     user: User;
@@ -93,7 +97,7 @@ export class AuthService {
         return this.http.post<AuthResponse>(`${AUTH_API_BASE}/signin`, payload);
     }
 
-    signUp(payload: SignUpPayload): Observable<AuthResponse> {
+    signUp(payload: FormData | SignUpPayload): Observable<AuthResponse> {
         return this.http.post<AuthResponse>(`${AUTH_API_BASE}/signup`, payload);
     }
 

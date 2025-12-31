@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, SignUpPayload } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { SeoService } from '../../services/seo.service';
 
@@ -10,9 +10,13 @@ import { SeoService } from '../../services/seo.service';
     standalone: false,
 })
 export class Signup implements OnInit {
-    name = '';
     email = '';
+    userName = '';
+    firstName = '';
+    lastName = '';
     password = '';
+    confirmPassword = '';
+    photo: File | null = null;
     loading = false;
     error: string | null = null;
 
@@ -27,18 +31,29 @@ export class Signup implements OnInit {
     }
 
     submit() {
-        if (!this.name || !this.email || !this.password) {
+        if (!this.email || !this.userName || !this.firstName || !this.lastName || !this.password || !this.confirmPassword) {
             this.error = 'All fields are required';
+            return;
+        }
+        if (this.password !== this.confirmPassword) {
+            this.error = 'Passwords do not match';
+            return;
+        }
+        if (!this.photo) {
+            this.error = 'Profile photo is required';
             return;
         }
         this.loading = true;
         this.error = null;
-        const payload: SignUpPayload = {
-            name: this.name,
-            email: this.email,
-            password: this.password,
-        };
-        this.auth.signUp(payload).subscribe({
+        const formData = new FormData();
+        formData.append('photo', this.photo, this.photo.name || 'photo');
+        formData.append('email', this.email);
+        formData.append('userName', this.userName);
+        formData.append('firstName', this.firstName);
+        formData.append('lastName', this.lastName);
+        formData.append('password', this.password);
+        formData.append('confirmPassword', this.confirmPassword);
+        this.auth.signUp(formData).subscribe({
             next: (res) => {
                 this.auth.saveTokenFromResponse(res);
                 this.router.navigateByUrl('/home');
@@ -49,5 +64,10 @@ export class Signup implements OnInit {
             },
             complete: () => (this.loading = false),
         });
+    }
+
+    onFileSelected(event: Event) {
+        const input = event.target as HTMLInputElement;
+        this.photo = input.files?.[0] ?? null;
     }
 }

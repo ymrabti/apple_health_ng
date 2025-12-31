@@ -76,6 +76,7 @@ export class Dashboard implements OnInit, OnDestroy {
     distanceStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     weightStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     fatLossStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
+    activeCaloriesStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     globalStats: GlobalSummaryStats = {
         sumDistance: 0,
         goalAchievements: 0,
@@ -109,13 +110,19 @@ export class Dashboard implements OnInit, OnDestroy {
         metricGoal: { visible: false, label: '', achieved: 0, goal: 0, left: 0, top: 0 },
     };
 
-    constructor(private auth: AuthService, private router: Router, private health: HealthService, private seo: SeoService) {}
+    constructor(
+        private auth: AuthService,
+        private router: Router,
+        private health: HealthService,
+        private seo: SeoService
+    ) {}
 
     ngOnInit() {
         // Page-specific SEO
         this.seo.apply({
             title: 'Dashboard – Personalized Health Analytics',
-            description: 'View your Apple Health trends including steps, calories, distance and goals.',
+            description:
+                'View your Apple Health trends including steps, Calories, distance and goals.',
             type: 'website',
         });
         // Fetch user infos (weight/height)
@@ -311,8 +318,11 @@ export class Dashboard implements OnInit, OnDestroy {
     private recomputeFatLoss() {
         if (!this.filteredData?.length) return;
         this.filteredData = this.filteredData.map((d) => {
-            const calories = Number(d.calories || 0);
-            const fatLoss = calories > 0 ? parseFloat((calories / this.KCAL_PER_KG).toFixed(3)) : 0;
+            const activeCaloriesBurned = Number(d.activeCalories || 0);
+            const fatLoss =
+                activeCaloriesBurned > 0
+                    ? parseFloat((activeCaloriesBurned / this.KCAL_PER_KG).toFixed(3))
+                    : 0;
             return { ...d, fatLoss } as HealthData;
         });
     }
@@ -420,7 +430,7 @@ export class Dashboard implements OnInit, OnDestroy {
         return data.map((d) => ({ label: d.displayDate, value: Number(d.calories || 0) }));
     }
 
-    // Active vs Basal calories dual series
+    // Active vs Basal Calories dual series
     getActiveBasalChartData(): DualChartPoint[] {
         const data = this.filteredData;
         if (this.selectedView === 'weekly') {
@@ -701,6 +711,7 @@ export class Dashboard implements OnInit, OnDestroy {
     calculateAllStats() {
         this.stepsStats = this.calculateStats('steps');
         this.caloriesStats = this.calculateStats('calories');
+        this.activeCaloriesStats = this.calculateStats('activeCalories');
         this.distanceStats = this.calculateStats('distance');
         this.weightStats = this.calculateStats('weight');
         this.fatLossStats = this.calculateStats('fatLoss');
@@ -726,6 +737,8 @@ export class Dashboard implements OnInit, OnDestroy {
                 return this.stepsStats;
             case 'calories':
                 return this.caloriesStats;
+            case 'activeCalories':
+                return this.activeCaloriesStats;
             case 'distance':
                 return this.distanceStats;
             case 'weight':
@@ -794,7 +807,7 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     getWeightLossKg(): number {
-        const currentLoss = this.caloriesStats.total / this.KCAL_PER_KG;
+        const currentLoss = this.activeCaloriesStats.total / this.KCAL_PER_KG;
         const loss = currentLoss; // positive when weight decreased
         return parseFloat((loss || 0).toFixed(1));
     }
@@ -817,7 +830,7 @@ export class Dashboard implements OnInit, OnDestroy {
         return Math.round(this.globalStats.sumDistance * 10) / 10 || 0;
     }
 
-    // Active vs Basal calories split over the current filtered range
+    // Active vs Basal Calories split over the current filtered range
     getCaloriesSplitTotals(): { active: number; basal: number; total: number; activePct: number } {
         const a = this.filteredData.reduce((s, d) => s + Number(d.activeCalories || 0), 0);
         const b = this.filteredData.reduce((s, d) => s + Number(d.basalCalories || 0), 0);

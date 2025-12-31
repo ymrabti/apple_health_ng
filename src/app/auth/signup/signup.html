@@ -5,8 +5,18 @@
 
     <form (ngSubmit)="submit()" class="form">
       <div class="field">
-        <label>Name</label>
-        <input type="text" [(ngModel)]="name" name="name" placeholder="Your name" />
+        <label>First Name</label>
+        <input type="text" [(ngModel)]="firstName" name="firstName" placeholder="Golda" />
+      </div>
+
+      <div class="field">
+        <label>Last Name</label>
+        <input type="text" [(ngModel)]="lastName" name="lastName" placeholder="Heathcote" />
+      </div>
+
+      <div class="field">
+        <label>Username</label>
+        <input type="text" [(ngModel)]="userName" name="userName" placeholder="Perry_Walter13" />
       </div>
 
       <div class="field">
@@ -17,6 +27,17 @@
       <div class="field">
         <label>Password</label>
         <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" />
+      </div>
+
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="••••••••" />
+      </div>
+
+      <div class="field">
+        <label>Profile Photo</label>
+        <input type="file" name="photo" (change)="onFileSelected($event)" accept="image/*" />
+        <small *ngIf="photo">Selected: {{ photo.name }}</small>
       </div>
 
       <div class="actions">
