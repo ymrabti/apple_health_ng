@@ -15,7 +15,7 @@ import {
     ApexTooltip,
     ApexLegend,
     ApexFill,
-    ChartComponent
+    ChartComponent,
 } from 'ng-apexcharts';
 
 export type ChartOptions = {
@@ -127,6 +127,12 @@ export class Dashboard implements OnInit, OnDestroy {
     activeBasalChartOptions: Partial<ChartOptions> = this.getDefaultChartOptions();
     metricGoalChartOptions: Partial<ChartOptions> = this.getDefaultChartOptions();
 
+    // Chart type toggles
+    stepsChartType: 'bar' | 'line' | 'area' = 'bar';
+    caloriesChartType: 'bar' | 'line' | 'area' = 'area';
+    activeBasalChartType: 'bar' | 'line' | 'area' = 'line';
+    metricGoalChartType: 'bar' | 'line' | 'area' = 'line';
+
     // Colors for activity levels
     private readonly activityColors = {
         very: '#10B981',
@@ -144,16 +150,16 @@ export class Dashboard implements OnInit, OnDestroy {
                 background: 'transparent',
                 toolbar: { show: false },
                 zoom: { enabled: false },
-                selection: { enabled: false }
+                selection: { enabled: false },
             },
             colors: ['#22d3ee'],
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 2 },
-            xaxis: { categories: [], labels: { style: { colors: '#9ca3af' } } },
+            xaxis: { categories: [], labels: { style: { colors: '#9ca3af' } }, tickAmount: 10 },
             yaxis: { labels: { style: { colors: '#9ca3af' } } },
             grid: { borderColor: 'rgba(55, 65, 81, 0.3)', strokeDashArray: 4 },
             tooltip: { theme: 'dark' },
-            fill: { opacity: 1 }
+            fill: { opacity: 1 },
         };
     }
 
@@ -191,6 +197,26 @@ export class Dashboard implements OnInit, OnDestroy {
         // Clean up any subscriptions or intervals
     }
 
+    toggleStepsChartType(type: 'bar' | 'line' | 'area') {
+        this.stepsChartType = type;
+        this.updateStepsChart();
+    }
+
+    toggleCaloriesChartType(type: 'bar' | 'line' | 'area') {
+        this.caloriesChartType = type;
+        this.updateCaloriesChart();
+    }
+
+    toggleActiveBasalChartType(type: 'bar' | 'line' | 'area') {
+        this.activeBasalChartType = type;
+        this.updateActiveBasalChart();
+    }
+
+    toggleMetricGoalChartType(type: 'bar' | 'line' | 'area') {
+        this.metricGoalChartType = type;
+        this.updateMetricGoalChart();
+    }
+
     private updateCharts() {
         this.updateStepsChart();
         this.updateCaloriesChart();
@@ -201,40 +227,45 @@ export class Dashboard implements OnInit, OnDestroy {
     private updateStepsChart() {
         const data = this.getStepsChartData();
         this.stepsChartOptions = {
-            series: [{
-                name: 'Steps',
-                data: data.map(d => d.value)
-            }],
+            series: [
+                {
+                    name: 'Steps',
+                    data: data.map((d) => d.value),
+                },
+            ],
             chart: {
-                type: 'bar',
+                type: this.stepsChartType,
                 height: 300,
                 background: 'transparent',
                 toolbar: { show: false },
                 animations: { enabled: true, speed: 800 },
                 zoom: { enabled: false },
-                selection: { enabled: false }
+                selection: { enabled: false },
             },
             colors: ['#22d3ee'],
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 2 },
             xaxis: {
-                categories: data.map(d => d.label),
+                categories: data.map((d) => d.label),
+                tickAmount: 10,
                 labels: {
                     style: { colors: '#9ca3af', fontSize: '11px' },
                     rotate: -45,
-                    rotateAlways: false
-                }
+                    rotateAlways: false,
+                },
             },
             yaxis: {
-                labels: { style: { colors: '#9ca3af' } }
+                labels: {
+                    style: { colors: '#9ca3af' },
+                },
             },
             grid: {
                 borderColor: 'rgba(55, 65, 81, 0.3)',
-                strokeDashArray: 4
+                strokeDashArray: 4,
             },
             tooltip: {
                 theme: 'dark',
-                y: { formatter: (val: number) => `${val.toLocaleString()} steps` }
+                y: { formatter: (val: number) => `${val.toLocaleString()} steps` },
             },
             fill: {
                 type: 'gradient',
@@ -244,48 +275,54 @@ export class Dashboard implements OnInit, OnDestroy {
                     shadeIntensity: 0.5,
                     gradientToColors: ['#a855f7'],
                     opacityFrom: 0.8,
-                    opacityTo: 0.4
-                }
-            }
+                    opacityTo: 0.4,
+                },
+            },
         };
     }
 
     private updateCaloriesChart() {
         const data = this.getCaloriesChartData();
         this.caloriesChartOptions = {
-            series: [{
-                name: 'Calories',
-                data: data.map(d => d.value)
-            }],
+            series: [
+                {
+                    name: 'Calories',
+                    data: data.map((d) => d.value),
+                },
+            ],
             chart: {
-                type: 'area',
+                type: this.caloriesChartType,
                 height: 300,
                 background: 'transparent',
                 toolbar: { show: false },
                 animations: { enabled: true, speed: 800 },
                 zoom: { enabled: false },
-                selection: { enabled: false }
+                selection: { enabled: false },
             },
             colors: ['#f59e0b'],
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 2 },
             xaxis: {
-                categories: data.map(d => d.label),
+                categories: data.map((d) => d.label),
+                tickAmount: 10,
                 labels: {
                     style: { colors: '#9ca3af', fontSize: '11px' },
-                    rotate: -45
-                }
+                    rotate: -45,
+                },
             },
             yaxis: {
-                labels: { style: { colors: '#9ca3af' } }
+                labels: {
+                    style: { colors: '#9ca3af' },
+                    formatter: (val: number) => val.toFixed(2),
+                },
             },
             grid: {
                 borderColor: 'rgba(55, 65, 81, 0.3)',
-                strokeDashArray: 4
+                strokeDashArray: 4,
             },
             tooltip: {
                 theme: 'dark',
-                y: { formatter: (val: number) => `${val.toLocaleString()} kcal` }
+                y: { formatter: (val: number) => `${val.toLocaleString()} kcal` },
             },
             fill: {
                 type: 'gradient',
@@ -295,9 +332,9 @@ export class Dashboard implements OnInit, OnDestroy {
                     shadeIntensity: 0.5,
                     gradientToColors: ['#ef4444'],
                     opacityFrom: 0.7,
-                    opacityTo: 0.1
-                }
-            }
+                    opacityTo: 0.1,
+                },
+            },
         };
     }
 
@@ -305,43 +342,47 @@ export class Dashboard implements OnInit, OnDestroy {
         const data = this.getActiveBasalChartData();
         this.activeBasalChartOptions = {
             series: [
-                { name: 'Active', data: data.map(d => d.active) },
-                { name: 'Basal', data: data.map(d => d.basal) }
+                { name: 'Active', data: data.map((d) => d.active) },
+                { name: 'Basal', data: data.map((d) => d.basal) },
             ],
             chart: {
-                type: 'line',
+                type: this.activeBasalChartType,
                 height: 300,
                 background: 'transparent',
                 toolbar: { show: false },
                 zoom: { enabled: false },
-                selection: { enabled: false }
+                selection: { enabled: false },
             },
             colors: ['#22d3ee', '#a855f7'],
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 3 },
             xaxis: {
-                categories: data.map(d => d.label),
+                categories: data.map((d) => d.label),
+                tickAmount: 10,
                 labels: {
                     style: { colors: '#9ca3af', fontSize: '11px' },
-                    rotate: -45
-                }
+                    rotate: -45,
+                },
             },
             yaxis: {
-                labels: { style: { colors: '#9ca3af' } }
+                labels: {
+                    style: { colors: '#9ca3af' },
+                    formatter: (val: number) => val.toFixed(2),
+                },
             },
             grid: {
                 borderColor: 'rgba(55, 65, 81, 0.3)',
-                strokeDashArray: 4
+                strokeDashArray: 4,
             },
             tooltip: {
                 theme: 'dark',
-                y: { formatter: (val: number) => `${val.toLocaleString()} kcal` }
+                y: { formatter: (val: number) => `${val.toLocaleString()} kcal` },
             },
             legend: {
                 labels: { colors: '#e5e7eb' },
-                position: 'top'
+                position: 'top',
             },
-            fill: { opacity: 1 }
+            fill: { opacity: 1 },
         };
     }
 
@@ -350,43 +391,47 @@ export class Dashboard implements OnInit, OnDestroy {
         const unit = this.getMetricUnit(this.selectedActivityMetric);
         this.metricGoalChartOptions = {
             series: [
-                { name: 'Achieved', data: data.map(d => d.achieved) },
-                { name: 'Goal', data: data.map(d => d.goal) }
+                { name: 'Achieved', data: data.map((d) => d.achieved) },
+                { name: 'Goal', data: data.map((d) => d.goal) },
             ],
             chart: {
-                type: 'line',
+                type: this.metricGoalChartType,
                 height: 300,
                 background: 'transparent',
                 toolbar: { show: false },
                 zoom: { enabled: false },
-                selection: { enabled: false }
+                selection: { enabled: false },
             },
             colors: ['#10b981', '#f59e0b'],
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 3 },
             xaxis: {
-                categories: data.map(d => d.label),
+                categories: data.map((d) => d.label),
+                tickAmount: 10,
                 labels: {
                     style: { colors: '#9ca3af', fontSize: '11px' },
-                    rotate: -45
-                }
+                    rotate: -45,
+                },
             },
             yaxis: {
-                labels: { style: { colors: '#9ca3af' } }
+                labels: {
+                    style: { colors: '#9ca3af' },
+                    formatter: (val: number) => val.toFixed(2),
+                },
             },
             grid: {
                 borderColor: 'rgba(55, 65, 81, 0.3)',
-                strokeDashArray: 4
+                strokeDashArray: 4,
             },
             tooltip: {
                 theme: 'dark',
-                y: { formatter: (val: number) => `${val.toLocaleString()} ${unit}` }
+                y: { formatter: (val: number) => `${val.toLocaleString()} ${unit}` },
             },
             legend: {
                 labels: { colors: '#e5e7eb' },
-                position: 'top'
+                position: 'top',
             },
-            fill: { opacity: 1 }
+            fill: { opacity: 1 },
         };
     }
 

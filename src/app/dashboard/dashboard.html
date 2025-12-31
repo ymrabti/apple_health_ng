@@ -271,6 +271,38 @@
                         </svg>
                         {{ getChartTitle('steps') }}
                     </h3>
+                    <div class="chart-type-toggle">
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="stepsChartType === 'bar'"
+                            (click)="toggleStepsChartType('bar')"
+                            aria-label="Bar chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="10" width="4" height="11"></rect>
+                                <rect x="10" y="6" width="4" height="15"></rect>
+                                <rect x="17" y="3" width="4" height="18"></rect>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="stepsChartType === 'line'"
+                            (click)="toggleStepsChartType('line')"
+                            aria-label="Line chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="stepsChartType === 'area'"
+                            (click)="toggleStepsChartType('area')"
+                            aria-label="Area chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
                     <div class="chart-info">
                         <ng-container [ngSwitch]="selectedView">
                             <span *ngSwitchCase="'weekly'">Total: {{ stepsStats.total | number:'1.0-0' }}</span>
@@ -306,6 +338,38 @@
                         </svg>
                         {{ getChartTitle('calories') }}
                     </h3>
+                    <div class="chart-type-toggle">
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="caloriesChartType === 'bar'"
+                            (click)="toggleCaloriesChartType('bar')"
+                            aria-label="Bar chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="10" width="4" height="11"></rect>
+                                <rect x="10" y="6" width="4" height="15"></rect>
+                                <rect x="17" y="3" width="4" height="18"></rect>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="caloriesChartType === 'line'"
+                            (click)="toggleCaloriesChartType('line')"
+                            aria-label="Line chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="caloriesChartType === 'area'"
+                            (click)="toggleCaloriesChartType('area')"
+                            aria-label="Area chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
                     <div class="chart-info">
                         <ng-container [ngSwitch]="selectedView">
                             <span *ngSwitchCase="'weekly'">Total: {{ caloriesStats.total | number:'1.0-0' }} {{' kcal'}}</span>
@@ -342,6 +406,70 @@
                             <span *ngSwitchCase="'metricGoal'">Achieved vs Goal</span>
                         </ng-container>
                     </h3>
+                    <div class="chart-type-toggle" *ngIf="mergedChartView === 'activeBasal'">
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="activeBasalChartType === 'bar'"
+                            (click)="toggleActiveBasalChartType('bar')"
+                            aria-label="Bar chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="10" width="4" height="11"></rect>
+                                <rect x="10" y="6" width="4" height="15"></rect>
+                                <rect x="17" y="3" width="4" height="18"></rect>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="activeBasalChartType === 'line'"
+                            (click)="toggleActiveBasalChartType('line')"
+                            aria-label="Line chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="activeBasalChartType === 'area'"
+                            (click)="toggleActiveBasalChartType('area')"
+                            aria-label="Area chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="chart-type-toggle" *ngIf="mergedChartView === 'metricGoal'">
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="metricGoalChartType === 'bar'"
+                            (click)="toggleMetricGoalChartType('bar')"
+                            aria-label="Bar chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="10" width="4" height="11"></rect>
+                                <rect x="10" y="6" width="4" height="15"></rect>
+                                <rect x="17" y="3" width="4" height="18"></rect>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="metricGoalChartType === 'line'"
+                            (click)="toggleMetricGoalChartType('line')"
+                            aria-label="Line chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            </svg>
+                        </button>
+                        <button 
+                            class="toggle-btn" 
+                            [class.active]="metricGoalChartType === 'area'"
+                            (click)="toggleMetricGoalChartType('area')"
+                            aria-label="Area chart">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
                     <div class="view-toggle chart-type-toggle">
                         <button class="view-btn" [class.active]="mergedChartView === 'activeBasal'" (click)="setMergedChartView('activeBasal')">Active/Basal</button>
                         <button class="view-btn" [class.active]="mergedChartView === 'metricGoal'" (click)="setMergedChartView('metricGoal')">Achieved/Goal</button>
