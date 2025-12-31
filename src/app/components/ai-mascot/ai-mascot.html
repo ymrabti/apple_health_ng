@@ -1,0 +1,35 @@
+<div class="mascot-container">
+  
+    <!-- Chat Bubble Window -->
+    <div class="chat-window" *ngIf="isOpen" [@popOver]>
+      <div class="chat-header">
+        <span>FitBot AI</span>
+        <button (click)="toggleChat()">×</button>
+      </div>
+      <div class="chat-messages">
+        <div *ngFor="let msg of messages" 
+             [class.user-msg]="msg.isUser" 
+             [class.bot-msg]="!msg.isUser">
+          {{ msg.text }}
+        </div>
+        <div *ngIf="isThinking" class="thinking">FitBot is typing...</div>
+      </div>
+      <div class="chat-input">
+        <input [(ngModel)]="userInput" (keyup.enter)="sendMessage()" placeholder="Ask about your health...">
+        <button (click)="sendMessage()">→</button>
+      </div>
+    </div>
+  
+    <!-- The Mascot Avatar (Click to open) -->
+    <div class="mascot-avatar" (click)="toggleChat()" [class.talking]="mascotState === 'talking'">
+      <!-- Simple CSS Robot -->
+      <div class="robot-head">
+        <div class="eyes">
+          <div class="eye left"></div>
+          <div class="eye right"></div>
+        </div>
+        <div class="mouth"></div>
+      </div>
+      <div class="notification-badge" *ngIf="!isOpen && messages.length === 0">1</div>
+    </div>
+  </div>

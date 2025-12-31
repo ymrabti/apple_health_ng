@@ -16,14 +16,14 @@ import { OauthCallback } from './auth/oauth-callback/oauth-callback';
 import { authInterceptor } from './interceptors/auth.interceptor';
 import { ImportHealth } from './import-health/import-health';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { AiMascotComponent } from './components/ai-mascot/ai-mascot';
 
 @NgModule({
-    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth],
+    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth, AiMascotComponent],
     imports: [BrowserModule, FormsModule, AppRoutingModule, NgApexchartsModule],
     providers: [
         provideBrowserGlobalErrorListeners(),
         provideHttpClient(withInterceptors([authInterceptor])),
-        provideNoopAnimations(),
         provideAnimationsAsync(),
     ],
     bootstrap: [App],
