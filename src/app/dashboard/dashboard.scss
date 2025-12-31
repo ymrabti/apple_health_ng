@@ -155,7 +155,7 @@
     }
 }
 
-.view-toggle {
+.view-toggle, .logout-section {
     display: flex;
     background: rgba(17, 24, 39, 0.5);
     backdrop-filter: blur(12px);
@@ -291,116 +291,6 @@
     margin-bottom: 1rem;
 }
 
-.chart-line,
-.chart-area {
-    height: 200px;
-    margin-bottom: 1rem;
-    overflow-x: auto;
-    overflow-y: hidden;
-}
-
-.chart-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-.line-polyline {
-    fill: none;
-    stroke: #22d3ee;
-    stroke-width: 1.5;
-    vector-effect: non-scaling-stroke;
-}
-.active-line {
-    stroke: #f59e0b;
-}
-.basal-line {
-    stroke: #6b7280;
-}
-.area-polygon {
-    stroke: none;
-    fill: rgba(34, 211, 238, 0.25);
-}
-.calories-line {
-    stroke: #f59e0b;
-}
-/* Achieved vs Goal chart colors */
-.achieved-line {
-    stroke: #22d3ee;
-}
-.goal-line {
-    stroke: #10b981;
-}
-.steps-area {
-    fill: rgba(34, 211, 238, 0.25);
-}
-.calories-area {
-    fill: rgba(245, 158, 11, 0.25);
-}
-
-.chart-type-toggle {
-    margin-bottom: 0.5rem;
-}
-.chart-type-toggle.view-toggle {
-    padding: 0.125rem;
-    gap: 0.25rem;
-    border-radius: 0.5rem;
-    display: inline-flex;
-    width: auto;
-    flex: 0 0 auto;
-    align-self: flex-start;
-    justify-content: flex-start;
-}
-.chart-type-toggle .view-btn {
-    padding: 0.2rem 0.5rem;
-    font-size: 0.75rem;
-    border-radius: 0.375rem;
-    line-height: 1rem;
-}
-.dual-legend {
-    display: inline-flex;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-.dual-legend .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 0.3rem;
-}
-.dual-legend .legend-item.active .dot {
-    background: #f59e0b;
-    box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
-}
-.dual-legend .legend-item.basal .dot {
-    background: #6b7280;
-}
-
-.metric-legend {
-    display: inline-flex;
-    gap: 0.75rem;
-    margin-bottom: 0.25rem;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-.metric-legend .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 0.3rem;
-}
-.metric-legend .legend-item.achieved .dot {
-    background: #22d3ee;
-    box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);
-}
-.metric-legend .legend-item.goal .dot {
-    background: #10b981;
-    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
-}
 .icon-section {
     display: flex;
     align-items: center;
@@ -638,109 +528,8 @@
     color: var(--text-secondary);
 }
 
-.simple-chart {
-    /* create breathing room for labels below charts */
-    padding-bottom: 0.5rem;
-    .chart-bars {
-        display: flex;
-        align-items: flex-end;
-        gap: 1.25rem;
-        height: 200px;
-        margin-bottom: 1rem;
-        overflow-x: auto;
-        overflow-y: hidden;
-        width: 100%;
-    }
-    position: relative;
-    .chart-tooltip {
-        position: absolute;
-        transform: translateX(-50%);
-        background: rgba(17, 24, 39, 0.9);
-        border: 1px solid rgba(55, 65, 81, 0.6);
-        color: #fff;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.375rem;
-        font-size: 0.75rem;
-        pointer-events: none;
-        white-space: nowrap;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
-    .chart-tooltip .tooltip-value {
-        font-weight: 700;
-    }
-    .chart-tooltip .tooltip-label {
-        color: #9ca3af;
-    }
-    .chart-tooltip .swatch {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        margin-right: 0.35rem;
-    }
-    .chart-tooltip .swatch.active {
-        background: #f59e0b;
-    }
-    .chart-tooltip .swatch.basal {
-        background: #6b7280;
-    }
-    .chart-tooltip .swatch.achieved {
-        background: #22d3ee;
-    }
-    .chart-tooltip .swatch.goal {
-        background: #10b981;
-    }
-
-    .chart-bar {
-        /* Prevent massive overflow for large ranges */
-        flex: 0 0 clamp(3px, 1.2vw, 14px);
-        border-radius: 0.25rem 0.25rem 0 0;
-        transition: all 0.3s ease;
-        animation: slideUp 0.8s ease-out forwards;
-        transform: translateY(100%);
-
-        &.steps-bar {
-            background: linear-gradient(to top, #22d3ee, #06b6d4);
-        }
-
-        &.calories-bar {
-            background: linear-gradient(to top, #f59e0b, #d97706);
-        }
-
-        &:hover {
-            opacity: 0.8;
-            transform: scale(1.05);
-        }
-    }
-
-    .chart-labels {
-        display: flex;
-        justify-content: space-between; /* spread labels across full width */
-        gap: 0;
-        overflow-x: hidden;
-        overflow-y: hidden;
-        min-height: 2.75rem; /* extra space for rotated text */
-        padding: 0.25rem 0 0.25rem;
-
-        .chart-label {
-            display: inline-block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            transform: rotate(-30deg) translate(-40px);
-            transform-origin: left bottom;
-            /* Expand evenly across the available width */
-            flex: 1 1 0;
-            min-width: 0;
-            text-align: center;
-            white-space: nowrap;
-        }
-    }
-}
-
-@keyframes slideUp {
-    to {
-        transform: translateY(0);
-    }
+.chart-wrapper {
+    padding: 1rem 0;
 }
 
 // Analytics Section

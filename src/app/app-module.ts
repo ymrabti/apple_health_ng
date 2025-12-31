@@ -15,10 +15,11 @@ import { Signup } from './auth/signup/signup';
 import { OauthCallback } from './auth/oauth-callback/oauth-callback';
 import { authInterceptor } from './interceptors/auth.interceptor';
 import { ImportHealth } from './import-health/import-health';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
     declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth],
-    imports: [BrowserModule, FormsModule, AppRoutingModule],
+    imports: [BrowserModule, FormsModule, AppRoutingModule, NgApexchartsModule],
     providers: [
         provideBrowserGlobalErrorListeners(),
         provideHttpClient(withInterceptors([authInterceptor])),

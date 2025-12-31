@@ -1,9 +1,36 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, GlobalSummaryStats, UserInfos } from '../services/auth.service';
 import { HealthService } from '../services/health.service';
 import { SeoService } from '../services/seo.service';
 import { formatDate } from './utils/date';
+import {
+    ApexAxisChartSeries,
+    ApexChart,
+    ApexXAxis,
+    ApexDataLabels,
+    ApexStroke,
+    ApexYAxis,
+    ApexGrid,
+    ApexTooltip,
+    ApexLegend,
+    ApexFill,
+    ChartComponent
+} from 'ng-apexcharts';
+
+export type ChartOptions = {
+    series: ApexAxisChartSeries;
+    chart: ApexChart;
+    xaxis: ApexXAxis;
+    dataLabels: ApexDataLabels;
+    stroke: ApexStroke;
+    yaxis: ApexYAxis;
+    grid: ApexGrid;
+    tooltip: ApexTooltip;
+    legend: ApexLegend;
+    fill: ApexFill;
+    colors: string[];
+};
 
 interface HealthData {
     date: string;
@@ -94,6 +121,12 @@ export class Dashboard implements OnInit, OnDestroy {
     activityLevelsAll: ActivityLevel[] = [];
     activitySummaries: ActivitySummary[] = [];
 
+    // ApexCharts options
+    stepsChartOptions: Partial<ChartOptions> = this.getDefaultChartOptions();
+    caloriesChartOptions: Partial<ChartOptions> = this.getDefaultChartOptions();
+    activeBasalChartOptions: Partial<ChartOptions> = this.getDefaultChartOptions();
+    metricGoalChartOptions: Partial<ChartOptions> = this.getDefaultChartOptions();
+
     // Colors for activity levels
     private readonly activityColors = {
         very: '#10B981',
@@ -102,13 +135,27 @@ export class Dashboard implements OnInit, OnDestroy {
         sedentary: '#EF4444',
     };
 
-    // Tooltip state for charts
-    tooltip = {
-        steps: { visible: false, label: '', value: 0, left: 0, top: 0 },
-        calories: { visible: false, label: '', value: 0, left: 0, top: 0 },
-        activeBasal: { visible: false, label: '', active: 0, basal: 0, left: 0, top: 0 },
-        metricGoal: { visible: false, label: '', achieved: 0, goal: 0, left: 0, top: 0 },
-    };
+    private getDefaultChartOptions(): Partial<ChartOptions> {
+        return {
+            series: [{ name: '', data: [] }],
+            chart: {
+                type: 'bar',
+                height: 300,
+                background: 'transparent',
+                toolbar: { show: false },
+                zoom: { enabled: false },
+                selection: { enabled: false }
+            },
+            colors: ['#22d3ee'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 2 },
+            xaxis: { categories: [], labels: { style: { colors: '#9ca3af' } } },
+            yaxis: { labels: { style: { colors: '#9ca3af' } } },
+            grid: { borderColor: 'rgba(55, 65, 81, 0.3)', strokeDashArray: 4 },
+            tooltip: { theme: 'dark' },
+            fill: { opacity: 1 }
+        };
+    }
 
     constructor(
         private auth: AuthService,
@@ -142,6 +189,205 @@ export class Dashboard implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         // Clean up any subscriptions or intervals
+    }
+
+    private updateCharts() {
+        this.updateStepsChart();
+        this.updateCaloriesChart();
+        this.updateActiveBasalChart();
+        this.updateMetricGoalChart();
+    }
+
+    private updateStepsChart() {
+        const data = this.getStepsChartData();
+        this.stepsChartOptions = {
+            series: [{
+                name: 'Steps',
+                data: data.map(d => d.value)
+            }],
+            chart: {
+                type: 'bar',
+                height: 300,
+                background: 'transparent',
+                toolbar: { show: false },
+                animations: { enabled: true, speed: 800 },
+                zoom: { enabled: false },
+                selection: { enabled: false }
+            },
+            colors: ['#22d3ee'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 2 },
+            xaxis: {
+                categories: data.map(d => d.label),
+                labels: {
+                    style: { colors: '#9ca3af', fontSize: '11px' },
+                    rotate: -45,
+                    rotateAlways: false
+                }
+            },
+            yaxis: {
+                labels: { style: { colors: '#9ca3af' } }
+            },
+            grid: {
+                borderColor: 'rgba(55, 65, 81, 0.3)',
+                strokeDashArray: 4
+            },
+            tooltip: {
+                theme: 'dark',
+                y: { formatter: (val: number) => `${val.toLocaleString()} steps` }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: 'vertical',
+                    shadeIntensity: 0.5,
+                    gradientToColors: ['#a855f7'],
+                    opacityFrom: 0.8,
+                    opacityTo: 0.4
+                }
+            }
+        };
+    }
+
+    private updateCaloriesChart() {
+        const data = this.getCaloriesChartData();
+        this.caloriesChartOptions = {
+            series: [{
+                name: 'Calories',
+                data: data.map(d => d.value)
+            }],
+            chart: {
+                type: 'area',
+                height: 300,
+                background: 'transparent',
+                toolbar: { show: false },
+                animations: { enabled: true, speed: 800 },
+                zoom: { enabled: false },
+                selection: { enabled: false }
+            },
+            colors: ['#f59e0b'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 2 },
+            xaxis: {
+                categories: data.map(d => d.label),
+                labels: {
+                    style: { colors: '#9ca3af', fontSize: '11px' },
+                    rotate: -45
+                }
+            },
+            yaxis: {
+                labels: { style: { colors: '#9ca3af' } }
+            },
+            grid: {
+                borderColor: 'rgba(55, 65, 81, 0.3)',
+                strokeDashArray: 4
+            },
+            tooltip: {
+                theme: 'dark',
+                y: { formatter: (val: number) => `${val.toLocaleString()} kcal` }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: 'vertical',
+                    shadeIntensity: 0.5,
+                    gradientToColors: ['#ef4444'],
+                    opacityFrom: 0.7,
+                    opacityTo: 0.1
+                }
+            }
+        };
+    }
+
+    private updateActiveBasalChart() {
+        const data = this.getActiveBasalChartData();
+        this.activeBasalChartOptions = {
+            series: [
+                { name: 'Active', data: data.map(d => d.active) },
+                { name: 'Basal', data: data.map(d => d.basal) }
+            ],
+            chart: {
+                type: 'line',
+                height: 300,
+                background: 'transparent',
+                toolbar: { show: false },
+                zoom: { enabled: false },
+                selection: { enabled: false }
+            },
+            colors: ['#22d3ee', '#a855f7'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 3 },
+            xaxis: {
+                categories: data.map(d => d.label),
+                labels: {
+                    style: { colors: '#9ca3af', fontSize: '11px' },
+                    rotate: -45
+                }
+            },
+            yaxis: {
+                labels: { style: { colors: '#9ca3af' } }
+            },
+            grid: {
+                borderColor: 'rgba(55, 65, 81, 0.3)',
+                strokeDashArray: 4
+            },
+            tooltip: {
+                theme: 'dark',
+                y: { formatter: (val: number) => `${val.toLocaleString()} kcal` }
+            },
+            legend: {
+                labels: { colors: '#e5e7eb' },
+                position: 'top'
+            },
+            fill: { opacity: 1 }
+        };
+    }
+
+    private updateMetricGoalChart() {
+        const data = this.getMetricGoalChartData(this.selectedActivityMetric);
+        const unit = this.getMetricUnit(this.selectedActivityMetric);
+        this.metricGoalChartOptions = {
+            series: [
+                { name: 'Achieved', data: data.map(d => d.achieved) },
+                { name: 'Goal', data: data.map(d => d.goal) }
+            ],
+            chart: {
+                type: 'line',
+                height: 300,
+                background: 'transparent',
+                toolbar: { show: false },
+                zoom: { enabled: false },
+                selection: { enabled: false }
+            },
+            colors: ['#10b981', '#f59e0b'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 3 },
+            xaxis: {
+                categories: data.map(d => d.label),
+                labels: {
+                    style: { colors: '#9ca3af', fontSize: '11px' },
+                    rotate: -45
+                }
+            },
+            yaxis: {
+                labels: { style: { colors: '#9ca3af' } }
+            },
+            grid: {
+                borderColor: 'rgba(55, 65, 81, 0.3)',
+                strokeDashArray: 4
+            },
+            tooltip: {
+                theme: 'dark',
+                y: { formatter: (val: number) => `${val.toLocaleString()} ${unit}` }
+            },
+            legend: {
+                labels: { colors: '#e5e7eb' },
+                position: 'top'
+            },
+            fill: { opacity: 1 }
+        };
     }
 
     private fetchDataForCurrentRange() {
@@ -196,6 +442,7 @@ export class Dashboard implements OnInit, OnDestroy {
                 this.activityLevelsAll = this.computeActivityLevels(this.healthData);
                 this.calculateAllStats();
                 this.animateStepsValue();
+                this.updateCharts();
             },
             error: (err) => {
                 console.error('Failed to load daily summaries', err);
@@ -461,39 +708,6 @@ export class Dashboard implements OnInit, OnDestroy {
         return Math.max(...arr.map((p) => Math.max(Number(p.active || 0), Number(p.basal || 0))));
     }
 
-    private getXYActiveBasal(which: 'active' | 'basal'): Array<{ x: number; y: number }> {
-        const series = this.getActiveBasalChartData();
-        const max = this.getDualMax() || 1;
-        const n = series.length;
-        if (n === 0) return [];
-        if (n === 1) {
-            const v = Math.min(100, Math.max(0, (series[0][which] / max) * 100));
-            return [{ x: 0, y: 100 - v }];
-        }
-        return series.map((pt, i) => {
-            const x = (i / (n - 1)) * 100;
-            const v = Math.min(100, Math.max(0, ((pt[which] as number) / max) * 100));
-            const y = 100 - v;
-            return { x, y };
-        });
-    }
-    getSvgLinePointsActiveBasal(which: 'active' | 'basal'): string {
-        const xy = this.getXYActiveBasal(which);
-        return xy.map((p) => `${p.x},${p.y}`).join(' ');
-    }
-
-    // Labels sampling for dual chart
-    getActiveBasalLabelPoints(): ChartPoint[] {
-        const src = this.getActiveBasalChartData().map((d) => ({ label: d.label, value: 0 }));
-        const maxLabels = 12;
-        if (src.length <= maxLabels) return src;
-        const step = Math.ceil(src.length / maxLabels);
-        const sampled: ChartPoint[] = [];
-        for (let i = 0; i < src.length; i += step) sampled.push(src[i]);
-        if (sampled[sampled.length - 1] !== src[src.length - 1]) sampled.push(src[src.length - 1]);
-        return sampled;
-    }
-
     getChartTitle(kind: 'steps' | 'calories'): string {
         if (this.selectedView === 'weekly') {
             return kind === 'steps' ? 'Weekly Steps' : 'Weekly Calories';
@@ -501,7 +715,7 @@ export class Dashboard implements OnInit, OnDestroy {
         if (this.selectedView === 'trends') {
             return kind === 'steps' ? '7-day Steps Avg' : '7-day Calories Avg';
         }
-        return kind === 'steps' ? 'Steps Trend' : 'Calories Burned';
+        return kind === 'steps' ? 'Steps Trend' : 'Calories Burned Trend';
     }
 
     getMaxChartValue(kind: 'steps' | 'calories'): number {
@@ -527,150 +741,9 @@ export class Dashboard implements OnInit, OnDestroy {
         return sampled;
     }
 
-    // Chart type state per chart
-    stepsChartType: ChartType = 'column';
-    caloriesChartType: ChartType = 'column';
-
-    setStepsChartType(t: ChartType) {
-        this.stepsChartType = t;
-    }
-    setCaloriesChartType(t: ChartType) {
-        this.caloriesChartType = t;
-    }
-
-    // SVG helpers for line/area charts (normalized to 0..100 viewBox)
-    private getSeries(kind: 'steps' | 'calories'): ChartPoint[] {
-        return kind === 'steps' ? this.getStepsChartData() : this.getCaloriesChartData();
-    }
-    private getXY(kind: 'steps' | 'calories'): Array<{ x: number; y: number }> {
-        const series = this.getSeries(kind);
-        const max = this.getMaxChartValue(kind) || 1;
-        const n = series.length;
-        if (n === 0) return [];
-        if (n === 1) {
-            const v = Math.min(100, Math.max(0, (series[0].value / max) * 100));
-            return [{ x: 0, y: 100 - v }];
-        }
-        return series.map((pt, i) => {
-            const x = (i / (n - 1)) * 100;
-            const v = Math.min(100, Math.max(0, (pt.value / max) * 100));
-            const y = 100 - v; // invert for SVG coordinate system
-            return { x, y };
-        });
-    }
-    getSvgLinePoints(kind: 'steps' | 'calories'): string {
-        const xy = this.getXY(kind);
-        return xy.map((p) => `${p.x},${p.y}`).join(' ');
-    }
-    getSvgAreaPoints(kind: 'steps' | 'calories'): string {
-        const xy = this.getXY(kind);
-        if (xy.length === 0) return '';
-        if (xy.length === 1) {
-            const p = xy[0];
-            return `0,100 ${p.x},${p.y} 0,100`;
-        }
-        const start = `0,100`;
-        const mid = xy.map((p) => `${p.x},${p.y}`).join(' ');
-        const end = `100,100`;
-        return `${start} ${mid} ${end}`;
-    }
-
-    // Stable identity for *ngFor to prevent re-render animations
-    trackByIdx(index: number, _item: unknown) {
-        return index;
-    }
-
-    // Tooltip handlers for column bars
-    showBarTooltip(kind: 'steps' | 'calories', idx: number, ev: MouseEvent) {
-        const series = this.getSeries(kind);
-        const barEl = ev.currentTarget as HTMLElement;
-        const bars = barEl.parentElement as HTMLElement; // .chart-bars
-        const wrapper = barEl.closest('.simple-chart') as HTMLElement; // positioned container
-        if (!bars || !wrapper) return;
-        const barRect = barEl.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const top = Math.max(0, barRect.top - wrapperRect.top - 12);
-        const left =
-            barRect.left - wrapperRect.left + barEl.offsetWidth / 2 + (wrapper.scrollLeft || 0);
-        const point = series[idx];
-        const tgt = this.tooltip[kind];
-        tgt.visible = true;
-        tgt.label = point?.label ?? '';
-        tgt.value = Number(point?.value ?? 0);
-        tgt.left = left;
-        tgt.top = top;
-    }
-
-    hideBarTooltip(kind: 'steps' | 'calories') {
-        const tgt = this.tooltip[kind];
-        tgt.visible = false;
-    }
-
-    // Tooltip for SVG charts (line/area)
-    onSvgMove(kind: 'steps' | 'calories', ev: MouseEvent) {
-        const series = this.getSeries(kind);
-        const svg = ev.currentTarget as SVGElement;
-        const wrapper = svg.closest('.simple-chart') as HTMLElement;
-        if (!wrapper || !series.length) return;
-        const svgRect = svg.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const relX = ev.clientX - svgRect.left;
-        const pctX = Math.min(1, Math.max(0, relX / svgRect.width));
-        const i = Math.round(pctX * (series.length - 1));
-        const max = this.getMaxChartValue(kind) || 1;
-        const value = Number(series[i]?.value ?? 0);
-        const vPct = Math.min(100, Math.max(0, (value / max) * 100));
-        const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
-        const left =
-            svgRect.left - wrapperRect.left + pctX * svgRect.width + (wrapper.scrollLeft || 0);
-        const tgt = this.tooltip[kind];
-        tgt.visible = true;
-        tgt.label = series[i]?.label ?? '';
-        tgt.value = value;
-        tgt.left = left;
-        tgt.top = top;
-    }
-
-    onSvgLeave(kind: 'steps' | 'calories') {
-        const tgt = this.tooltip[kind];
-        tgt.visible = false;
-    }
-
-    // Tooltip for dual series chart
-    onSvgMoveDual(ev: MouseEvent) {
-        const series = this.getActiveBasalChartData();
-        const svg = ev.currentTarget as SVGElement;
-        const wrapper = svg.closest('.simple-chart') as HTMLElement;
-        if (!wrapper || !series.length) return;
-        const svgRect = svg.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const relX = ev.clientX - svgRect.left;
-        const pctX = Math.min(1, Math.max(0, relX / svgRect.width));
-        const i = Math.round(pctX * (series.length - 1));
-        const max = this.getDualMax() || 1;
-        const a = Number(series[i]?.active ?? 0);
-        const b = Number(series[i]?.basal ?? 0);
-        const vPct = Math.max(
-            Math.min(100, Math.max(0, (a / max) * 100)),
-            Math.min(100, Math.max(0, (b / max) * 100))
-        );
-        const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
-        const left =
-            svgRect.left - wrapperRect.left + pctX * svgRect.width + (wrapper.scrollLeft || 0);
-        const tgt = this.tooltip.activeBasal;
-        tgt.visible = true;
-        tgt.label = series[i]?.label ?? '';
-        tgt.active = a;
-        tgt.basal = b;
-        tgt.left = left;
-        tgt.top = top;
-    }
-    onSvgLeaveDual() {
-        this.tooltip.activeBasal.visible = false;
-    }
-
     setSelectedView(view: string) {
         this.selectedView = view;
+        this.updateCharts();
     }
 
     getViewButtonClass(view: string): string {
@@ -679,6 +752,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
     setMergedChartView(view: 'activeBasal' | 'metricGoal') {
         this.mergedChartView = view;
+    }
+
+    trackByIdx(index: number, _item: unknown) {
+        return index;
     }
 
     calculateStats(field: keyof HealthData): Stats {
@@ -872,6 +949,7 @@ export class Dashboard implements OnInit, OnDestroy {
         m: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
     ) {
         this.selectedActivityMetric = m;
+        this.updateMetricGoalChart();
     }
     // Weekly Rings grid (7 rows per week)
     selectedRingMetric:
@@ -953,70 +1031,6 @@ export class Dashboard implements OnInit, OnDestroy {
         const arr = this.getMetricGoalChartData(metric);
         if (!arr.length) return 0;
         return Math.max(...arr.map((p) => Math.max(Number(p.achieved || 0), Number(p.goal || 0))));
-    }
-    private getXYMetricGoal(which: 'achieved' | 'goal'): Array<{ x: number; y: number }> {
-        const series = this.getMetricGoalChartData(this.selectedActivityMetric);
-        const max = this.getMetricGoalMax(this.selectedActivityMetric) || 1;
-        const n = series.length;
-        if (n === 0) return [];
-        if (n === 1) {
-            const v = Math.min(100, Math.max(0, ((series[0] as any)[which] / max) * 100));
-            return [{ x: 0, y: 100 - v }];
-        }
-        return series.map((pt, i) => {
-            const x = (i / (n - 1)) * 100;
-            const v = Math.min(100, Math.max(0, (((pt as any)[which] as number) / max) * 100));
-            const y = 100 - v;
-            return { x, y };
-        });
-    }
-    getSvgLinePointsMetricGoal(which: 'achieved' | 'goal'): string {
-        const xy = this.getXYMetricGoal(which);
-        return xy.map((p) => `${p.x},${p.y}`).join(' ');
-    }
-    getMetricGoalLabelPoints(): ChartPoint[] {
-        const src = this.getMetricGoalChartData(this.selectedActivityMetric).map((d) => ({
-            label: d.label,
-            value: 0,
-        }));
-        const maxLabels = 12;
-        if (src.length <= maxLabels) return src;
-        const step = Math.ceil(src.length / maxLabels);
-        const sampled: ChartPoint[] = [];
-        for (let i = 0; i < src.length; i += step) sampled.push(src[i]);
-        if (sampled[sampled.length - 1] !== src[src.length - 1]) sampled.push(src[src.length - 1]);
-        return sampled;
-    }
-    onSvgMoveMetricGoal(ev: MouseEvent) {
-        const series = this.getMetricGoalChartData(this.selectedActivityMetric);
-        const svg = ev.currentTarget as SVGElement;
-        const wrapper = svg.closest('.simple-chart') as HTMLElement;
-        if (!wrapper || !series.length) return;
-        const svgRect = svg.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const relX = ev.clientX - svgRect.left;
-        const pctX = Math.min(1, Math.max(0, relX / svgRect.width));
-        const i = Math.round(pctX * (series.length - 1));
-        const max = this.getMetricGoalMax(this.selectedActivityMetric) || 1;
-        const a = Number(series[i]?.achieved ?? 0);
-        const g = Number(series[i]?.goal ?? 0);
-        const vPct = Math.max(
-            Math.min(100, Math.max(0, (a / max) * 100)),
-            Math.min(100, Math.max(0, (g / max) * 100))
-        );
-        const top = Math.max(0, svgRect.height * (1 - vPct / 100) - 12);
-        const left =
-            svgRect.left - wrapperRect.left + pctX * svgRect.width + (wrapper.scrollLeft || 0);
-        const tgt = this.tooltip.metricGoal;
-        tgt.visible = true;
-        tgt.label = series[i]?.label ?? '';
-        tgt.achieved = a;
-        tgt.goal = g;
-        tgt.left = left;
-        tgt.top = top;
-    }
-    onSvgLeaveMetricGoal() {
-        this.tooltip.metricGoal.visible = false;
     }
 
     animateStepsValue() {
