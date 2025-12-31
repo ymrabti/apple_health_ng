@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GlobalSummaryStats } from './auth.service';
@@ -40,5 +40,14 @@ export class HealthService {
             `${environment.apiBase}/apple-health/stats-summaries`,
             { params }
         );
+    }
+
+    uploadHealthExport(file: File): Observable<HttpEvent<any>> {
+        const formData = new FormData();
+        formData.append('file', file, file.name || 'export.zip');
+        return this.http.post(`${environment.apiBase}/apple-health/import`, formData, {
+            observe: 'events',
+            reportProgress: true,
+        });
     }
 }

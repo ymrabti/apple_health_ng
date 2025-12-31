@@ -14,9 +14,10 @@ import { Signin } from './auth/signin/signin';
 import { Signup } from './auth/signup/signup';
 import { OauthCallback } from './auth/oauth-callback/oauth-callback';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { ImportHealth } from './import-health/import-health';
 
 @NgModule({
-    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback],
+    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth],
     imports: [BrowserModule, FormsModule, AppRoutingModule],
     providers: [
         provideBrowserGlobalErrorListeners(),

@@ -1,0 +1,46 @@
+<div class="import-container">
+  <div class="import-card">
+    <div class="header">
+      <div>
+        <p class="eyebrow">Apple Health</p>
+        <h1>Import your export file</h1>
+        <p class="lede">Drop the export.zip or export.xml you downloaded from your iPhone Health app. We will parse it and update your dashboards.</p>
+      </div>
+      <button type="button" class="ghost" (click)="goBack()">Back to dashboard</button>
+    </div>
+
+    <div class="dropzone"
+         [class.dragging]="dragging"
+         (drop)="onDrop($event)"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)"
+         (click)="fileInput.click()">
+      <input #fileInput class="file-input" type="file" accept=".zip,.xml" (change)="onFileChange($event)" />
+      <div class="dropzone-inner">
+        <div class="icon">⬆</div>
+        <div class="copy">
+          <div class="headline">Drag & drop your export</div>
+          <div class="helper">or <span class="link" (click)="$event.stopPropagation(); fileInput.click();">browse</span> to choose a file</div>
+          <p class="hint">Accepted: export.zip, export.xml • Recommended: keep under 50MB</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="file-meta" *ngIf="file">
+      <div class="name">{{ file.name }}</div>
+      <div class="size">{{ file.size / 1024 / 1024 | number:'1.1-1' }} MB</div>
+      <div class="action-row">
+        <button class="secondary" type="button" (click)="upload()" [disabled]="uploading">Import now</button>
+        <button class="ghost" type="button" (click)="goBack()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="progress" *ngIf="uploading || progress > 0">
+      <div class="bar" [style.width.%]="progress"></div>
+      <span class="percent">{{ progress | number:'1.0-0' }}%</span>
+    </div>
+
+    <p class="status success" *ngIf="status">{{ status }}</p>
+    <p class="status error" *ngIf="error">{{ error }}</p>
+  </div>
+</div>

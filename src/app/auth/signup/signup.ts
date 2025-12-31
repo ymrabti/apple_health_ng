@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { SeoService } from '../../services/seo.service';
@@ -9,7 +9,7 @@ import { SeoService } from '../../services/seo.service';
     styleUrl: './signup.scss',
     standalone: false,
 })
-export class Signup implements OnInit {
+export class Signup implements OnInit, OnDestroy {
     email = '';
     userName = '';
     firstName = '';
@@ -17,6 +17,7 @@ export class Signup implements OnInit {
     password = '';
     confirmPassword = '';
     photo: File | null = null;
+    photoPreview: string | null = null;
     loading = false;
     error: string | null = null;
 
@@ -68,6 +69,18 @@ export class Signup implements OnInit {
 
     onFileSelected(event: Event) {
         const input = event.target as HTMLInputElement;
-        this.photo = input.files?.[0] ?? null;
+        const file = input.files?.[0];
+        if (!file) {
+            this.photo = null;
+            this.photoPreview = null;
+            return;
+        }
+        this.photo = file;
+        if (this.photoPreview) URL.revokeObjectURL(this.photoPreview);
+        this.photoPreview = URL.createObjectURL(file);
+    }
+
+    ngOnDestroy(): void {
+        if (this.photoPreview) URL.revokeObjectURL(this.photoPreview);
     }
 }

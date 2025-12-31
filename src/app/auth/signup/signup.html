@@ -34,10 +34,19 @@
         <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="••••••••" />
       </div>
 
-      <div class="field">
+      <div class="field photo-field">
         <label>Profile Photo</label>
-        <input type="file" name="photo" (change)="onFileSelected($event)" accept="image/*" />
-        <small *ngIf="photo">Selected: {{ photo.name }}</small>
+        <div class="avatar-picker">
+          <div class="avatar" [class.filled]="photoPreview">
+            <img *ngIf="photoPreview" [src]="photoPreview" alt="Selected avatar preview" />
+            <span *ngIf="!photoPreview">+</span>
+          </div>
+          <div class="avatar-actions">
+            <button type="button" class="btn-ghost" (click)="fileInput.click()">Choose Photo</button>
+            <small>{{ photo?.name || 'PNG or JPG, max 5MB' }}</small>
+          </div>
+          <input #fileInput class="file-input" type="file" name="photo" (change)="onFileSelected($event)" accept="image/*" />
+        </div>
       </div>
 
       <div class="actions">

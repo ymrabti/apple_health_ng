@@ -6,6 +6,7 @@ import { Signin } from './auth/signin/signin';
 import { Signup } from './auth/signup/signup';
 import { OauthCallback } from './auth/oauth-callback/oauth-callback';
 import { AuthGuard } from './guards/auth.guard';
+import { ImportHealth } from './import-health/import-health';
 
 const routes: Routes = [
   {
@@ -27,6 +28,11 @@ const routes: Routes = [
   {
     path: 'home',
     component: Dashboard,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'import',
+    component: ImportHealth,
     canActivate: [AuthGuard],
   },
   {
