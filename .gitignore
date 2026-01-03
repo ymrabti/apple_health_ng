@@ -40,3 +40,12 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Large model files
+src/assets/model/*.glb
+src/assets/model/*.gltf
+
+src/assets/model/Asuna/
+src/assets/model/HyperdimentionNeptunia/
+src/assets/model/Pio/
+src/assets/model/Tia/
