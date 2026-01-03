@@ -364,6 +364,70 @@ const monoChromeLight: Theme = {
     },
 };
 
+// BioGreen theme - Lime/Emerald (Health & Wellness)
+const bioGreenDark: Theme = {
+    id: 'biogreen-dark',
+    name: 'BioGreen Dark',
+    mode: 'dark',
+    colors: {
+        primary: '#84cc16',
+        primaryLight: '#a3e635',
+        primaryDark: '#65a30d',
+        primaryShadow: 'rgba(132, 204, 22, 0.25)',
+        secondary: '#22c55e',
+        secondaryLight: '#4ade80',
+        secondaryDark: '#16a34a',
+        accent: '#10b981',
+        background: '#0a0f0a',
+        backgroundAlt: '#0f1a0f',
+        surface: 'rgba(20, 30, 20, 0.5)',
+        surfaceAlt: 'rgba(30, 45, 30, 0.6)',
+        textPrimary: '#e7f9e7',
+        textSecondary: '#a3e635',
+        textMuted: '#84cc16',
+        textHeading: '#f0fdf4',
+        border: 'rgba(132, 204, 22, 0.3)',
+        borderLight: 'rgba(132, 204, 22, 0.2)',
+        success: '#22c55e',
+        warning: '#f59e0b',
+        error: '#ef4444',
+        info: '#3b82f6',
+        iconFilter: 'invert(1) opacity(0.85)',
+    },
+    typography: {
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+        fontFamilyHeading: "'Montserrat', 'Inter', sans-serif",
+        fontFamilyMono: "'Fira Code', 'Courier New', monospace",
+        fontSizeBase: '1rem',
+        fontSizeSmall: '0.875rem',
+        fontSizeLarge: '1.125rem',
+        fontWeightNormal: 400,
+        fontWeightMedium: 500,
+        fontWeightBold: 600,
+    },
+};
+
+const bioGreenLight: Theme = {
+    ...bioGreenDark,
+    id: 'biogreen-light',
+    name: 'BioGreen Light',
+    mode: 'light',
+    colors: {
+        ...bioGreenDark.colors,
+        background: '#fafff9',
+        backgroundAlt: '#f0fdf4',
+        surface: 'rgba(240, 253, 244, 0.8)',
+        surfaceAlt: 'rgba(220, 252, 231, 0.9)',
+        textPrimary: '#14532d',
+        textSecondary: '#15803d',
+        textMuted: '#16a34a',
+        textHeading: '#052e16',
+        border: 'rgba(132, 204, 22, 0.3)',
+        borderLight: 'rgba(163, 230, 53, 0.2)',
+        iconFilter: 'opacity(0.7)',
+    },
+};
+
 export const THEMES: Theme[] = [
     cyberDark,
     cyberLight,
@@ -373,6 +437,8 @@ export const THEMES: Theme[] = [
     sunsetLight,
     forestDark,
     forestLight,
+    bioGreenDark,
+    bioGreenLight,
     monoChromeDark,
     monoChromeLight,
 ];

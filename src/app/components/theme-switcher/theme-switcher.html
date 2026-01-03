@@ -1,4 +1,7 @@
 <div class="theme-switcher" [class.expanded]="isExpanded">
+    <!-- Backdrop (moved to top for proper rendering order) -->
+    <!-- <div class="backdrop" *ngIf="isExpanded" (click)="toggleExpanded()"></div> -->
+
     <!-- Toggle Button -->
     <button class="theme-toggle-btn" (click)="toggleExpanded()" [attr.aria-label]="'Theme Switcher'">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -70,7 +73,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Backdrop -->
-    <div class="backdrop" *ngIf="isExpanded" (click)="toggleExpanded()"></div>
 </div>
