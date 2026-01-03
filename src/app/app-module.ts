@@ -17,9 +17,10 @@ import { authInterceptor } from './interceptors/auth.interceptor';
 import { ImportHealth } from './import-health/import-health';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AiMascotComponent } from './components/ai-mascot/ai-mascot';
+import { AnimeMascot } from './components/anime-mascot/anime-mascot';
 
 @NgModule({
-    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth, AiMascotComponent],
+    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth, AiMascotComponent, AnimeMascot],
     imports: [BrowserModule, FormsModule, AppRoutingModule, NgApexchartsModule],
     providers: [
         provideBrowserGlobalErrorListeners(),
