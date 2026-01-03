@@ -42,6 +42,21 @@
                     </div>
                 </div>
 
+                <!-- Monthly Period Chips -->
+                <div class="monthly-periods">
+                    <label class="period-label">Quick Select:</label>
+                    <div class="period-chips">
+                        <button 
+                            *ngFor="let period of monthlyPeriods" 
+                            class="period-chip"
+                            [class.active]="selectedMonthPeriod === period.value"
+                            (click)="selectMonthPeriod(period)"
+                            [title]="period.label + ' ' + period.year">
+                            {{ period.label }}
+                        </button>
+                    </div>
+                </div>
+
                 <div class="view-toggle">
                     <button *ngFor="let view of views" [class]="getViewButtonClass(view)" (click)="setSelectedView(view)">
                         {{ view | titlecase }}
