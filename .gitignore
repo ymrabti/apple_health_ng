@@ -42,9 +42,6 @@ testem.log
 Thumbs.db
 
 # Large model files
-src/assets/model/*.glb
-src/assets/model/*.gltf
-
 src/assets/model/
 src/assets/model/Asuna/
 src/assets/model/HyperdimentionNeptunia/
