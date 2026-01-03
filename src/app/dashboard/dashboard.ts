@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    OnDestroy,
+    ViewChild,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, GlobalSummaryStats, UserInfos } from '../services/auth.service';
 import { HealthService } from '../services/health.service';
@@ -78,7 +85,9 @@ interface ActivitySummary {
     appleStandHours: number;
     appleStandHoursGoal: number;
 }
-type ChartType = 'column' | 'line' | 'area';
+
+
+
 @Component({
     selector: 'app-dashboard',
     standalone: false,
@@ -97,9 +106,9 @@ export class Dashboard implements OnInit, OnDestroy {
     // Custom date range inputs (YYYY-MM-DD)
     customFrom: string | null = null;
     customTo: string | null = null;
-    
+
     // Monthly period chips (last 12 months)
-    monthlyPeriods: Array<{label: string; value: string; year: number; month: number}> = [];
+    monthlyPeriods: Array<{ label: string; value: string; year: number; month: number }> = [];
     selectedMonthPeriod: string | null = null;
 
     stepsStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
@@ -166,13 +175,13 @@ export class Dashboard implements OnInit, OnDestroy {
             fill: { opacity: 1 },
         };
     }
-
     constructor(
         private auth: AuthService,
         private router: Router,
         private health: HealthService,
-        private seo: SeoService
-    ) {}
+        private seo: SeoService,
+    ) {
+    }
 
     ngOnInit() {
         // Page-specific SEO
@@ -603,37 +612,49 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     private generateMonthlyPeriods() {
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                           'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthNames = [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December',
+        ];
         const today = new Date();
         this.monthlyPeriods = [];
-        
+
         for (let i = 0; i < 12; i++) {
             const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
             const year = date.getFullYear();
             const month = date.getMonth();
             const value = `${year}-${String(month + 1).padStart(2, '0')}`;
-            
+
             this.monthlyPeriods.push({
                 label: monthNames[month],
                 value: value,
                 year: year,
-                month: month
+                month: month,
             });
         }
     }
 
-    selectMonthPeriod(period: {label: string; value: string; year: number; month: number}) {
+    selectMonthPeriod(period: { label: string; value: string; year: number; month: number }) {
         this.selectedMonthPeriod = period.value;
-        
+
         // Set date range to the selected month
         const firstDay = new Date(period.year, period.month, 1);
         const lastDay = new Date(period.year, period.month + 1, 0);
-        
+
         this.customFrom = formatDate(firstDay);
         this.customTo = formatDate(lastDay);
         this.dateRange = 'custom';
-        
+
         this.fetchDataForCurrentRange();
     }
 
@@ -1042,7 +1063,7 @@ export class Dashboard implements OnInit, OnDestroy {
         | 'activeEnergyBurned'
         | 'appleMoveTime'
         | 'appleExerciseTime'
-        | 'appleStandHours' = 'appleMoveTime';
+        | 'appleStandHours' = 'activeEnergyBurned';
     setSelectedRingMetric(
         m: 'activeEnergyBurned' | 'appleMoveTime' | 'appleExerciseTime' | 'appleStandHours'
     ) {
