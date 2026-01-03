@@ -1,0 +1,76 @@
+<div class="theme-switcher" [class.expanded]="isExpanded">
+    <!-- Toggle Button -->
+    <button class="theme-toggle-btn" (click)="toggleExpanded()" [attr.aria-label]="'Theme Switcher'">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+        </svg>
+    </button>
+
+    <!-- Expanded Panel -->
+    <div class="theme-panel" *ngIf="isExpanded">
+        <div class="panel-header">
+            <h3>Theme Settings</h3>
+            <button class="close-btn" (click)="toggleExpanded()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+            <button 
+                class="mode-btn" 
+                [class.active]="currentTheme?.mode === 'light'"
+                (click)="toggleMode()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M17.66 6.34l1.41-1.41"></path>
+                </svg>
+                <span>Light</span>
+            </button>
+            <button 
+                class="mode-btn" 
+                [class.active]="currentTheme?.mode === 'dark'"
+                (click)="toggleMode()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <span>Dark</span>
+            </button>
+        </div>
+
+        <!-- Theme List -->
+        <div class="theme-list">
+            <h4>Theme</h4>
+            <div class="theme-options">
+                <button 
+                    *ngFor="let group of themeGroups | keyvalue"
+                    class="theme-option"
+                    [class.active]="isThemeActive(group.key)"
+                    (click)="selectTheme(group.key)">
+                    <div class="theme-preview">
+                        <div class="preview-colors">
+                            <span class="color-dot" [style.background]="group.value[0].colors.primary"></span>
+                            <span class="color-dot" [style.background]="group.value[0].colors.secondary"></span>
+                            <span class="color-dot" [style.background]="group.value[0].colors.accent"></span>
+                        </div>
+                    </div>
+                    <span class="theme-name">{{ formatThemeName(group.key) }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backdrop -->
+    <div class="backdrop" *ngIf="isExpanded" (click)="toggleExpanded()"></div>
+</div>

@@ -9,21 +9,56 @@ body {
 	box-sizing: border-box;
 }
 
-/* Typography color system */
+/* Default fallback values - will be overridden by ThemeService */
 :root {
-	--text-heading: #ffffff;      /* prominent headings on dark bg */
-	--text-primary: #e5e7eb;      /* main body text (gray-200) */
-	--text-secondary: #9ca3af;    /* subdued labels (gray-400) */
-	--text-muted: #6b7280;        /* muted captions (gray-500) */
+	/* Colors */
+	--primary: #22d3ee;
+	--primary-light: #67e8f9;
+	--primary-dark: #06b6d4;
+	--secondary: #a855f7;
+	--secondary-light: #c084fc;
+	--secondary-dark: #9333ea;
+	--accent: #ec4899;
+	--background: #000000;
+	--background-alt: #0a0a0a;
+	--surface: rgba(17, 24, 39, 0.5);
+	--surface-alt: rgba(31, 41, 55, 0.6);
+	--text-primary: #e5e7eb;
+	--text-secondary: #9ca3af;
+	--text-muted: #6b7280;
+	--text-heading: #ffffff;
+	--border: rgba(55, 65, 81, 0.5);
+	--border-light: rgba(75, 85, 99, 0.3);
+	--success: #10b981;
+	--warning: #f59e0b;
+	--error: #ef4444;
+	--info: #3b82f6;
+
+	/* Typography */
+	--font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+	--font-family-heading: 'Orbitron', 'Rajdhani', sans-serif;
+	--font-family-mono: 'Fira Code', 'Courier New', monospace;
+	--font-size-base: 1rem;
+	--font-size-small: 0.875rem;
+	--font-size-large: 1.125rem;
+	--font-weight-normal: 400;
+	--font-weight-medium: 500;
+	--font-weight-bold: 700;
 }
 
 body {
+	font-family: var(--font-family);
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-normal);
 	color: var(--text-primary);
-	background-color: #000; /* ensure dark base matches dashboard */
+	background-color: var(--background);
+	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3, .title, .main-title, .chart-title, .analytics-title {
+h1, h2, h3, h4, h5, h6, .title, .main-title, .chart-title, .analytics-title {
+	font-family: var(--font-family-heading);
 	color: var(--text-heading);
+	font-weight: var(--font-weight-bold);
 }
 
 p, small, .subtitle, .footer-label, .progress-label, .chart-info, .activity-label, .stat-label {

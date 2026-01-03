@@ -1,8 +1,8 @@
 .dashboard-container {
     min-height: 100vh;
-    background: #000;
+    background: var(--background);
     padding: 1.5rem;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-family);
 }
 
 .max-w-7xl {
@@ -19,13 +19,13 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(0, 0, 0, 0.95);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     padding: 1rem 0;
     margin: -1.5rem -1.5rem 0 -1.5rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-    border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+    border-bottom: 1px solid var(--border-light);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -70,7 +70,7 @@
     /* Prevent wide children from expanding the grid */
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
-    background: rgba(17, 24, 39, 0.5);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 0.75rem;
@@ -96,7 +96,7 @@
         overflow: hidden;
 
         option {
-            background: #111827;
+            background: var(--background-alt);
         }
     }
 
@@ -109,9 +109,9 @@
     }
 
     .date-input {
-        background: rgba(17, 24, 39, 0.4);
+        background: var(--surface-alt);
         color: var(--text-primary);
-        border: 1px solid rgba(55, 65, 81, 0.6);
+        border: 1px solid var(--border);
         border-radius: 0.5rem;
         padding: 0.35rem 0.5rem;
         font-size: 0.875rem;
@@ -170,7 +170,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: rgba(17, 24, 39, 0.5);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 0.75rem;
@@ -196,8 +196,8 @@
             font-size: 0.8rem;
             font-weight: 500;
             border-radius: 9999px;
-            border: 1px solid rgba(55, 65, 81, 0.6);
-            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid var(--border);
+            background: var(--surface-alt);
             color: #9ca3af;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -232,7 +232,7 @@
 
 .view-toggle, .logout-section {
     display: flex;
-    background: rgba(17, 24, 39, 0.5);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 0.75rem;
@@ -269,7 +269,7 @@
 .logout-section {
     display: flex;
     align-items: center;
-    background: rgba(17, 24, 39, 0.5);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 0.75rem;
@@ -324,7 +324,7 @@
 }
 
 .stat-card {
-    background: rgba(17, 24, 39, 0.5);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 1rem;
@@ -501,7 +501,7 @@
 }
 
 .chart-container {
-    background: rgba(17, 24, 39, 0.5);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 1rem;
@@ -549,7 +549,7 @@
         position: absolute;
         inset: 5px;
         border-radius: 50%;
-        background: rgba(17, 24, 39, 0.9);
+        background: var(--surface-alt);
         border: 1px solid rgba(55,65,81,0.6);
     }
     /* metric colors */
@@ -603,7 +603,7 @@
 .chart-type-toggle {
     display: flex;
     gap: 0.25rem;
-    background: rgba(17, 24, 39, 0.6);
+    background: var(--surface-alt);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 0.5rem;
     padding: 0.25rem;
@@ -660,7 +660,7 @@
 }
 
 .analytics-card {
-    background: rgba(17, 24, 39, 0.5);
+    background: var(--surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(55, 65, 81, 0.5);
     border-radius: 1rem;
@@ -704,7 +704,7 @@
     position: absolute;
     inset: 18px;
     border-radius: 50%;
-    background: rgba(17, 24, 39, 0.9);
+    background: var(--surface-alt);
     border: 1px solid rgba(55, 65, 81, 0.6);
     z-index: 1;
 }
@@ -1027,3 +1027,4 @@
     background: rgba(239, 68, 68, 0.12);
     color: #ef4444;
 }
+

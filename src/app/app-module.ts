@@ -19,9 +19,10 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { AiMascotComponent } from './components/ai-mascot/ai-mascot';
 import { AnimeMascot } from './components/anime-mascot/anime-mascot';
 import { Particles } from './components/particles/particles';
+import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
 
 @NgModule({
-    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth, AiMascotComponent, AnimeMascot, Particles],
+    declarations: [App, VerifyEmail, Dashboard, Signin, Signup, OauthCallback, ImportHealth, AiMascotComponent, AnimeMascot, Particles, ThemeSwitcher],
     imports: [BrowserModule, FormsModule, AppRoutingModule, NgApexchartsModule],
     providers: [
         provideBrowserGlobalErrorListeners(),

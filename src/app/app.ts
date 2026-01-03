@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SeoService } from './services/seo.service';
+import { ThemeService } from './services/theme.service';
 
 
 @Component({
@@ -11,9 +12,12 @@ import { SeoService } from './services/seo.service';
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  constructor(private seo: SeoService, private router: Router) {}
+  constructor(private seo: SeoService, private router: Router, private themeService: ThemeService) {}
 
   ngOnInit() {
+    // Initialize theme service (loads saved theme from localStorage)
+    this.themeService.getCurrentTheme();
+    
     // Set default site-wide SEO
     this.seo.setDefaults();
     // Add Organization JSON-LD

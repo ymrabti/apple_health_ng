@@ -1,0 +1,263 @@
+.theme-switcher {
+    position: relative;
+}
+
+.theme-toggle-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    &:hover {
+        background: var(--surface-alt);
+        border-color: var(--primary);
+        transform: scale(1.05);
+    }
+}
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    animation: fadeIn 0.2s ease;
+}
+
+.theme-panel {
+    position: fixed;
+    top: 5rem;
+    right: 1rem;
+    width: 22rem;
+    max-width: 90vw;
+    background: var(--surface);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    animation: slideDown 0.3s ease;
+
+    @media (max-width: 768px) {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 1rem 1rem 0 0;
+        animation: slideUp 0.3s ease;
+    }
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h3 {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-heading);
+    }
+
+    .close-btn {
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        &:hover {
+            background: var(--surface-alt);
+            color: var(--text-primary);
+        }
+    }
+}
+
+.mode-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.25rem;
+    background: var(--background-alt);
+    border-radius: 0.75rem;
+}
+
+.mode-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .icon {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    &:hover {
+        color: var(--text-primary);
+        background: var(--surface);
+    }
+
+    &.active {
+        background: linear-gradient(
+            135deg,
+            var(--primary) 0%,
+            var(--secondary) 100%
+        );
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.theme-list {
+    h4 {
+        margin: 0 0 1rem 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+    }
+}
+
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 2px solid var(--border-light);
+    background: var(--background-alt);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: var(--border);
+        background: var(--surface);
+        transform: translateY(-2px);
+    }
+
+    &.active {
+        border-color: var(--primary);
+        background: var(--surface);
+        box-shadow: 0 0 0 2px rgba(var(--primary), 0.2);
+
+        .theme-name {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    }
+}
+
+.theme-preview {
+    width: 100%;
+    height: 3rem;
+    border-radius: 0.5rem;
+    background: var(--background);
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-colors {
+    display: flex;
+    gap: 0.375rem;
+}
+
+.color-dot {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    border: 2px solid var(--background);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-name {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
