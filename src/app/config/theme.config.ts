@@ -2,6 +2,7 @@ export interface ThemeColors {
     primary: string;
     primaryLight: string;
     primaryDark: string;
+    primaryShadow: string;
     secondary: string;
     secondaryLight: string;
     secondaryDark: string;
@@ -20,6 +21,7 @@ export interface ThemeColors {
     warning: string;
     error: string;
     info: string;
+    iconFilter: string;
 }
 
 export interface ThemeTypography {
@@ -51,6 +53,7 @@ const cyberDark: Theme = {
         primary: '#22d3ee',
         primaryLight: '#67e8f9',
         primaryDark: '#06b6d4',
+        primaryShadow: 'rgba(34, 211, 238, 0.25)',
         secondary: '#a855f7',
         secondaryLight: '#c084fc',
         secondaryDark: '#9333ea',
@@ -69,6 +72,7 @@ const cyberDark: Theme = {
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#3b82f6',
+        iconFilter: 'invert(1) opacity(0.85)',
     },
     typography: {
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
@@ -100,6 +104,7 @@ const cyberLight: Theme = {
         textHeading: '#111827',
         border: 'rgba(209, 213, 219, 0.8)',
         borderLight: 'rgba(229, 231, 235, 0.6)',
+        iconFilter: 'opacity(0.7)',
     },
 };
 
@@ -109,9 +114,11 @@ const oceanDark: Theme = {
     name: 'Ocean Dark',
     mode: 'dark',
     colors: {
+        iconFilter: 'invert(1) opacity(0.85)',
         primary: '#0ea5e9',
         primaryLight: '#38bdf8',
         primaryDark: '#0284c7',
+        primaryShadow: 'rgba(14, 165, 233, 0.25)',
         secondary: '#14b8a6',
         secondaryLight: '#2dd4bf',
         secondaryDark: '#0d9488',
@@ -161,6 +168,7 @@ const oceanLight: Theme = {
         textHeading: '#0f172a',
         border: 'rgba(203, 213, 225, 0.8)',
         borderLight: 'rgba(226, 232, 240, 0.6)',
+        iconFilter: 'opacity(0.7)',
     },
 };
 
@@ -173,6 +181,7 @@ const sunsetDark: Theme = {
         primary: '#f97316',
         primaryLight: '#fb923c',
         primaryDark: '#ea580c',
+        primaryShadow: 'rgba(249, 115, 22, 0.25)',
         secondary: '#d946ef',
         secondaryLight: '#e879f9',
         secondaryDark: '#c026d3',
@@ -191,6 +200,7 @@ const sunsetDark: Theme = {
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#3b82f6',
+        iconFilter: 'invert(1) opacity(0.85)',
     },
     typography: {
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
@@ -222,6 +232,7 @@ const sunsetLight: Theme = {
         textHeading: '#451a03',
         border: 'rgba(253, 230, 138, 0.8)',
         borderLight: 'rgba(254, 240, 138, 0.6)',
+        iconFilter: 'opacity(0.7)',
     },
 };
 
@@ -234,6 +245,7 @@ const forestDark: Theme = {
         primary: '#10b981',
         primaryLight: '#34d399',
         primaryDark: '#059669',
+        primaryShadow: 'rgba(16, 185, 129, 0.25)',
         secondary: '#14b8a6',
         secondaryLight: '#2dd4bf',
         secondaryDark: '#0d9488',
@@ -252,6 +264,7 @@ const forestDark: Theme = {
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#3b82f6',
+        iconFilter: 'invert(1) opacity(0.85)',
     },
     typography: {
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
@@ -283,6 +296,7 @@ const forestLight: Theme = {
         textHeading: '#052e16',
         border: 'rgba(187, 247, 208, 0.8)',
         borderLight: 'rgba(220, 252, 231, 0.6)',
+        iconFilter: 'opacity(0.7)',
     },
 };
 
@@ -295,6 +309,7 @@ const monoChromeDark: Theme = {
         primary: '#f5f5f5',
         primaryLight: '#ffffff',
         primaryDark: '#e5e5e5',
+        primaryShadow: 'rgba(245, 245, 245, 0.25)',
         secondary: '#a3a3a3',
         secondaryLight: '#d4d4d4',
         secondaryDark: '#737373',
@@ -313,6 +328,7 @@ const monoChromeDark: Theme = {
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#3b82f6',
+        iconFilter: 'invert(1) opacity(0.85)',
     },
     typography: {
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
@@ -344,6 +360,7 @@ const monoChromeLight: Theme = {
         textHeading: '#0a0a0a',
         border: 'rgba(212, 212, 212, 0.8)',
         borderLight: 'rgba(229, 229, 229, 0.6)',
+        iconFilter: 'opacity(0.7)',
     },
 };
 

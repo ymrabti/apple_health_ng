@@ -15,6 +15,7 @@ body {
 	--primary: #22d3ee;
 	--primary-light: #67e8f9;
 	--primary-dark: #06b6d4;
+	--primary-shadow: rgba(34, 211, 238, 0.25);
 	--secondary: #a855f7;
 	--secondary-light: #c084fc;
 	--secondary-dark: #9333ea;
@@ -33,6 +34,7 @@ body {
 	--warning: #f59e0b;
 	--error: #ef4444;
 	--info: #3b82f6;
+	--icon-filter: invert(1) opacity(0.85);
 
 	/* Typography */
 	--font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
