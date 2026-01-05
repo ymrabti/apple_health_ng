@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { Model } from './model';
 import { loadExternalResource } from './load_ressources';
+import { MascotTipsService, MascotTip } from '../../services/mascot-tips.service';
+import { Subscription } from 'rxjs';
 
 declare var loadlive2d: any;
 declare var Live2D: any;
 declare var data: any;
+declare var healthTips: any;
 
 @Component({
     selector: 'app-anime-mascot',
@@ -13,9 +16,10 @@ declare var data: any;
     styleUrl: './anime-mascot.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnimeMascot implements OnInit {
+export class AnimeMascot implements OnInit, OnDestroy {
     private i: any;
     private s: any = false;
+    private tipSubscription?: Subscription;
 
     private waifuTips = data.waifu.tips;
     public waifuTipsActive: boolean = true;
@@ -258,11 +262,25 @@ export class AnimeMascot implements OnInit {
         }
     }
 
-    constructor(private changeDetectorRef: ChangeDetectorRef) {
+    constructor(
+        private changeDetectorRef: ChangeDetectorRef,
+        private mascotTipsService: MascotTipsService
+    ) {
         changeDetectorRef.detach();
+        
+        // Merge health tips with existing waifu tips
+        if (typeof healthTips !== 'undefined' && healthTips.mouseover) {
+            this.waifuTips.mouseover = [...this.waifuTips.mouseover, ...healthTips.mouseover];
+        }
     }
 
     ngOnInit(): void {
+        // Subscribe to external tip messages from the service
+        this.tipSubscription = this.mascotTipsService.currentTip$.subscribe((tip: MascotTip | null) => {
+            if (tip) {
+                this.r(tip.message, tip.duration || 6000, tip.priority || 8);
+            }
+        });
         Promise.all([loadExternalResource('assets/js/live2d.min.js')])
             .then(() => {
                 this.changeDetectorRef.detectChanges();
@@ -284,6 +302,7 @@ export class AnimeMascot implements OnInit {
 				 .|/ /  ｉ：    ﾍ!    ＼  |
 				  kヽ>､ﾊ    _,.ﾍ､    /､!
 				  !'〈//｀Ｔ´', ＼ ｀'7'ｰr'
+
 				  ﾚ'ヽL__|___i,___,ンﾚ|ノ
 					  ﾄ-,/  |___./
 					  'ｰ'    !_,.:
@@ -292,5 +311,17 @@ export class AnimeMascot implements OnInit {
             .catch((err) => {
                 console.log(err);
             });
+    }
+
+    ngOnDestroy(): void {
+        // Clean up subscription
+        if (this.tipSubscription) {
+            this.tipSubscription.unsubscribe();
+        }
+
+        // Clean up event listeners
+        for (let event in this.windowEvent) {
+            window.removeEventListener(event, this.windowEvent[event]);
+        }
     }
 }

@@ -127,7 +127,7 @@
                 </div>
             </div>
 
-            <div class="stat-card calories-card">
+            <div class="stat-card calories-card" (mouseenter)="onCardHover('calories')" (mouseleave)="onCardLeave('calories')">
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container calories-icon">
@@ -181,7 +181,7 @@
                 </div>
             </div>
 
-            <div class="stat-card distance-card">
+            <div class="stat-card distance-card" (mouseenter)="onCardHover('distance')" (mouseleave)="onCardLeave('distance')">
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container distance-icon">
@@ -238,7 +238,7 @@
                 </div>
             </div>
 
-            <div class="stat-card weight-card">
+            <div class="stat-card weight-card" (mouseenter)="onCardHover('weight')" (mouseleave)="onCardLeave('weight')">
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container weight-icon">
@@ -280,7 +280,7 @@
             <!-- Steps Chart -->
             <div class="chart-container">
                 <div class="chart-header">
-                    <h3 class="chart-title">
+                    <h3 class="chart-title" (mouseenter)="onChartHover('steps', 'title')" (mouseleave)="onCardLeave('chart')">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
 
@@ -347,7 +347,7 @@
             <!-- Calories Chart -->
             <div class="chart-container">
                 <div class="chart-header">
-                    <h3 class="chart-title">
+                    <h3 class="chart-title" (mouseenter)="onChartHover('calories', 'title')" (mouseleave)="onCardLeave('chart')">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
 
@@ -525,10 +525,10 @@
                 <!-- Achieved vs Goal content -->
                 <div class="chart-wrapper" *ngIf="mergedChartView === 'metricGoal'">
                     <div class="view-toggle chart-type-toggle" style="margin-bottom: 0.5rem;">
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'activeEnergyBurned'" (click)="setSelectedActivityMetric('activeEnergyBurned')">Energy</button>
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleMoveTime'" (click)="setSelectedActivityMetric('appleMoveTime')">Move</button>
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleExerciseTime'" (click)="setSelectedActivityMetric('appleExerciseTime')">Exercise</button>
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleStandHours'" (click)="setSelectedActivityMetric('appleStandHours')">Stand</button>
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'activeEnergyBurned'" (click)="setSelectedActivityMetric('activeEnergyBurned')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Energy</button>
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleMoveTime'" (click)="setSelectedActivityMetric('appleMoveTime')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Move</button>
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleExerciseTime'" (click)="setSelectedActivityMetric('appleExerciseTime')" (mouseenter)="onActivityRingHover('exercise')" (mouseleave)="onCardLeave('activity')">Exercise</button>
+                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleStandHours'" (click)="setSelectedActivityMetric('appleStandHours')" (mouseenter)="onActivityRingHover('stand')" (mouseleave)="onCardLeave('activity')">Stand</button>
                     </div>
                     <apx-chart
                         *ngIf="metricGoalChartOptions.series && metricGoalChartOptions.series.length > 0 && metricGoalChartOptions.series[0] && metricGoalChartOptions.series[0].data && metricGoalChartOptions.series[0].data.length > 0"
@@ -550,17 +550,17 @@
             <!-- Weekly Rings Achievements (7 rows per week) -->
             <div class="chart-container span-2">
                 <div class="chart-header">
-                    <h3 class="chart-title">
+                    <h3 class="chart-title" (mouseenter)="onChartHover('activity', 'title')" (mouseleave)="onCardLeave('chart')">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <circle cx="12" cy="12" r="10"></circle>
                         </svg>
                         Weekly Rings Achievements
                     </h3>
                     <div class="view-toggle chart-type-toggle" style="margin-bottom: 0;">
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'activeEnergyBurned'" (click)="setSelectedRingMetric('activeEnergyBurned')">Energy</button>
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleMoveTime'" (click)="setSelectedRingMetric('appleMoveTime')">Move</button>
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleExerciseTime'" (click)="setSelectedRingMetric('appleExerciseTime')">Exercise</button>
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleStandHours'" (click)="setSelectedRingMetric('appleStandHours')">Stand</button>
+                        <button class="view-btn" [class.active]="selectedRingMetric === 'activeEnergyBurned'" (click)="setSelectedRingMetric('activeEnergyBurned')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Energy</button>
+                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleMoveTime'" (click)="setSelectedRingMetric('appleMoveTime')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Move</button>
+                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleExerciseTime'" (click)="setSelectedRingMetric('appleExerciseTime')" (mouseenter)="onActivityRingHover('exercise')" (mouseleave)="onCardLeave('activity')">Exercise</button>
+                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleStandHours'" (click)="setSelectedRingMetric('appleStandHours')" (mouseenter)="onActivityRingHover('stand')" (mouseleave)="onCardLeave('activity')">Stand</button>
                     </div>
                 </div>
                 <div class="rings-weekly">

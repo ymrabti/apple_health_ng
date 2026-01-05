@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { AuthService, GlobalSummaryStats, UserInfos } from '../services/auth.service';
 import { HealthService } from '../services/health.service';
 import { SeoService } from '../services/seo.service';
+import { MascotTipsService, TrendAnalysis } from '../services/mascot-tips.service';
 import { formatDate } from './utils/date';
 import {
     ApexAxisChartSeries,
@@ -180,6 +181,7 @@ export class Dashboard implements OnInit, OnDestroy {
         private router: Router,
         private health: HealthService,
         private seo: SeoService,
+        private mascotTipsService: MascotTipsService,
     ) {
     }
 
@@ -1158,11 +1160,130 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     onCardHover(cardType: string) {
-        // Add hover effects if needed
+        let tip: string = '';
+        let trend: TrendAnalysis;
+
+        switch (cardType) {
+            case 'steps':
+                trend = this.analyzeTrend(this.filteredData.map(d => d.steps));
+                tip = this.mascotTipsService.getStepsTip(trend);
+                break;
+            case 'calories':
+                trend = this.analyzeTrend(this.filteredData.map(d => d.calories));
+                tip = this.mascotTipsService.getCaloriesTip(trend);
+                break;
+            case 'distance':
+                trend = this.analyzeTrend(this.filteredData.map(d => d.distance));
+                tip = this.mascotTipsService.getDistanceTip(trend);
+                break;
+            case 'weight':
+                trend = this.analyzeTrend(this.filteredData.map(d => d.weight).filter(w => w > 0));
+                tip = this.mascotTipsService.getWeightTip(trend);
+                break;
+            case 'flights':
+                tip = this.mascotTipsService.getFlightsTip('general');
+                break;
+        }
+
+        if (tip) {
+            this.mascotTipsService.showTip({ message: tip, duration: 6000, priority: 8 });
+        }
     }
 
     onCardLeave(cardType: string) {
-        // Remove hover effects if needed
+        // Optionally hide tip when leaving card
+        // this.mascotTipsService.hideTip();
+    }
+
+    onChartHover(chartType: string, element?: string) {
+        let tip: string = '';
+
+        if (element === 'title') {
+            switch (chartType) {
+                case 'steps':
+                    tip = this.mascotTipsService.getStepsTip('general');
+                    break;
+                case 'calories':
+                    tip = this.mascotTipsService.getCaloriesTip('general');
+                    break;
+                case 'distance':
+                    tip = this.mascotTipsService.getDistanceTip('general');
+                    break;
+                case 'activity':
+                    tip = this.mascotTipsService.getActivityTip('general');
+                    break;
+            }
+        } else {
+            tip = this.mascotTipsService.getChartTip(chartType);
+        }
+
+        if (tip) {
+            this.mascotTipsService.showTip({ message: tip, duration: 5000, priority: 7 });
+        }
+    }
+
+    onActivityRingHover(ringType: string) {
+        const tip = this.mascotTipsService.getActivityTip(ringType);
+        if (tip) {
+            this.mascotTipsService.showTip({ message: tip, duration: 5000, priority: 7 });
+        }
+    }
+
+    private analyzeTrend(data: number[]): TrendAnalysis {
+        if (data.length < 2) {
+            return { direction: 'stable', percentage: 0 };
+        }
+
+        const validData = data.filter(v => v > 0);
+        if (validData.length < 2) {
+            return { direction: 'stable', percentage: 0 };
+        }
+
+        const firstHalf = validData.slice(0, Math.floor(validData.length / 2));
+        const secondHalf = validData.slice(Math.floor(validData.length / 2));
+
+        const avgFirst = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+        const avgSecond = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+
+        const percentage = ((avgSecond - avgFirst) / avgFirst) * 100;
+        const absPercentage = Math.abs(percentage);
+
+        // Check for spikes and drops
+        const avg = validData.reduce((a, b) => a + b, 0) / validData.length;
+        const stdDev = Math.sqrt(
+            validData.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / validData.length
+        );
+
+        const hasSpike = validData.some(v => v > avg + (2 * stdDev));
+        const hasDrop = validData.some(v => v < avg - (2 * stdDev));
+
+        // Calculate variability
+        const coefficientOfVariation = (stdDev / avg) * 100;
+        let variability: 'low' | 'medium' | 'high';
+        if (coefficientOfVariation < 15) {
+            variability = 'low';
+        } else if (coefficientOfVariation < 30) {
+            variability = 'medium';
+        } else {
+            variability = 'high';
+        }
+
+        let direction: 'up' | 'down' | 'stable';
+        if (absPercentage < 5) {
+            direction = 'stable';
+        } else if (percentage > 0) {
+            direction = 'up';
+        } else {
+            direction = 'down';
+        }
+
+        return {
+            direction,
+            percentage: Math.round(absPercentage),
+            hasSpike,
+            hasDrop,
+            variability
+        };
     }
 
     logout() {
