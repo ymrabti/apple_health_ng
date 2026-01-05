@@ -94,6 +94,16 @@ export class MascotTipsService {
             personalized: "Your ideal activity level is unique. Compare to your own baseline and goals, not to others or arbitrary standards.",
             progress: "Progress isn't always linear. Plateaus, setbacks, and variability are all normal. Long-term consistency beats short-term perfection.",
             celebrate: "Take time to acknowledge improvements—even small ones. Behavior change is hard, and every positive trend deserves recognition."
+        },
+        footer: {
+            daysTracked: "This represents the total number of days with recorded health data. More days tracked means better insights into your patterns and trends.",
+            goalAchievement: "This percentage shows how often you hit your daily activity goals. Consistency matters more than perfection—70-80% is excellent!",
+            totalDistance: "The cumulative distance you've traveled across all tracked days. Every kilometer contributes to cardiovascular health and endurance.",
+            healthGrade: "Your overall health grade (A-F) based on multiple factors: consistency, goal achievement, activity levels, and trends. This is personalized to your baseline.",
+            healthScore: "A numerical score combining activity, steps, and consistency metrics. Higher scores indicate better overall health patterns and habits.",
+            activityScore: "Measures your overall activity levels including move calories, exercise time, and stand hours. Reflects how active you are beyond just steps.",
+            stepsScore: "Evaluates your step count patterns, consistency, and progress over time. Steps are a foundational indicator of daily movement.",
+            streakScore: "Rewards consecutive days of meeting your goals. Streaks build powerful momentum and indicate sustainable habit formation."
         }
     };
 
@@ -261,6 +271,30 @@ export class MascotTipsService {
             this.tips.summary.celebrate
         ];
         return tips[Math.floor(Math.random() * tips.length)];
+    }
+
+    // Footer stat tips
+    getFooterStatTip(statType: string): string {
+        switch (statType) {
+            case 'daysTracked':
+                return this.tips.footer.daysTracked;
+            case 'goalAchievement':
+                return this.tips.footer.goalAchievement;
+            case 'totalDistance':
+                return this.tips.footer.totalDistance;
+            case 'healthGrade':
+                return this.tips.footer.healthGrade;
+            case 'healthScore':
+                return this.tips.footer.healthScore;
+            case 'activityScore':
+                return this.tips.footer.activityScore;
+            case 'stepsScore':
+                return this.tips.footer.stepsScore;
+            case 'streakScore':
+                return this.tips.footer.streakScore;
+            default:
+                return this.tips.summary.general;
+        }
     }
 
     // Additional contextual tips

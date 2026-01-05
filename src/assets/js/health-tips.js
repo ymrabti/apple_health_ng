@@ -200,6 +200,24 @@ const healthTips = {
                 "Charts make patterns visible that numbers alone can't reveal.",
                 "Use zoom and pan if available to explore specific time periods."
             ]
+        },
+        
+        // Footer Stats
+        {
+            selector: '.footer-stats',
+            text: [
+                "These summary statistics provide a bird's-eye view of your overall health journey.",
+                "Track these numbers over months to see your long-term progress and patterns.",
+                "Each metric tells part of your health story. Together they reveal the complete picture."
+            ]
+        },
+        {
+            selector: '.footer-stat',
+            text: [
+                "Summary stats show your cumulative progress and overall health patterns.",
+                "These aggregated metrics help you see the big picture beyond daily fluctuations.",
+                "Improving these numbers indicates sustainable, long-term health improvements."
+            ]
         }
     ]
 };

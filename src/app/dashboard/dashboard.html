@@ -685,37 +685,37 @@
 
         <!-- Footer Stats -->
         <div class="footer-stats">
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('daysTracked')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value cyan">{{ globalStats.daysTracked }}</div>
                 <div class="footer-label">Days Tracked</div>
             </div>
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('goalAchievement')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value green">{{ getGoalAchievement()
                     }}%</div>
                 <div class="footer-label">Goal Achievement</div>
             </div>
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('totalDistance')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value orange">{{ getTotalDistance()
                     }}km</div>
                 <div class="footer-label">Total Distance</div>
             </div>
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('healthGrade')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value purple">{{ globalStats.healthGrade }}</div>
                 <div class="footer-label">Health Grade</div>
             </div>
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('healthScore')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value purple">{{ globalStats.healthScore | number:'1.0-0' }}</div>
                 <div class="footer-label">Health Score</div>
             </div>
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('activityScore')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value green">{{ globalStats.components.activityScore | number:'1.0-0' }}</div>
                 <div class="footer-label">Activity Score</div>
             </div>
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('stepsScore')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value cyan">{{ globalStats.components.stepsScore | number:'1.0-0' }}</div>
                 <div class="footer-label">Steps Score</div>
             </div>
-            <div class="footer-stat">
+            <div class="footer-stat" (mouseenter)="onFooterStatHover('streakScore')" (mouseleave)="onCardLeave('footer')">
                 <div class="footer-value orange">{{ globalStats.components.streakScore | number:'1.0-0' }}</div>
                 <div class="footer-label">Streak Score</div>
             </div>

@@ -1229,6 +1229,13 @@ export class Dashboard implements OnInit, OnDestroy {
         }
     }
 
+    onFooterStatHover(statType: string) {
+        const tip = this.mascotTipsService.getFooterStatTip(statType);
+        if (tip) {
+            this.mascotTipsService.showTip({ message: tip, duration: 6000, priority: 7 });
+        }
+    }
+
     private analyzeTrend(data: number[]): TrendAnalysis {
         if (data.length < 2) {
             return { direction: 'stable', percentage: 0 };
