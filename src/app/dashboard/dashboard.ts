@@ -97,7 +97,7 @@ interface ActivitySummary {
 })
 export class Dashboard implements OnInit, OnDestroy {
     private readonly KCAL_PER_KG = 7700;
-    dateRange: string = '7d';
+    dateRange: string = '30d';
     selectedView: string = 'daily';
     views: string[] = ['daily', 'weekly', 'trends'];
 

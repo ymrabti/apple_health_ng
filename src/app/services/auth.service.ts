@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TokenService } from './token.service';
 import { environment } from '../../environments/environment';
+import { WebsocketService } from './websocket.service';
 
 // Configure these endpoints via Angular environments
 const AUTH_API_BASE = `${environment.apiBase}/auth`;
@@ -91,7 +92,11 @@ export interface UserInfos {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    constructor(private http: HttpClient, private tokens: TokenService) {}
+    constructor(
+        private http: HttpClient,
+        private tokens: TokenService,
+        private socket: WebsocketService
+    ) {}
 
     signIn(payload: SignInPayload): Observable<AuthResponse> {
         return this.http.post<AuthResponse>(`${AUTH_API_BASE}/signin`, payload);
@@ -167,6 +172,7 @@ export class AuthService {
     }
 
     signOut(): void {
+        this.socket.disconnect();
         this.tokens.clearToken();
     }
 

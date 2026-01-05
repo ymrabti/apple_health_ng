@@ -8,19 +8,26 @@ import {
 } from '@angular/router';
 import { TokenService } from '../services/token.service';
 import { AuthService } from '../services/auth.service';
+import { WebsocketService } from '../services/websocket.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
     private refreshTimeout: ReturnType<typeof setTimeout> | null = null;
-    constructor(private tokens: TokenService, private router: Router, private auth: AuthService) {}
+    constructor(
+        private tokens: TokenService,
+        private router: Router,
+        private auth: AuthService,
+        private socket: WebsocketService
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
         const token = this.tokens.getToken();
         const tokens = this.tokens.getTokens();
         if (tokens) {
             if (tokens.access && tokens.refresh) {
-                this.startTokenRefreshWatcher();
                 try {
+                    this.startTokenRefreshWatcher();
+
                     return true;
                 } catch (err) {
                     console.error('Invalid auth data', err);
@@ -62,6 +69,7 @@ export class AuthGuard implements CanActivate {
         const timeoutAccessMs = Math.max(expaMs - nowMs - 60_000, 5_000);
 
         if (this.refreshTimeout) {
+            this.socket.disconnect();
             clearTimeout(this.refreshTimeout);
             this.refreshTimeout = null;
         }
@@ -71,6 +79,8 @@ export class AuthGuard implements CanActivate {
                 next: (newTokens) => {
                     this.tokens.setToken(newTokens.access.token);
                     this.tokens.saveTokens(newTokens);
+                    this.socket.disconnect();
+                    this.socket.connect(newTokens.access.token);
                     if (this.refreshTimeout) {
                         clearTimeout(this.refreshTimeout);
                         this.refreshTimeout = null;
@@ -79,6 +89,7 @@ export class AuthGuard implements CanActivate {
                     console.log('Token refreshed successfully', new Date());
                 },
                 error: (err) => {
+                    this.socket.disconnect();
                     console.error('Token refresh failed', err);
                     this.auth.signOut();
                 },
