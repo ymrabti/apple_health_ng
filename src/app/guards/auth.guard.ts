@@ -73,6 +73,7 @@ export class AuthGuard implements CanActivate {
             clearTimeout(this.refreshTimeout);
             this.refreshTimeout = null;
         }
+        this.socket.connect(this.tokens.getToken() || undefined);
 
         this.refreshTimeout = setTimeout(() => {
             this.auth.refreshToken().subscribe({

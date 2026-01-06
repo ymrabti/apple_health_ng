@@ -25,6 +25,8 @@ import {
     ApexFill,
     ChartComponent,
 } from 'ng-apexcharts';
+import { SocketEvent, WebsocketService } from '../services/websocket.service';
+import { environment } from '../../environments/environment';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -87,8 +89,6 @@ interface ActivitySummary {
     appleStandHoursGoal: number;
 }
 
-
-
 @Component({
     selector: 'app-dashboard',
     standalone: false,
@@ -97,7 +97,7 @@ interface ActivitySummary {
 })
 export class Dashboard implements OnInit, OnDestroy {
     private readonly KCAL_PER_KG = 7700;
-    dateRange: string = '30d';
+    dateRange: string = environment.production ? '30d' : '7d';
     selectedView: string = 'daily';
     views: string[] = ['daily', 'weekly', 'trends'];
 
@@ -182,10 +182,18 @@ export class Dashboard implements OnInit, OnDestroy {
         private health: HealthService,
         private seo: SeoService,
         private mascotTipsService: MascotTipsService,
-    ) {
-    }
+        private socket: WebsocketService
+    ) {}
 
     ngOnInit() {
+        this.socket.onMessage<void>(SocketEvent.IMPORT_SUCCESS, (data) => {
+            this.mascotTipsService.showTip({
+                priority: 8,
+                message: 'Health data import completed successfully!',
+            });
+            console.log('Import success message received via WebSocket', data);
+            this.fetchDataForCurrentRange();
+        });
         // Page-specific SEO
         this.seo.apply({
             title: 'Dashboard – Personalized Health Analytics',
@@ -1165,19 +1173,21 @@ export class Dashboard implements OnInit, OnDestroy {
 
         switch (cardType) {
             case 'steps':
-                trend = this.analyzeTrend(this.filteredData.map(d => d.steps));
+                trend = this.analyzeTrend(this.filteredData.map((d) => d.steps));
                 tip = this.mascotTipsService.getStepsTip(trend);
                 break;
             case 'calories':
-                trend = this.analyzeTrend(this.filteredData.map(d => d.calories));
+                trend = this.analyzeTrend(this.filteredData.map((d) => d.calories));
                 tip = this.mascotTipsService.getCaloriesTip(trend);
                 break;
             case 'distance':
-                trend = this.analyzeTrend(this.filteredData.map(d => d.distance));
+                trend = this.analyzeTrend(this.filteredData.map((d) => d.distance));
                 tip = this.mascotTipsService.getDistanceTip(trend);
                 break;
             case 'weight':
-                trend = this.analyzeTrend(this.filteredData.map(d => d.weight).filter(w => w > 0));
+                trend = this.analyzeTrend(
+                    this.filteredData.map((d) => d.weight).filter((w) => w > 0)
+                );
                 tip = this.mascotTipsService.getWeightTip(trend);
                 break;
             case 'flights':
@@ -1241,7 +1251,7 @@ export class Dashboard implements OnInit, OnDestroy {
             return { direction: 'stable', percentage: 0 };
         }
 
-        const validData = data.filter(v => v > 0);
+        const validData = data.filter((v) => v > 0);
         if (validData.length < 2) {
             return { direction: 'stable', percentage: 0 };
         }
@@ -1261,8 +1271,8 @@ export class Dashboard implements OnInit, OnDestroy {
             validData.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / validData.length
         );
 
-        const hasSpike = validData.some(v => v > avg + (2 * stdDev));
-        const hasDrop = validData.some(v => v < avg - (2 * stdDev));
+        const hasSpike = validData.some((v) => v > avg + 2 * stdDev);
+        const hasDrop = validData.some((v) => v < avg - 2 * stdDev);
 
         // Calculate variability
         const coefficientOfVariation = (stdDev / avg) * 100;
@@ -1289,7 +1299,7 @@ export class Dashboard implements OnInit, OnDestroy {
             percentage: Math.round(absPercentage),
             hasSpike,
             hasDrop,
-            variability
+            variability,
         };
     }
 

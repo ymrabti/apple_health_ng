@@ -4,6 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { environment } from '../../environments/environment';
 
 export enum SocketEvent {
+    IMPORT_SUCCESS = 'import_success',
     CONNECT = 'connect',
     DISCONNECT = 'disconnect',
     ERROR = 'error',
@@ -313,5 +314,12 @@ export class WebsocketService {
             connected: this.isConnected(),
             reconnectAttempts: this.reconnectAttempts,
         };
+    }
+
+    onMessage<T>(message: string, callback: (data: T) => void): void {
+        this.on<T>(message).subscribe((data) => {
+            console.log(`Received message on ${message}:`, data);
+            callback(data);
+        });
     }
 }

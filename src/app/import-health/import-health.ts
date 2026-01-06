@@ -75,6 +75,9 @@ export class ImportHealth {
                     this.uploading = false;
                     this.progress = 100;
                     this.status = event.body?.message || 'Import completed. We are syncing your data now.';
+                    setTimeout(() => {
+                        this.router.navigateByUrl('/dashboard');
+                    }, 1000);
                 }
             },
             error: (err) => {

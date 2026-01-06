@@ -24,7 +24,6 @@ export class App implements OnInit {
     ngOnInit() {
         // Initialize theme service (loads saved theme from localStorage)
         this.themeService.getCurrentTheme();
-        this.socket.connect(this.tokenService.getToken() || undefined);
 
         // Set default site-wide SEO
         this.seo.setDefaults();
