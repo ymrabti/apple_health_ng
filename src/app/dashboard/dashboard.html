@@ -4,6 +4,11 @@
         <!-- Header -->
         <div class="header-section">
             <div class="header-content">
+                <div class="title-area">
+                    <h1 class="main-title">Health Analytics</h1>
+                    <p class="subtitle">Advanced insights from your Apple Health
+                        data</p>
+                </div>
                 <!-- User Profile Section -->
                 <div class="user-profile-section" *ngIf="userInfo">
                     <div class="user-avatar">
@@ -27,11 +32,10 @@
                             </span>
                         </div>
                     </div>
-                </div>
-                <div class="title-area">
-                    <h1 class="main-title">Health Analytics</h1>
-                    <p class="subtitle">Advanced insights from your Apple Health
-                        data</p>
+                    <div class="user-actions">
+                        <button class="action-btn import-btn" type="button" routerLink="/import">Import</button>
+                        <button class="action-btn logout-btn" (click)="logout()">Logout</button>
+                    </div>
                 </div>
             </div>
 
@@ -88,11 +92,6 @@
                     <button *ngFor="let view of views" [class]="getViewButtonClass(view)" (click)="setSelectedView(view)">
                         {{ view | titlecase }}
                     </button>
-                </div>
-
-                <div class="logout-section">
-                    <button class="view-btn" type="button" routerLink="/import">Import data</button>
-                    <button class="logout-btn" (click)="logout()">Logout</button>
                 </div>
             </div>
         </div>

@@ -56,13 +56,10 @@ export class WebsocketService {
      */
     connect(token?: string): void {
         if (this.socket && this.socket.connected) {
-            console.log('Socket already connected');
             return;
         }
 
         const options: any = { ...this.socketOptions, query: { token: token } };
-
-        console.log(options);
 
         this.socket = io(this.socketUrl, options);
         this.setupEventListeners();
