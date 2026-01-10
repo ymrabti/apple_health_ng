@@ -83,6 +83,8 @@ export interface UserInfos {
     cardioFitnessMedicationsUse: string;
     isEmailVerified: boolean;
     email: string;
+    userName: string;
+    photo: string;
     role: string;
     weightInKilograms: number | null;
     heightInCentimeters: number | null;

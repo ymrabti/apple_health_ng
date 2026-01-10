@@ -1307,4 +1307,16 @@ export class Dashboard implements OnInit, OnDestroy {
         this.auth.signOut();
         this.router.navigate(['/signin'], { queryParams: { redirect: '/home' } });
     }
+
+    getUserPhotoUrl(): string {
+        if (!this.userInfo?.userName || !this.userInfo?.photo) {
+            return 'assets/default-avatar.svg';
+        }
+        return `${environment.apiBase.replace('/api', '')}/uploads/${this.userInfo.userName}/${this.userInfo.photo}`;
+    }
+
+    onAvatarError(event: Event): void {
+        const img = event.target as HTMLImageElement;
+        img.src = 'assets/default-avatar.svg';
+    }
 }
