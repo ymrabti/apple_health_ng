@@ -22,16 +22,34 @@
         <div class="profile-content" *ngIf="!loading && userInfo">
             <!-- Avatar Section -->
             <div class="avatar-section">
-                <div class="avatar-wrapper">
+                <div class="avatar-wrapper" (click)="triggerPhotoUpload()">
                     <img 
                         [src]="getUserPhotoUrl()" 
                         [alt]="userInfo.firstName + ' ' + userInfo.lastName"
                         class="avatar-image"
                         (error)="onAvatarError($event)" />
+                    <div class="avatar-overlay">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2z"/>
+                        </svg>
+                    </div>
+                    <input 
+                        #photoInput
+                        type="file" 
+                        accept="image/*" 
+                        class="photo-input" 
+                        (change)="onPhotoSelected($event)" />
                 </div>
                 <div class="user-primary-info">
                     <h2 class="user-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h2>
                     <p class="user-username">&#64;{{ userInfo.userName }}</p>
+                    <!-- Photo upload actions -->
+                    <div class="photo-actions" *ngIf="selectedPhotoFile">
+                        <button class="btn-upload" (click)="uploadPhoto()" [disabled]="uploadingPhoto">
+                            {{ uploadingPhoto ? 'Uploading...' : 'Save Photo' }}
+                        </button>
+                        <button class="btn-cancel-photo" (click)="cancelPhotoUpload()">Cancel</button>
+                    </div>
                 </div>
             </div>
 
@@ -167,6 +185,73 @@
                         <button type="button" class="btn-cancel" (click)="toggleEditMode()">Cancel</button>
                         <button type="submit" class="btn-save" [disabled]="saving">
                             {{ saving ? 'Saving...' : 'Save Changes' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Password Section -->
+            <div class="password-section">
+                <div class="section-header">
+                    <h3>Security</h3>
+                    <button class="btn-edit" (click)="togglePasswordForm()">
+                        {{ showPasswordForm ? 'Cancel' : 'Change Password' }}
+                    </button>
+                </div>
+
+                <div class="password-info" *ngIf="!showPasswordForm">
+                    <div class="detail-item">
+                        <span class="label">Password</span>
+                        <span class="value">••••••••••••</span>
+                    </div>
+                </div>
+
+                <form class="password-form" *ngIf="showPasswordForm" (ngSubmit)="changePassword()">
+                    <div class="form-field">
+                        <label for="currentPassword">Current Password</label>
+                        <input 
+                            type="password" 
+                            id="currentPassword" 
+                            [(ngModel)]="passwordData.currentPassword" 
+                            name="currentPassword"
+                            placeholder="Enter current password" />
+                    </div>
+                    <div class="form-field">
+                        <label for="newPassword">New Password</label>
+                        <input 
+                            type="password" 
+                            id="newPassword" 
+                            [(ngModel)]="passwordData.newPassword" 
+                            name="newPassword"
+                            placeholder="Enter new password (min 8 characters)" />
+                    </div>
+                    <div class="form-field">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            [(ngModel)]="passwordData.confirmPassword" 
+                            name="confirmPassword"
+                            placeholder="Confirm new password" />
+                    </div>
+
+                    <div class="password-message error" *ngIf="passwordError">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        {{ passwordError }}
+                    </div>
+                    <div class="password-message success" *ngIf="passwordSuccess">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                        </svg>
+                        {{ passwordSuccess }}
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" (click)="togglePasswordForm()">Cancel</button>
+                        <button type="submit" class="btn-save" [disabled]="changingPassword">
+                            {{ changingPassword ? 'Changing...' : 'Change Password' }}
                         </button>
                     </div>
                 </form>

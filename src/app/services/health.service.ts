@@ -31,10 +31,7 @@ export class HealthService {
         );
     }
 
-    getFooterStats(
-        dateFrom: string,
-        dateTo: string
-    ): Observable<GlobalSummaryStats> {
+    getFooterStats(dateFrom: string, dateTo: string): Observable<GlobalSummaryStats> {
         const params = new HttpParams().set('dateFrom', dateFrom).set('dateTo', dateTo);
         return this.http.get<GlobalSummaryStats>(
             `${environment.apiBase}/apple-health/stats-summaries`,
@@ -63,5 +60,23 @@ export class HealthService {
 
     sendVerificationEmail(): Observable<void> {
         return this.http.post<void>(`${environment.apiBase}/auth/send-verification-email`, {});
+    }
+
+    uploadProfilePhoto(file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('photo', file, file.name);
+        return this.http.post<any>(`${environment.apiBase}/account/photo`, formData);
+    }
+
+    changePassword(
+        currentPassword: string,
+        newPassword: string,
+        confirmPassword: string
+    ): Observable<void> {
+        return this.http.post<void>(`${environment.apiBase}/auth/change-password`, {
+            oldPassword: currentPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword,
+        });
     }
 }
