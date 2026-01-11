@@ -30,14 +30,20 @@
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
                         <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="select-input">
-                            <option value="7d">7d</option>
-                            <option value="14d">14d</option>
-                            <option value="30d">30d</option>
-                            <option value="week">Week</option>
-                            <option value="month">Month</option>
-                            <option value="year">Year</option>
-                            <option value="all">All</option>
+                            <option value="7d">Last 7 days</option>
+                            <option value="14d">Last 14 days</option>
+                            <option value="30d">Last 30 days</option>
+                            <option value="week">This week</option>
+                            <option value="month">This month</option>
+                            <option value="year">This year</option>
+                            <option value="all">All time</option>
+                            <option value="custom">Custom range…</option>
                         </select>
+                        <div class="custom-range" *ngIf="dateRange === 'custom'">
+                            <input type="date" [(ngModel)]="customFrom" class="date-input" aria-label="From date" />
+                            <input type="date" [(ngModel)]="customTo" class="date-input" aria-label="To date" />
+                            <button class="view-btn" (click)="applyCustomRange()" [disabled]="!customFrom || !customTo || customFrom > customTo">Apply</button>
+                        </div>
                     </div>
                 </div>
 
@@ -787,5 +793,5 @@
         </div>
     </div>
     <!-- <app-ai-mascot [healthContext]="{ stepsStats: stepsStats, caloriesStats: caloriesStats }"></app-ai-mascot> -->
-    <app-anime-mascot></app-anime-mascot>
+    <app-anime-mascot *ngIf="isProduction"></app-anime-mascot>
 </div>

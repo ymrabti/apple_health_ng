@@ -98,6 +98,7 @@ interface ActivitySummary {
 export class Dashboard implements OnInit, OnDestroy {
     private readonly KCAL_PER_KG = 7700;
     dateRange: string = environment.production ? '30d' : '7d';
+    isProduction: boolean = environment.production;
     selectedView: string = 'daily';
     views: string[] = ['daily', 'weekly', 'trends'];
     navbarMinified = false;
