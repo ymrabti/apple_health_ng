@@ -21,6 +21,7 @@ import { Particles } from './components/particles/particles';
 import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
 import { Profile } from './profile/profile';
 import { ForgotPassword } from './auth/forgot-password/forgot-password';
+import { ResetPassword } from './auth/reset-password/reset-password';
 
 @NgModule({
     declarations: [
@@ -37,6 +38,7 @@ import { ForgotPassword } from './auth/forgot-password/forgot-password';
         ThemeSwitcher,
         Profile,
         ForgotPassword,
+        ResetPassword,
     ],
     imports: [BrowserModule, FormsModule, AppRoutingModule, NgApexchartsModule],
     providers: [

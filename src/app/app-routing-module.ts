@@ -9,6 +9,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { ImportHealth } from './import-health/import-health';
 import { Profile } from './profile/profile';
 import { ForgotPassword } from './auth/forgot-password/forgot-password';
+import { ResetPassword } from './auth/reset-password/reset-password';
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
   {
     path: 'forgot-password',
     component: ForgotPassword,
+  },
+  {
+    path: 'reset-password',
+    component: ResetPassword,
   },
   {
     path: 'oauth/callback',

@@ -8,6 +8,20 @@ import { GlobalSummaryStats } from './auth.service';
 export class HealthService {
     constructor(private http: HttpClient) {}
 
+    saveCollapsedState(isCollapsed: boolean): void {
+        try {
+            localStorage.setItem('sidebar_collapsed', isCollapsed ? '1' : '0');
+        } catch {}
+    }
+
+    getCollapsedState(): boolean {
+        try {
+            const value = localStorage.getItem('sidebar_collapsed');
+            return value === '1';
+        } catch {
+            return false;
+        }
+    }
     getUserInfos(): Observable<any> {
         return this.http.get<any>(`${environment.apiBase}/apple-health/user-infos`);
     }
@@ -81,8 +95,16 @@ export class HealthService {
     }
 
     sendResetPasswordEmail(email: string): Observable<void> {
-        return this.http.post<void>(`${environment.apiBase}/auth/send-reset-password-otp`, {
+        return this.http.post<void>(`${environment.apiBase}/auth/send-reset-password-email`, {
             email: email,
         });
+    }
+
+    resetPassword(token: string, password: string): Observable<void> {
+        return this.http.post<void>(
+            `${environment.apiBase}/auth/reset-password`,
+            { password: password },
+            { params: { token: token } }
+        );
     }
 }

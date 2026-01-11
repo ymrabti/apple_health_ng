@@ -105,6 +105,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
     toggleNavbar(): void {
         this.navbarMinified = !this.navbarMinified;
+        this.health.saveCollapsedState(this.navbarMinified);
     }
 
     healthData: HealthData[] = [];
@@ -189,7 +190,9 @@ export class Dashboard implements OnInit, OnDestroy {
         private seo: SeoService,
         private mascotTipsService: MascotTipsService,
         private socket: WebsocketService
-    ) {}
+    ) {
+        this.navbarMinified = this.health.getCollapsedState();
+    }
 
     ngOnInit() {
         this.socket.onMessage<void>(SocketEvent.IMPORT_SUCCESS, (data) => {
