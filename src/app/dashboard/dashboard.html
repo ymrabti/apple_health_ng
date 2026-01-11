@@ -3,6 +3,16 @@
 
         <!-- Header -->
         <div class="header-section" [class.minified]="navbarMinified">
+            <!-- Toggle Navbar Button - Top Right -->
+            <button class="navbar-toggle-btn" (click)="toggleNavbar()" [title]="navbarMinified ? 'Expand navbar' : 'Shrink navbar'">
+                <svg *ngIf="!navbarMinified" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 15l-6-6-6 6"/>
+                </svg>
+                <svg *ngIf="navbarMinified" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </button>
+
             <div class="header-content">
                 <div class="title-area">
                     <h1 class="main-title">Health Analytics</h1>
@@ -18,6 +28,8 @@
                             class="avatar-image"
                             (error)="onAvatarError($event)" />
                     </div>
+                    <!-- Show fullname in both modes -->
+                    <span class="user-fullname-mini" *ngIf="navbarMinified">{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
                     <div class="user-details" *ngIf="!navbarMinified">
                         <span class="user-fullname">{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
                         <div class="user-email-row">
@@ -37,15 +49,6 @@
                         <button class="action-btn import-btn" type="button" routerLink="/import">Import</button>
                         <button class="action-btn logout-btn" (click)="logout()">Logout</button>
                     </div>
-                    <!-- Toggle Navbar Button -->
-                    <button class="navbar-toggle-btn" (click)="toggleNavbar()" [title]="navbarMinified ? 'Expand navbar' : 'Shrink navbar'">
-                        <svg *ngIf="!navbarMinified" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                        <svg *ngIf="navbarMinified" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 9l6 6 6-6"/>
-                        </svg>
-                    </button>
                 </div>
             </div>
 
