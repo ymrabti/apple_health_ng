@@ -385,7 +385,7 @@ export class Dashboard implements OnInit, OnDestroy {
             },
             colors: ['#22d3ee', '#a855f7'],
             dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 3 },
+            stroke: { curve: 'straight', width: 3 },
             xaxis: {
                 categories: data.map((d) => d.label),
                 tickAmount: 10,

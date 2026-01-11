@@ -14,23 +14,107 @@
             </button>
 
             <div class="header-content">
+                <!-- Row 1: Title with subtitle -->
                 <div class="title-area">
-                    <h1 class="main-title">Health Analytics</h1>
-                    <p class="subtitle" *ngIf="!navbarMinified">Advanced insights from your Apple Health
-                        data</p>
+                    <h1 class="main-title">Health Analytics<span class="title-separator" *ngIf="!navbarMinified">:</span><span class="subtitle-inline" *ngIf="!navbarMinified">Advanced insights from your Apple Health data</span></h1>
                 </div>
-                <!-- User Profile Section -->
-                <div class="user-profile-section" *ngIf="userInfo">
-                    <div class="user-avatar" [routerLink]="navbarMinified ? '/profile' : null" [class.clickable]="navbarMinified">
+
+                <!-- Mini Controls for minified navbar -->
+                <div class="mini-controls" *ngIf="navbarMinified">
+                    <app-theme-switcher></app-theme-switcher>
+                    <div class="date-selector mini">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="select-input">
+                            <option value="7d">7d</option>
+                            <option value="14d">14d</option>
+                            <option value="30d">30d</option>
+                            <option value="week">Week</option>
+                            <option value="month">Month</option>
+                            <option value="year">Year</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- User Profile Section (minified) -->
+                <div class="user-profile-section" *ngIf="userInfo && navbarMinified">
+                    <div class="user-avatar clickable" routerLink="/profile">
                         <img 
                             [src]="getUserPhotoUrl()" 
                             [alt]="userInfo.firstName + ' ' + userInfo.lastName"
                             class="avatar-image"
                             (error)="onAvatarError($event)" />
                     </div>
-                    <!-- Show fullname in both modes -->
-                    <span class="user-fullname-mini" *ngIf="navbarMinified">{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
-                    <div class="user-details" *ngIf="!navbarMinified">
+                    <span class="user-fullname-mini">{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
+                </div>
+            </div>
+
+            <!-- Row 2 for expanded: Controls <=> Profile -->
+            <div class="expanded-row" *ngIf="!navbarMinified">
+                <!-- Controls -->
+                <div class="controls-section">
+                    <app-theme-switcher></app-theme-switcher>
+                    <div class="date-selector">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="select-input">
+                            <option value="7d">Last 7 days</option>
+                            <option value="14d">Last 14 days</option>
+                            <option value="30d">Last 30 days</option>
+                            <option value="week">This week</option>
+                            <option value="month">This month</option>
+                            <option value="year">This year</option>
+                            <option value="all">All time</option>
+                            <option value="custom">Custom range…</option>
+                        </select>
+                        <div class="custom-range" *ngIf="dateRange === 'custom'">
+                            <input type="date" [(ngModel)]="customFrom" class="date-input" aria-label="From date" />
+                            <input type="date" [(ngModel)]="customTo" class="date-input" aria-label="To date" />
+                            <button class="view-btn" (click)="applyCustomRange()" [disabled]="!customFrom || !customTo || customFrom > customTo">Apply</button>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Period Chips -->
+                    <div class="monthly-periods">
+                        <label class="period-label">Quick Select:</label>
+                        <div class="period-chips">
+                            <button 
+                                *ngFor="let period of monthlyPeriods" 
+                                class="period-chip"
+                                [class.active]="selectedMonthPeriod === period.value"
+                                (click)="selectMonthPeriod(period)"
+                                [title]="period.label + ' ' + period.year">
+                                {{ period.label }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="view-toggle">
+                        <button *ngFor="let view of views" [class]="getViewButtonClass(view)" (click)="setSelectedView(view)">
+                            {{ view | titlecase }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Profile Section (expanded) -->
+                <div class="user-profile-section" *ngIf="userInfo">
+                    <div class="user-avatar">
+                        <img 
+                            [src]="getUserPhotoUrl()" 
+                            [alt]="userInfo.firstName + ' ' + userInfo.lastName"
+                            class="avatar-image"
+                            (error)="onAvatarError($event)" />
+                    </div>
+                    <div class="user-details">
                         <span class="user-fullname">{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
                         <div class="user-email-row">
                             <span class="user-email">{{ userInfo.email }}</span>
@@ -44,67 +128,11 @@
                             </span>
                         </div>
                     </div>
-                    <div class="user-actions" *ngIf="!navbarMinified">
+                    <div class="user-actions">
                         <button class="action-btn profile-btn" type="button" routerLink="/profile">Profile</button>
                         <button class="action-btn import-btn" type="button" routerLink="/import">Import</button>
                         <button class="action-btn logout-btn" (click)="logout()">Logout</button>
                     </div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div class="controls-section" *ngIf="!navbarMinified">
-                <app-theme-switcher></app-theme-switcher>
-                <div class="date-selector">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2">
-                        </rect>
-                        <line x1="16" y1="2" x2="16" y2="6">
-
-                        </line>
-                        <line x1="8" y1="2" x2="8" y2="6">
-
-                        </line>
-                        <line x1="3" y1="10" x2="21" y2="10">
-
-                        </line>
-                    </svg>
-                    <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="select-input">
-                        <option value="7d">Last 7 days</option>
-                        <option value="14d">Last 14 days</option>
-                        <option value="30d">Last 30 days</option>
-                        <option value="week">This week</option>
-                        <option value="month">This month</option>
-                        <option value="year">This year</option>
-                        <option value="all">All time</option>
-                        <option value="custom">Custom range…</option>
-                    </select>
-                    <div class="custom-range" *ngIf="dateRange === 'custom'">
-                        <input type="date" [(ngModel)]="customFrom" class="date-input" aria-label="From date" />
-                        <input type="date" [(ngModel)]="customTo" class="date-input" aria-label="To date" />
-                        <button class="view-btn" (click)="applyCustomRange()" [disabled]="!customFrom || !customTo || customFrom > customTo">Apply</button>
-                    </div>
-                </div>
-
-                <!-- Monthly Period Chips -->
-                <div class="monthly-periods">
-                    <label class="period-label">Quick Select:</label>
-                    <div class="period-chips">
-                        <button 
-                            *ngFor="let period of monthlyPeriods" 
-                            class="period-chip"
-                            [class.active]="selectedMonthPeriod === period.value"
-                            (click)="selectMonthPeriod(period)"
-                            [title]="period.label + ' ' + period.year">
-                            {{ period.label }}
-                        </button>
-                    </div>
-                </div>
-
-                <div class="view-toggle">
-                    <button *ngFor="let view of views" [class]="getViewButtonClass(view)" (click)="setSelectedView(view)">
-                        {{ view | titlecase }}
-                    </button>
                 </div>
             </div>
         </div>
