@@ -100,6 +100,11 @@ export class Dashboard implements OnInit, OnDestroy {
     dateRange: string = environment.production ? '30d' : '7d';
     selectedView: string = 'daily';
     views: string[] = ['daily', 'weekly', 'trends'];
+    navbarMinified = false;
+
+    toggleNavbar(): void {
+        this.navbarMinified = !this.navbarMinified;
+    }
 
     healthData: HealthData[] = [];
     filteredData: HealthData[] = [];
