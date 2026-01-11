@@ -79,4 +79,10 @@ export class HealthService {
             confirmPassword: confirmPassword,
         });
     }
+
+    sendResetPasswordEmail(email: string): Observable<void> {
+        return this.http.post<void>(`${environment.apiBase}/auth/send-reset-password-otp`, {
+            email: email,
+        });
+    }
 }

@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, take } from 'rxjs/operators';
-import { EmailVerificationService } from '../email-verification';
+import { EmailVerificationService } from '../services/email-verification.service';
 import { SeoService } from '../services/seo.service';
 import { environment } from '../../environments/environment';
 
@@ -126,32 +126,31 @@ export class VerifyEmail implements OnInit, OnDestroy {
                     // Animation cleanup handled in ngOnDestroy
                 })
             )
-            .subscribe(
-                (res: VerifyResult) => {
-                    // Add a small delay for better UX
-                    const timeout = setTimeout(() => {
-                        if (res.success) {
-                            this.state = VerifyState.Success;
-                            this.message = res.message ?? 'Email verified successfully!';
-                        } else {
-                            this.state = VerifyState.Error;
-                            this.message =
-                                res.message ??
-                                'Verification failed. The token may be invalid or expired.';
-                        }
-                    }, 800);
-                    this.animationTimeouts.push(timeout);
+            .subscribe({
+                next: (result: VerifyResult) => {
+                    if (result.success) {
+                        this.transitionToState(
+                            VerifyState.Success,
+                            result.message || 'Your email has been successfully verified!',
+                            500
+                        );
+                    } else {
+                        this.transitionToState(
+                            VerifyState.Error,
+                            result.message ||
+                                'Verification failed. The token may be invalid or expired.',
+                            500
+                        );
+                    }
                 },
-                (err) => {
-                    // Error handling with user-friendly message
-                    const timeout = setTimeout(() => {
-                        this.state = VerifyState.Error;
-                        this.message =
-                            'Network error while verifying. Please check your connection and try again.';
-                    }, 500);
-                    this.animationTimeouts.push(timeout);
-                }
-            );
+                error: (err) => {
+                    this.transitionToState(
+                        VerifyState.Error,
+                        'Network error while verifying. Please check your connection and try again.',
+                        500
+                    );
+                },
+            });
     }
 
     // Get status class for styling

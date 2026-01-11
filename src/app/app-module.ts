@@ -20,6 +20,7 @@ import { AnimeMascot } from './components/anime-mascot/anime-mascot';
 import { Particles } from './components/particles/particles';
 import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
 import { Profile } from './profile/profile';
+import { ForgotPassword } from './auth/forgot-password/forgot-password';
 
 @NgModule({
     declarations: [
@@ -35,6 +36,7 @@ import { Profile } from './profile/profile';
         Particles,
         ThemeSwitcher,
         Profile,
+        ForgotPassword,
     ],
     imports: [BrowserModule, FormsModule, AppRoutingModule, NgApexchartsModule],
     providers: [
