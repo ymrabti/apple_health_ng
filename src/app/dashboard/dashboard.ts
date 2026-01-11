@@ -1312,7 +1312,7 @@ export class Dashboard implements OnInit, OnDestroy {
         if (!this.userInfo?.userName || !this.userInfo?.photo) {
             return 'assets/default-avatar.svg';
         }
-        return `${environment.apiBase.replace('/api', '')}/uploads/${this.userInfo.userName}/${this.userInfo.photo}`;
+        return `${environment.apiBase}/account/photo`;
     }
 
     onAvatarError(event: Event): void {

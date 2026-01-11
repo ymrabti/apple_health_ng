@@ -19,6 +19,7 @@ import { AiMascotComponent } from './components/ai-mascot/ai-mascot';
 import { AnimeMascot } from './components/anime-mascot/anime-mascot';
 import { Particles } from './components/particles/particles';
 import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
+import { Profile } from './profile/profile';
 
 @NgModule({
     declarations: [
@@ -33,6 +34,7 @@ import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
         AnimeMascot,
         Particles,
         ThemeSwitcher,
+        Profile,
     ],
     imports: [BrowserModule, FormsModule, AppRoutingModule, NgApexchartsModule],
     providers: [

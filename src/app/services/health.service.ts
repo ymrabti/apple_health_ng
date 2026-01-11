@@ -50,4 +50,18 @@ export class HealthService {
             reportProgress: true,
         });
     }
+
+    updateUserInfos(data: {
+        firstName?: string;
+        lastName?: string;
+        dateOfBirth?: string;
+        weightInKilograms?: number | null;
+        heightInCentimeters?: number | null;
+    }): Observable<any> {
+        return this.http.patch<any>(`${environment.apiBase}/account`, data);
+    }
+
+    sendVerificationEmail(): Observable<void> {
+        return this.http.post<void>(`${environment.apiBase}/auth/send-verification-email`, {});
+    }
 }

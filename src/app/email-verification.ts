@@ -22,9 +22,8 @@ export class EmailVerificationService {
   verify(token: string, apiBase: string) {
     const url = `${apiBase.replace(/\/$/, '')}/auth/verify-email`;
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const body = { token };
 
-    return this.http.post(url, body, { headers }).pipe(
+    return this.http.post(url, null, { headers, params: { token } }).pipe(
       timeout(this.REQUEST_TIMEOUT),
       map((resp: any) => {
         // If backend returns success indicator, map to { success: true, message }

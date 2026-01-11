@@ -1,0 +1,196 @@
+<div class="profile-container">
+    <div class="profile-card">
+        <!-- Header -->
+        <div class="profile-header">
+            <button class="back-btn" (click)="goBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back
+            </button>
+            <h1 class="title">My Profile</h1>
+            <button class="logout-btn" (click)="logout()">Logout</button>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="loading">
+            <div class="spinner"></div>
+            <p>Loading profile...</p>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content" *ngIf="!loading && userInfo">
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    <img 
+                        [src]="getUserPhotoUrl()" 
+                        [alt]="userInfo.firstName + ' ' + userInfo.lastName"
+                        class="avatar-image"
+                        (error)="onAvatarError($event)" />
+                </div>
+                <div class="user-primary-info">
+                    <h2 class="user-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h2>
+                    <p class="user-username">&#64;{{ userInfo.userName }}</p>
+                </div>
+            </div>
+
+            <!-- Email Verification Status -->
+            <div class="verification-section">
+                <div class="email-row">
+                    <div class="email-info">
+                        <span class="label">Email</span>
+                        <span class="value">{{ userInfo.email }}</span>
+                    </div>
+                    <div class="verification-status" [class.verified]="userInfo.isEmailVerified" [class.unverified]="!userInfo.isEmailVerified">
+                        <svg *ngIf="userInfo.isEmailVerified" class="status-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                        </svg>
+                        <svg *ngIf="!userInfo.isEmailVerified" class="status-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        <span class="status-text">{{ userInfo.isEmailVerified ? 'Verified' : 'Not Verified' }}</span>
+                    </div>
+                </div>
+                <button 
+                    *ngIf="!userInfo.isEmailVerified"
+                    class="btn-verify" 
+                    (click)="sendVerificationEmail()" 
+                    [disabled]="sendingVerification || verificationSent">
+                    <svg *ngIf="sendingVerification" class="spinner-small" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" stroke-linecap="round"/>
+                    </svg>
+                    {{ sendingVerification ? 'Sending...' : (verificationSent ? 'Email Sent!' : 'Send Verification Email') }}
+                </button>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="details-section">
+                <div class="section-header">
+                    <h3>Profile Details</h3>
+                    <button class="btn-edit" (click)="toggleEditMode()">
+                        {{ editMode ? 'Cancel' : 'Edit' }}
+                    </button>
+                </div>
+
+                <!-- View Mode -->
+                <div class="details-grid" *ngIf="!editMode">
+                    <div class="detail-item">
+                        <span class="label">First Name</span>
+                        <span class="value">{{ userInfo.firstName || 'Not set' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Last Name</span>
+                        <span class="value">{{ userInfo.lastName || 'Not set' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Date of Birth</span>
+                        <span class="value">{{ formatDate(userInfo.dateOfBirth) }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Weight</span>
+                        <span class="value">{{ userInfo.weightInKilograms ? userInfo.weightInKilograms + ' kg' : 'Not set' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Height</span>
+                        <span class="value">{{ userInfo.heightInCentimeters ? userInfo.heightInCentimeters + ' cm' : 'Not set' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Biological Sex</span>
+                        <span class="value">{{ userInfo.biologicalSex || 'Not set' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Blood Type</span>
+                        <span class="value">{{ userInfo.bloodType || 'Not set' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Role</span>
+                        <span class="value role-badge">{{ userInfo.role }}</span>
+                    </div>
+                    <div class="detail-item full-width">
+                        <span class="label">Member Since</span>
+                        <span class="value">{{ formatDate(userInfo.createdAt) }}</span>
+                    </div>
+                </div>
+
+                <!-- Edit Mode -->
+                <form class="edit-form" *ngIf="editMode" (ngSubmit)="saveProfile()">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="firstName">First Name</label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                [(ngModel)]="editData.firstName" 
+                                name="firstName"
+                                placeholder="Enter first name" />
+                        </div>
+                        <div class="form-field">
+                            <label for="lastName">Last Name</label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                [(ngModel)]="editData.lastName" 
+                                name="lastName"
+                                placeholder="Enter last name" />
+                        </div>
+                        <div class="form-field">
+                            <label for="dateOfBirth">Date of Birth</label>
+                            <input 
+                                type="date" 
+                                id="dateOfBirth" 
+                                [(ngModel)]="editData.dateOfBirth" 
+                                name="dateOfBirth" />
+                        </div>
+                        <div class="form-field">
+                            <label for="weight">Weight (kg)</label>
+                            <input 
+                                type="number" 
+                                id="weight" 
+                                [(ngModel)]="editData.weightInKilograms" 
+                                name="weightInKilograms"
+                                placeholder="e.g., 70"
+                                step="0.1" />
+                        </div>
+                        <div class="form-field">
+                            <label for="height">Height (cm)</label>
+                            <input 
+                                type="number" 
+                                id="height" 
+                                [(ngModel)]="editData.heightInCentimeters" 
+                                name="heightInCentimeters"
+                                placeholder="e.g., 175"
+                                step="0.1" />
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" (click)="toggleEditMode()">Cancel</button>
+                        <button type="submit" class="btn-save" [disabled]="saving">
+                            {{ saving ? 'Saving...' : 'Save Changes' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Messages -->
+            <div class="message error" *ngIf="error">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                {{ error }}
+            </div>
+            <div class="message success" *ngIf="success">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+                {{ success }}
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-state" *ngIf="!loading && !userInfo && error">
+            <p>{{ error }}</p>
+            <button class="btn-retry" (click)="loadUserInfo()">Retry</button>
+        </div>
+    </div>
+</div>

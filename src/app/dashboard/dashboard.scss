@@ -370,6 +370,15 @@
             cursor: pointer;
             white-space: nowrap;
 
+            &.profile-btn {
+                color: var(--text-primary);
+                background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(34, 211, 238, 0.25) 100%);
+                
+                &:hover {
+                    background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(34, 211, 238, 0.4) 100%);
+                }
+            }
+
             &.import-btn {
                 color: var(--text-primary);
                 background: rgba(34, 211, 238, 0.15);
