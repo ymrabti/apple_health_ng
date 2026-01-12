@@ -29,6 +29,8 @@ export class WebsocketService {
     private messageSubject$ = new Subject<SocketMessage>();
     private reconnectAttempts = 0;
     private maxReconnectAttempts = 5;
+    private currentToken: string | null = null;
+    private initialized = false;
 
     get disconnected(): boolean {
         return !(this.socket?.connected || false);
@@ -51,6 +53,35 @@ export class WebsocketService {
     }
 
     /**
+     * Initialize socket connection on app startup if user is logged in
+     * This should be called once from the App component
+     * @param token - Authentication token from storage
+     */
+    initialize(token: string | null): void {
+        if (this.initialized) return;
+        this.initialized = true;
+
+        if (token) {
+            this.connect(token);
+        }
+    }
+
+    /**
+     * Update token and reconnect if necessary (e.g., after token refresh)
+     * @param newToken - New authentication token
+     */
+    updateToken(newToken: string): void {
+        if (this.currentToken === newToken) return;
+
+        this.currentToken = newToken;
+        if (this.socket && this.socket.connected) {
+            // Reconnect with new token
+            this.disconnect();
+            this.connect(newToken);
+        }
+    }
+
+    /**
      * Connect to WebSocket server
      * @param token - Optional authentication token
      */
@@ -59,6 +90,7 @@ export class WebsocketService {
             return;
         }
 
+        this.currentToken = token || null;
         const options: any = { ...this.socketOptions, query: { token: token } };
 
         this.socket = io(this.socketUrl, options);
@@ -68,12 +100,17 @@ export class WebsocketService {
 
     /**
      * Disconnect from WebSocket server
+     * @param clearAuth - If true, clears the token and allows re-initialization (use on logout)
      */
-    disconnect(): void {
+    disconnect(clearAuth: boolean = false): void {
         if (this.socket) {
             this.socket.disconnect();
             this.socket = null;
             this.connectionStatus$.next(false);
+        }
+        if (clearAuth) {
+            this.currentToken = null;
+            this.initialized = false;
         }
     }
 

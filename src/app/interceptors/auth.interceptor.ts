@@ -5,11 +5,16 @@ import { TokenService } from '../services/token.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokens = inject(TokenService);
   const token = tokens.getToken();
+
+  // Always include credentials for cookie-based auth fallback
+  let authReq = req.clone({
+    withCredentials: true,
+  });
+
   if (token) {
-    const authReq = req.clone({
+    authReq = authReq.clone({
       setHeaders: { Authorization: `Bearer ${token}` },
     });
-    return next(authReq);
   }
-  return next(req);
+  return next(authReq);
 };

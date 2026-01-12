@@ -113,6 +113,8 @@ export class AuthService {
         if (token) {
             this.tokens.setToken(token);
             this.tokens.saveTokens(res.tokens);
+            // Connect socket after successful login/signup
+            this.socket.connect(token);
         }
     }
 
@@ -173,9 +175,27 @@ export class AuthService {
         );
     }
 
-    signOut(): void {
-        this.socket.disconnect();
+    signOut(): Observable<void>{
+        // Disconnect socket and clear auth state (allows re-initialization on next login)
+        this.socket.disconnect(true);
+        const tokens = this.tokens.getTokens();
         this.tokens.clearToken();
+        const refreshToken = tokens?.refresh.token;
+        return this.http.post<void>(
+            `${AUTH_API_BASE}/logout`,
+            {
+                refreshToken: refreshToken,
+            },
+            { withCredentials: true }
+        );
+    }
+
+    /**
+     * Connect socket after successful login
+     * @param token - Access token from login response
+     */
+    connectSocket(token: string): void {
+        this.socket.connect(token);
     }
 
     getToken(): string | null {

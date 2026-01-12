@@ -152,9 +152,8 @@ export class Profile implements OnInit {
 
     onAvatarError(event: Event): void {
         const img = event.target as HTMLImageElement;
-        img.src = 'assets/default-avatar.png';
+        img.src = 'assets/default-avatar.svg';
     }
-
     // Photo upload methods
     triggerPhotoUpload(): void {
         this.photoInput.nativeElement.click();
@@ -257,25 +256,27 @@ export class Profile implements OnInit {
 
         this.changingPassword = true;
 
-        this.health.changePassword(
-            this.passwordData.currentPassword,
-            this.passwordData.newPassword,
-            this.passwordData.confirmPassword
-        ).subscribe({
-            next: () => {
-                this.passwordSuccess = 'Password changed successfully!';
-                this.changingPassword = false;
-                this.resetPasswordForm();
-                setTimeout(() => {
-                    this.showPasswordForm = false;
-                    this.passwordSuccess = null;
-                }, 2000);
-            },
-            error: (err) => {
-                this.passwordError = err?.error?.message || 'Failed to change password';
-                this.changingPassword = false;
-            },
-        });
+        this.health
+            .changePassword(
+                this.passwordData.currentPassword,
+                this.passwordData.newPassword,
+                this.passwordData.confirmPassword
+            )
+            .subscribe({
+                next: () => {
+                    this.passwordSuccess = 'Password changed successfully!';
+                    this.changingPassword = false;
+                    this.resetPasswordForm();
+                    setTimeout(() => {
+                        this.showPasswordForm = false;
+                        this.passwordSuccess = null;
+                    }, 2000);
+                },
+                error: (err) => {
+                    this.passwordError = err?.error?.message || 'Failed to change password';
+                    this.changingPassword = false;
+                },
+            });
     }
 
     goBack(): void {
@@ -283,8 +284,15 @@ export class Profile implements OnInit {
     }
 
     logout(): void {
-        this.auth.signOut();
-        this.router.navigate(['/signin']);
+        this.auth.signOut().subscribe({
+            next: () => {
+                this.router.navigate(['/signin']);
+            },
+            error: () => {
+                // Even on error, navigate to signin
+                this.router.navigate(['/signin']);
+            },
+        });
     }
 
     formatDate(dateString: string): string {

@@ -34,7 +34,14 @@ export class AuthGuard implements CanActivate {
                 }
             }
         } else {
-            this.auth.signOut();
+            this.auth.signOut().subscribe({
+                next: () => {
+                    console.log('Signed out due to invalid auth data');
+                },
+                error: (err) => {
+                    console.error('Error during sign out', err);
+                },
+            });
             return this.router.createUrlTree(['/signin'], {
                 queryParams: { redirect: state.url || '/home' },
             });
@@ -50,7 +57,14 @@ export class AuthGuard implements CanActivate {
         const expr = this.auth.getRefreshTokenExp();
 
         if (expa == null || expr == null) {
-            this.auth.signOut();
+            this.auth.signOut().subscribe({
+                next: () => {
+                    console.log('Signed out due to invalid auth data');
+                },
+                error: (err) => {
+                    console.error('Error during sign out', err);
+                },
+            });
             return;
         }
 
@@ -61,7 +75,14 @@ export class AuthGuard implements CanActivate {
 
         // If refresh token is expired, sign out immediately (no navigation from here)
         if (exprMs <= nowMs) {
-            this.auth.signOut();
+            this.auth.signOut().subscribe({
+                next: () => {
+                    console.log('Signed out due to invalid auth data');
+                },
+                error: (err) => {
+                    console.error('Error during sign out', err);
+                },
+            });
             return;
         }
 
@@ -69,19 +90,23 @@ export class AuthGuard implements CanActivate {
         const timeoutAccessMs = Math.max(expaMs - nowMs - 60_000, 5_000);
 
         if (this.refreshTimeout) {
-            this.socket.disconnect();
             clearTimeout(this.refreshTimeout);
             this.refreshTimeout = null;
         }
-        this.socket.connect(this.tokens.getToken() || undefined);
+
+        // Ensure socket is connected (will be a no-op if already connected)
+        /* const currentToken = this.tokens.getToken();
+        if (currentToken && this.socket.disconnected) {
+            this.socket.connect(currentToken);
+        } */
 
         this.refreshTimeout = setTimeout(() => {
             this.auth.refreshToken().subscribe({
                 next: (newTokens) => {
                     this.tokens.setToken(newTokens.access.token);
                     this.tokens.saveTokens(newTokens);
-                    this.socket.disconnect();
-                    this.socket.connect(newTokens.access.token);
+                    // Update socket with new token (handles reconnection internally)
+                    this.socket.updateToken(newTokens.access.token);
                     if (this.refreshTimeout) {
                         clearTimeout(this.refreshTimeout);
                         this.refreshTimeout = null;
@@ -90,9 +115,15 @@ export class AuthGuard implements CanActivate {
                     console.log('Token refreshed successfully', new Date());
                 },
                 error: (err) => {
-                    this.socket.disconnect();
                     console.error('Token refresh failed', err);
-                    this.auth.signOut();
+                    this.auth.signOut().subscribe({
+                next: () => {
+                    console.log('Signed out due to invalid auth data');
+                },
+                error: (err) => {
+                    console.error('Error during sign out', err);
+                },
+            });
                 },
             });
         }, timeoutAccessMs);

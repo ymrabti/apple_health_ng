@@ -1313,8 +1313,21 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     logout() {
-        this.auth.signOut();
-        this.router.navigate(['/signin'], { queryParams: { redirect: '/home' } });
+        this.auth.signOut().subscribe({
+            next: () => {
+                this.router.navigate(['/signin'], {
+                    replaceUrl: true,
+                    queryParams: { redirect: '/home' },
+                });
+            },
+            error: () => {
+                // Even on error, navigate to signin
+                this.router.navigate(['/signin'], {
+                    replaceUrl: true,
+                    queryParams: { redirect: '/home' },
+                });
+            },
+        });
     }
 
     getUserPhotoUrl(): string {
