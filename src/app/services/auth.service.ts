@@ -190,14 +190,6 @@ export class AuthService {
         );
     }
 
-    /**
-     * Connect socket after successful login
-     * @param token - Access token from login response
-     */
-    connectSocket(token: string): void {
-        this.socket.connect(token);
-    }
-
     getToken(): string | null {
         return this.tokens.getToken();
     }
