@@ -3,4 +3,6 @@
 3- on this day indicator values
 
 
-tool-set: pdftk, ffmpeg, latex, image magick
+portfolio-profolio:
+    tool-set: pdftk, ffmpeg, latex, image magick
+    permisB, centres-dinterets
