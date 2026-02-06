@@ -67,7 +67,7 @@ export class Profile implements OnInit {
     loadUserInfo(): void {
         this.loading = true;
         this.error = null;
-        this.health.getUserInfos().subscribe({
+        this.auth.getUserInfos().subscribe({
             next: (info) => {
                 this.userInfo = info as UserInfos;
                 this.resetEditData();
@@ -108,7 +108,7 @@ export class Profile implements OnInit {
         this.error = null;
         this.success = null;
 
-        this.health.updateUserInfos(this.editData).subscribe({
+        this.auth.updateUserInfos(this.editData).subscribe({
             next: (info) => {
                 this.userInfo = info as UserInfos;
                 this.editMode = false;
@@ -127,7 +127,7 @@ export class Profile implements OnInit {
         this.error = null;
         this.verificationSent = false;
 
-        this.health.sendVerificationEmail().subscribe({
+        this.auth.sendVerificationEmail().subscribe({
             next: () => {
                 this.verificationSent = true;
                 this.sendingVerification = false;
@@ -193,7 +193,7 @@ export class Profile implements OnInit {
         this.uploadingPhoto = true;
         this.error = null;
 
-        this.health.uploadProfilePhoto(this.selectedPhotoFile).subscribe({
+        this.auth.uploadProfilePhoto(this.selectedPhotoFile).subscribe({
             next: (info) => {
                 this.userInfo = info as UserInfos;
                 this.photoPreview = null;
@@ -256,7 +256,7 @@ export class Profile implements OnInit {
 
         this.changingPassword = true;
 
-        this.health
+        this.auth
             .changePassword(
                 this.passwordData.currentPassword,
                 this.passwordData.newPassword,

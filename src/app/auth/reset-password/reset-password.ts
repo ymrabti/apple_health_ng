@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SeoService } from '../../services/seo.service';
-import { HealthService } from '../../services/health.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-reset-password',
@@ -23,7 +23,7 @@ export class ResetPassword implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private seo: SeoService,
-        private healthService: HealthService
+        private authService: AuthService
     ) {}
 
     ngOnInit() {
@@ -65,7 +65,7 @@ export class ResetPassword implements OnInit {
 
         this.loading = true;
 
-        this.healthService.resetPassword(this.token, this.newPassword).subscribe({
+        this.authService.resetPassword(this.token, this.newPassword).subscribe({
             next: () => {
                 this.success = true;
                 this.loading = false;

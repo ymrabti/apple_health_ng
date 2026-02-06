@@ -2,6 +2,7 @@
 2- graph distribution normale by indicator
 3- on this day indicator values
 4- Add Active calories stats, button toggler active/basal/all
+5- Trends, graph distribution normale by indicator, on this day indicator values, Add Active calories stats, button toggler active/basal/all
 
 
 portfolio-profolio:

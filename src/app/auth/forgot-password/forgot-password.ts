@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SeoService } from '../../services/seo.service';
 import { HealthService } from '../../services/health.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-forgot-password',
@@ -18,7 +19,7 @@ export class ForgotPassword implements OnInit {
     constructor(
         private router: Router,
         private seo: SeoService,
-        private healthService: HealthService
+        private authService: AuthService
     ) {}
 
     ngOnInit() {
@@ -43,7 +44,7 @@ export class ForgotPassword implements OnInit {
         this.loading = true;
         this.error = null;
 
-        this.healthService.sendResetPasswordEmail(this.email).subscribe({
+        this.authService.sendResetPasswordEmail(this.email).subscribe({
             next: () => {
                 this.success = true;
                 this.loading = false;

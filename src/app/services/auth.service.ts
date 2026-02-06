@@ -97,7 +97,7 @@ export class AuthService {
     constructor(
         private http: HttpClient,
         private tokens: TokenService,
-        private socket: WebsocketService
+        private socket: WebsocketService,
     ) {}
 
     signIn(payload: SignInPayload): Observable<AuthResponse> {
@@ -108,14 +108,69 @@ export class AuthService {
         return this.http.post<AuthResponse>(`${AUTH_API_BASE}/signup`, payload);
     }
 
-    saveTokenFromResponse(res: AuthResponse): void {
-        const token = res.tokens?.access?.token;
-        if (token) {
-            this.tokens.setToken(token);
-            this.tokens.saveTokens(res.tokens);
-            // Connect socket after successful login/signup
-            this.socket.connect(token);
-        }
+    signOut(): Observable<void> {
+        // Disconnect socket and clear auth state (allows re-initialization on next login)
+        this.socket.disconnect(true);
+        const tokens = this.tokens.getTokens();
+        this.tokens.clearToken();
+        const refreshToken = tokens?.refresh.token;
+        return this.http.post<void>(
+            `${AUTH_API_BASE}/logout`,
+            {
+                refreshToken: refreshToken,
+            },
+            { withCredentials: true },
+        );
+    }
+
+    getUserInfos(): Observable<any> {
+        return this.http.get<any>(`${environment.apiBase}/apple-health/user-infos`);
+    }
+
+    updateUserInfos(data: {
+        firstName?: string;
+        lastName?: string;
+        dateOfBirth?: string;
+        weightInKilograms?: number | null;
+        heightInCentimeters?: number | null;
+    }): Observable<any> {
+        return this.http.patch<any>(`${environment.apiBase}/account`, data);
+    }
+
+    sendVerificationEmail(): Observable<void> {
+        return this.http.post<void>(`${environment.apiBase}/auth/send-verification-email`, {});
+    }
+
+    uploadProfilePhoto(file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('photo', file, file.name);
+        return this.http.post<any>(`${environment.apiBase}/account/photo`, formData);
+    }
+
+    changePassword(
+        currentPassword: string,
+        newPassword: string,
+        confirmPassword: string,
+    ): Observable<void> {
+        return this.http.post<void>(`${environment.apiBase}/auth/change-password`, {
+            oldPassword: currentPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword,
+        });
+    }
+
+    sendResetPasswordEmail(email: string): Observable<void> {
+        return this.http.post<void>(`${environment.apiBase}/auth/send-reset-password-email`, {
+            email: email,
+        });
+    }
+
+    resetPassword(token: string, password: string): Observable<void> {
+        return this.http.post<void>(
+            `${environment.apiBase}/auth/reset-password`,
+            { password: password },
+            { params: { token: token } },
+        );
     }
 
     startOAuth(provider: string): Observable<{ url: string }> {
@@ -125,7 +180,7 @@ export class AuthService {
                 params: new HttpParams().set('provider', provider),
                 withCredentials: true,
                 observe: 'body',
-            }
+            },
         );
     }
 
@@ -141,6 +196,18 @@ export class AuthService {
         });
     }
 
+    refreshToken(): Observable<Tokens> {
+        const tokens = this.tokens.getTokens();
+        const refreshToken = tokens?.refresh.token;
+        return this.http.post<Tokens>(
+            `${AUTH_API_BASE}/refresh-tokens`,
+            {
+                refreshToken: refreshToken,
+            },
+            { withCredentials: true },
+        );
+    }
+    // Local helper to decode token and get expiration (assuming backend encodes exp in token)
     getAccessTokenExp(): number | null {
         const token = this.tokens.getTokens();
         if (!token) return null;
@@ -149,6 +216,16 @@ export class AuthService {
             return Math.floor(new Date(decoded.expires).getTime() / 1000); // convert to seconds
         } catch (error) {
             return null;
+        }
+    }
+
+    saveTokenFromResponse(res: AuthResponse): void {
+        const token = res.tokens?.access?.token;
+        if (token) {
+            this.tokens.setToken(token);
+            this.tokens.saveTokens(res.tokens);
+            // Connect socket after successful login/signup
+            this.socket.connect(token);
         }
     }
 
@@ -161,36 +238,5 @@ export class AuthService {
         } catch (error) {
             return null;
         }
-    }
-
-    refreshToken(): Observable<Tokens> {
-        const tokens = this.tokens.getTokens();
-        const refreshToken = tokens?.refresh.token;
-        return this.http.post<Tokens>(
-            `${AUTH_API_BASE}/refresh-tokens`,
-            {
-                refreshToken: refreshToken,
-            },
-            { withCredentials: true }
-        );
-    }
-
-    signOut(): Observable<void>{
-        // Disconnect socket and clear auth state (allows re-initialization on next login)
-        this.socket.disconnect(true);
-        const tokens = this.tokens.getTokens();
-        this.tokens.clearToken();
-        const refreshToken = tokens?.refresh.token;
-        return this.http.post<void>(
-            `${AUTH_API_BASE}/logout`,
-            {
-                refreshToken: refreshToken,
-            },
-            { withCredentials: true }
-        );
-    }
-
-    getToken(): string | null {
-        return this.tokens.getToken();
     }
 }

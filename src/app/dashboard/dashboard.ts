@@ -213,7 +213,7 @@ export class Dashboard implements OnInit, OnDestroy {
         // Generate monthly periods for last 12 months
         this.generateMonthlyPeriods();
         // Fetch user infos (weight/height)
-        this.health.getUserInfos().subscribe({
+        this.auth.getUserInfos().subscribe({
             next: (info) => {
                 this.userInfo = (info as UserInfos) || null;
                 this.applyUserInfoToWeights();
@@ -471,6 +471,15 @@ export class Dashboard implements OnInit, OnDestroy {
 
     private fetchDataForCurrentRange() {
         const { from: dateFrom, to: dateTo } = this.getDateRange();
+
+        this.health.getTrends(dateTo).subscribe({
+            next: (res) => {
+                console.log(res);
+            },
+            error: (err) => {
+                console.error('Failed to load trends', err);
+            },
+        });
 
         // Fetch global stats
         this.health.getFooterStats(dateFrom, dateTo).subscribe({

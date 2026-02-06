@@ -22,26 +22,23 @@ export class HealthService {
             return false;
         }
     }
-    getUserInfos(): Observable<any> {
-        return this.http.get<any>(`${environment.apiBase}/apple-health/user-infos`);
-    }
 
     getDailySummaries(dateFrom: string, dateTo: string): Observable<{ ok: boolean; items: any[] }> {
         const params = new HttpParams().set('dateFrom', dateFrom).set('dateTo', dateTo);
         return this.http.get<{ ok: boolean; items: any[] }>(
             `${environment.apiBase}/apple-health/daily-summaries`,
-            { params }
+            { params },
         );
     }
 
     getActivitySummaries(
         dateFrom: string,
-        dateTo: string
+        dateTo: string,
     ): Observable<{ ok: boolean; items: any[] }> {
         const params = new HttpParams().set('dateFrom', dateFrom).set('dateTo', dateTo);
         return this.http.get<{ ok: boolean; items: any[] }>(
             `${environment.apiBase}/apple-health/activity-summaries`,
-            { params }
+            { params },
         );
     }
 
@@ -49,7 +46,7 @@ export class HealthService {
         const params = new HttpParams().set('dateFrom', dateFrom).set('dateTo', dateTo);
         return this.http.get<GlobalSummaryStats>(
             `${environment.apiBase}/apple-health/stats-summaries`,
-            { params }
+            { params },
         );
     }
 
@@ -62,49 +59,14 @@ export class HealthService {
         });
     }
 
-    updateUserInfos(data: {
-        firstName?: string;
-        lastName?: string;
-        dateOfBirth?: string;
-        weightInKilograms?: number | null;
-        heightInCentimeters?: number | null;
-    }): Observable<any> {
-        return this.http.patch<any>(`${environment.apiBase}/account`, data);
-    }
-
-    sendVerificationEmail(): Observable<void> {
-        return this.http.post<void>(`${environment.apiBase}/auth/send-verification-email`, {});
-    }
-
-    uploadProfilePhoto(file: File): Observable<any> {
-        const formData = new FormData();
-        formData.append('photo', file, file.name);
-        return this.http.post<any>(`${environment.apiBase}/account/photo`, formData);
-    }
-
-    changePassword(
-        currentPassword: string,
-        newPassword: string,
-        confirmPassword: string
-    ): Observable<void> {
-        return this.http.post<void>(`${environment.apiBase}/auth/change-password`, {
-            oldPassword: currentPassword,
-            newPassword: newPassword,
-            confirmPassword: confirmPassword,
-        });
-    }
-
-    sendResetPasswordEmail(email: string): Observable<void> {
-        return this.http.post<void>(`${environment.apiBase}/auth/send-reset-password-email`, {
-            email: email,
-        });
-    }
-
-    resetPassword(token: string, password: string): Observable<void> {
-        return this.http.post<void>(
-            `${environment.apiBase}/auth/reset-password`,
-            { password: password },
-            { params: { token: token } }
+    getTrends(dateTo?: string): Observable<any> {
+        let params = new HttpParams();
+        if (dateTo) {
+            params = params.set('dateTo', dateTo);
+        }
+        return this.http.get<any>(
+            `${environment.apiBase}/apple-health/trends`,
+            { params },
         );
     }
 }
