@@ -481,6 +481,15 @@ export class Dashboard implements OnInit, OnDestroy {
             },
         });
 
+        this.health.getWeeklyStatistics(dateFrom, dateTo).subscribe({
+            next: (res) => {
+                console.log('Weekly stats:', res);
+            },
+            error: (err) => {
+                console.error('Failed to load weekly statistics', err);
+            },
+        });
+
         // Fetch global stats
         this.health.getFooterStats(dateFrom, dateTo).subscribe({
             next: (stats) => {

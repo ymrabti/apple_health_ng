@@ -69,4 +69,12 @@ export class HealthService {
             { params },
         );
     }
+
+    getWeeklyStatistics(dateFrom: string, dateTo: string): Observable<any> {
+        const params = new HttpParams().set('dateFrom', dateFrom).set('dateTo', dateTo);
+        return this.http.get<any>(
+            `${environment.apiBase}/apple-health/weekly-statistics`,
+            { params },
+        );
+    }
 }
