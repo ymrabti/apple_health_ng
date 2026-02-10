@@ -50,8 +50,8 @@ interface HealthData {
     distance: number;
     weight: number;
     fatLoss: number;
-    activeCalories?: number;
-    basalCalories?: number;
+    activeCalories: number;
+    basalCalories: number;
 }
 
 interface Stats {
@@ -125,6 +125,7 @@ export class Dashboard implements OnInit, OnDestroy {
     weightStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     fatLossStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     activeCaloriesStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
+    basalCaloriesStats: Stats = { current: 0, average: 0, median: 0, max: 0, min: 0, total: 0 };
     globalStats: GlobalSummaryStats = {
         sumDistance: 0,
         goalAchievements: 0,
@@ -933,6 +934,7 @@ export class Dashboard implements OnInit, OnDestroy {
         this.stepsStats = this.calculateStats('steps');
         this.caloriesStats = this.calculateStats('calories');
         this.activeCaloriesStats = this.calculateStats('activeCalories');
+        this.basalCaloriesStats = this.calculateStats('basalCalories');
         this.distanceStats = this.calculateStats('distance');
         this.weightStats = this.calculateStats('weight');
         this.fatLossStats = this.calculateStats('fatLoss');
@@ -960,6 +962,8 @@ export class Dashboard implements OnInit, OnDestroy {
                 return this.caloriesStats;
             case 'activeCalories':
                 return this.activeCaloriesStats;
+            case 'basalCalories':
+                return this.basalCaloriesStats;
             case 'distance':
                 return this.distanceStats;
             case 'weight':
@@ -1202,6 +1206,10 @@ export class Dashboard implements OnInit, OnDestroy {
             case 'steps':
                 trend = this.analyzeTrend(this.filteredData.map((d) => d.steps));
                 tip = this.mascotTipsService.getStepsTip(trend);
+                break;
+            case 'activeCalories':
+                trend = this.analyzeTrend(this.filteredData.map((d) => d.activeCalories));
+                // TODO tip = this.mascotTipsService.getActivityTip(trend);
                 break;
             case 'calories':
                 trend = this.analyzeTrend(this.filteredData.map((d) => d.calories));
