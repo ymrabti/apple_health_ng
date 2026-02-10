@@ -1,22 +1,43 @@
 <div class="dashboard-container">
     <div class="max-w-7xl mx-auto space-y-8">
-
         <!-- Header -->
         <div class="header-section" [class.minified]="navbarMinified">
             <!-- Toggle Navbar Button - Top Right -->
-            <button class="navbar-toggle-btn" (click)="toggleNavbar()" [title]="navbarMinified ? 'Expand navbar' : 'Shrink navbar'">
-                <svg *ngIf="!navbarMinified" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 15l-6-6-6 6"/>
+            <button
+                class="navbar-toggle-btn"
+                (click)="toggleNavbar()"
+                [title]="navbarMinified ? 'Expand navbar' : 'Shrink navbar'"
+            >
+                <svg
+                    *ngIf="!navbarMinified"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M18 15l-6-6-6 6" />
                 </svg>
-                <svg *ngIf="navbarMinified" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
+                <svg
+                    *ngIf="navbarMinified"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path d="M6 9l6 6 6-6" />
                 </svg>
             </button>
 
             <div class="header-content">
                 <!-- Row 1: Title with subtitle -->
                 <div class="title-area">
-                    <h1 class="main-title">Health Analytics<span class="title-separator" *ngIf="!navbarMinified">:</span><span class="subtitle-inline" *ngIf="!navbarMinified">Advanced insights from your Apple Health data</span></h1>
+                    <h1 class="main-title">
+                        Health Analytics<span class="title-separator" *ngIf="!navbarMinified"
+                            >:</span
+                        ><span class="subtitle-inline" *ngIf="!navbarMinified"
+                            >Advanced insights from your Apple Health data</span
+                        >
+                    </h1>
                 </div>
 
                 <!-- Mini Controls for minified navbar -->
@@ -29,7 +50,11 @@
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="select-input">
+                        <select
+                            [(ngModel)]="dateRange"
+                            (change)="onDateRangeChange()"
+                            class="select-input"
+                        >
                             <option value="7d">Last 7 days</option>
                             <option value="14d">Last 14 days</option>
                             <option value="30d">Last 30 days</option>
@@ -40,9 +65,25 @@
                             <option value="custom">Custom range…</option>
                         </select>
                         <div class="custom-range" *ngIf="dateRange === 'custom'">
-                            <input type="date" [(ngModel)]="customFrom" class="date-input" aria-label="From date" />
-                            <input type="date" [(ngModel)]="customTo" class="date-input" aria-label="To date" />
-                            <button class="view-btn" (click)="applyCustomRange()" [disabled]="!customFrom || !customTo || customFrom > customTo">Apply</button>
+                            <input
+                                type="date"
+                                [(ngModel)]="customFrom"
+                                class="date-input"
+                                aria-label="From date"
+                            />
+                            <input
+                                type="date"
+                                [(ngModel)]="customTo"
+                                class="date-input"
+                                aria-label="To date"
+                            />
+                            <button
+                                class="view-btn"
+                                (click)="applyCustomRange()"
+                                [disabled]="!customFrom || !customTo || customFrom > customTo"
+                            >
+                                Apply
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -50,13 +91,16 @@
                 <!-- User Profile Section (minified) -->
                 <div class="user-profile-section" *ngIf="userInfo && navbarMinified">
                     <div class="user-avatar clickable" routerLink="/profile">
-                        <img 
-                            [src]="getUserPhotoUrl()" 
+                        <img
+                            [src]="getUserPhotoUrl()"
                             [alt]="userInfo.firstName + ' ' + userInfo.lastName"
                             class="avatar-image"
-                            (error)="onAvatarError($event)" />
+                            (error)="onAvatarError($event)"
+                        />
                     </div>
-                    <span class="user-fullname-mini">{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
+                    <span class="user-fullname-mini"
+                        >{{ userInfo.firstName }} {{ userInfo.lastName }}</span
+                    >
                 </div>
             </div>
 
@@ -72,7 +116,11 @@
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="select-input">
+                        <select
+                            [(ngModel)]="dateRange"
+                            (change)="onDateRangeChange()"
+                            class="select-input"
+                        >
                             <option value="7d">Last 7 days</option>
                             <option value="14d">Last 14 days</option>
                             <option value="30d">Last 30 days</option>
@@ -83,9 +131,25 @@
                             <option value="custom">Custom range…</option>
                         </select>
                         <div class="custom-range" *ngIf="dateRange === 'custom'">
-                            <input type="date" [(ngModel)]="customFrom" class="date-input" aria-label="From date" />
-                            <input type="date" [(ngModel)]="customTo" class="date-input" aria-label="To date" />
-                            <button class="view-btn" (click)="applyCustomRange()" [disabled]="!customFrom || !customTo || customFrom > customTo">Apply</button>
+                            <input
+                                type="date"
+                                [(ngModel)]="customFrom"
+                                class="date-input"
+                                aria-label="From date"
+                            />
+                            <input
+                                type="date"
+                                [(ngModel)]="customTo"
+                                class="date-input"
+                                aria-label="To date"
+                            />
+                            <button
+                                class="view-btn"
+                                (click)="applyCustomRange()"
+                                [disabled]="!customFrom || !customTo || customFrom > customTo"
+                            >
+                                Apply
+                            </button>
                         </div>
                     </div>
 
@@ -93,19 +157,24 @@
                     <div class="monthly-periods">
                         <label class="period-label">Quick Select:</label>
                         <div class="period-chips">
-                            <button 
-                                *ngFor="let period of monthlyPeriods" 
+                            <button
+                                *ngFor="let period of monthlyPeriods"
                                 class="period-chip"
                                 [class.active]="selectedMonthPeriod === period.value"
                                 (click)="selectMonthPeriod(period)"
-                                [title]="period.label + ' ' + period.year">
+                                [title]="period.label + ' ' + period.year"
+                            >
                                 {{ period.label }}
                             </button>
                         </div>
                     </div>
 
                     <div class="view-toggle">
-                        <button *ngFor="let view of views" [class]="getViewButtonClass(view)" (click)="setSelectedView(view)">
+                        <button
+                            *ngFor="let view of views"
+                            [class]="getViewButtonClass(view)"
+                            (click)="setSelectedView(view)"
+                        >
                             {{ view | titlecase }}
                         </button>
                     </div>
@@ -114,29 +183,58 @@
                 <!-- User Profile Section (expanded) -->
                 <div class="user-profile-section" *ngIf="userInfo">
                     <div class="user-avatar">
-                        <img 
-                            [src]="getUserPhotoUrl()" 
+                        <img
+                            [src]="getUserPhotoUrl()"
                             [alt]="userInfo.firstName + ' ' + userInfo.lastName"
                             class="avatar-image"
-                            (error)="onAvatarError($event)" />
+                            (error)="onAvatarError($event)"
+                        />
                     </div>
                     <div class="user-details">
-                        <span class="user-fullname">{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
+                        <span class="user-fullname"
+                            >{{ userInfo.firstName }} {{ userInfo.lastName }}</span
+                        >
                         <div class="user-email-row">
                             <span class="user-email">{{ userInfo.email }}</span>
-                            <span class="email-badge" [class.verified]="userInfo.isEmailVerified" [title]="userInfo.isEmailVerified ? 'Email verified' : 'Email not verified'">
-                                <svg *ngIf="userInfo.isEmailVerified" class="badge-icon" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                            <span
+                                class="email-badge"
+                                [class.verified]="userInfo.isEmailVerified"
+                                [title]="
+                                    userInfo.isEmailVerified
+                                        ? 'Email verified'
+                                        : 'Email not verified'
+                                "
+                            >
+                                <svg
+                                    *ngIf="userInfo.isEmailVerified"
+                                    class="badge-icon"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                                    />
                                 </svg>
-                                <svg *ngIf="!userInfo.isEmailVerified" class="badge-icon" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                <svg
+                                    *ngIf="!userInfo.isEmailVerified"
+                                    class="badge-icon"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                    />
                                 </svg>
                             </span>
                         </div>
                     </div>
                     <div class="user-actions">
-                        <button class="action-btn profile-btn" type="button" routerLink="/profile">Profile</button>
-                        <button class="action-btn import-btn" type="button" routerLink="/import">Import</button>
+                        <button class="action-btn profile-btn" type="button" routerLink="/profile">
+                            Profile
+                        </button>
+                        <button class="action-btn import-btn" type="button" routerLink="/import">
+                            Import
+                        </button>
                         <button class="action-btn logout-btn" (click)="logout()">Logout</button>
                     </div>
                 </div>
@@ -145,201 +243,303 @@
 
         <!-- Daily Stats Cards -->
         <div class="stats-grid">
-            <div class="stat-card steps-card" (mouseenter)="onCardHover('steps')" (mouseleave)="onCardLeave('steps')">
-                <div class="card-header">
-                    <div class="icon-section">
-                        <div class="icon-container steps-icon">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
-                                </polyline>
-                            </svg>
-                        </div>
-                        <h3 class="card-title">Steps</h3>
-                    </div>
-                    <div class="trend-badge steps-trend">
-                        {{ getTrendIndicator('steps') }}{{
-                        getTrendPercentage('steps') }}%
-                    </div>
-                </div>
-
-                <div class="card-content">
-                    <div class="main-value">
-                        <span class="value-number">{{ stepsStats.current |
-                            number }}</span>
-                    </div>
-
-                    <div class="stats-details">
-                        <div class="stat-row">
-                            <span class="stat-label">Avg:</span>
-                            <span class="stat-value">{{ stepsStats.average |
-                                number:'1.0-0' }}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Max:</span>
-                            <span class="stat-value">{{ stepsStats.max |
-                                number:'1.0-0' }}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Med:</span>
-                            <span class="stat-value">{{ stepsStats.median |
-                                number:'1.0-0' }}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Min:</span>
-                            <span class="stat-value">{{ stepsStats.min |
-                                number:'1.0-0' }}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Total:</span>
-                            <span class="stat-value">{{ stepsStats.total |
-                                number:'1.0-0' }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stat-card calories-card" (mouseenter)="onCardHover('calories')" (mouseleave)="onCardLeave('calories')">
+            <div
+                class="stat-card calories-card"
+                (mouseenter)="onCardHover('calories')"
+                (mouseleave)="onCardLeave('calories')"
+            >
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container calories-icon">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
-                                </polygon>
+                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
                             </svg>
                         </div>
                         <h3 class="card-title">Calories</h3>
                     </div>
                     <div class="trend-badge calories-trend">
-                        {{ getTrendIndicator('calories') }}{{
-                        getTrendPercentage('calories') }}%
+                        {{ getTrendIndicator('calories') }}{{ getTrendPercentage('calories') }}%
                     </div>
                 </div>
 
                 <div class="card-content">
                     <div class="main-value">
-                        <span class="value-number">{{ caloriesStats.current |
-                            number:'1.0-0' }}</span>
-                        <span class="unit">{{' kcal'}}</span>
+                        <span class="value-number">{{
+                            caloriesStats.current | number: '1.0-0'
+                        }}</span>
+                        <span class="unit">{{ ' kcal' }}</span>
                     </div>
 
                     <div class="stats-details">
                         <div class="stat-row">
                             <span class="stat-label">Avg:</span>
-                            <span class="stat-value">{{ caloriesStats.average |
-                                number:'1.0-0' }}{{' kcal'}}</span>
+                            <span class="stat-value"
+                                >{{ caloriesStats.average | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Max:</span>
-                            <span class="stat-value">{{ caloriesStats.max |
-                                number:'1.0-0' }}{{' kcal'}}</span>
+                            <span class="stat-value"
+                                >{{ caloriesStats.max | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Med:</span>
-                            <span class="stat-value">{{ caloriesStats.median |
-                                number:'1.0-0' }}{{' kcal'}}</span>
+                            <span class="stat-value"
+                                >{{ caloriesStats.median | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Min:</span>
-                            <span class="stat-value">{{ caloriesStats.min |
-                                number:'1.0-0' }}{{' kcal'}}</span>
+                            <span class="stat-value"
+                                >{{ caloriesStats.min | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Total:</span>
-                            <span class="stat-value">{{ caloriesStats.total |
-                                number:'1.0-0' }}{{' kcal'}}</span>
+                            <span class="stat-value"
+                                >{{ caloriesStats.total | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="stat-card distance-card" (mouseenter)="onCardHover('distance')" (mouseleave)="onCardLeave('distance')">
+            <div
+                class="stat-card active-calories-card"
+                (mouseenter)="onCardHover('activeCalories')"
+                (mouseleave)="onCardLeave('activeCalories')"
+            >
+                <div class="card-header">
+                    <div class="icon-section">
+                        <div class="icon-container active-calories-icon">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Active Calories</h3>
+                    </div>
+                    <div class="trend-badge active-calories-trend">
+                        {{ getTrendIndicator('activeCalories')
+                        }}{{ getTrendPercentage('activeCalories') }}%
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="main-value">
+                        <span class="value-number">{{
+                            activeCaloriesStats.current | number: '1.0-0'
+                        }}</span>
+                        <span class="unit">{{ ' kcal' }}</span>
+                    </div>
+
+                    <div class="stats-details">
+                        <div class="stat-row">
+                            <span class="stat-label">Avg:</span>
+                            <span class="stat-value"
+                                >{{ activeCaloriesStats.average | number: '1.0-0'
+                                }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Max:</span>
+                            <span class="stat-value"
+                                >{{ activeCaloriesStats.max | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Med:</span>
+                            <span class="stat-value"
+                                >{{ activeCaloriesStats.median | number: '1.0-0'
+                                }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Min:</span>
+                            <span class="stat-value"
+                                >{{ activeCaloriesStats.min | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value"
+                                >{{ activeCaloriesStats.total | number: '1.0-0'
+                                }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="stat-card basal-calories-card"
+                (mouseenter)="onCardHover('basalCalories')"
+                (mouseleave)="onCardLeave('basalCalories')"
+            >
+                <div class="card-header">
+                    <div class="icon-section">
+                        <div class="icon-container basal-calories-icon">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Basal Calories</h3>
+                    </div>
+                    <div class="trend-badge basal-calories-trend">
+                        {{ getTrendIndicator('basalCalories')
+                        }}{{ getTrendPercentage('basalCalories') }}%
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="main-value">
+                        <span class="value-number">{{
+                            basalCaloriesStats.current | number: '1.0-0'
+                        }}</span>
+                        <span class="unit">{{ ' kcal' }}</span>
+                    </div>
+
+                    <div class="stats-details">
+                        <div class="stat-row">
+                            <span class="stat-label">Avg:</span>
+                            <span class="stat-value"
+                                >{{ basalCaloriesStats.average | number: '1.0-0'
+                                }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Max:</span>
+                            <span class="stat-value"
+                                >{{ basalCaloriesStats.max | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Med:</span>
+                            <span class="stat-value"
+                                >{{ basalCaloriesStats.median | number: '1.0-0'
+                                }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Min:</span>
+                            <span class="stat-value"
+                                >{{ basalCaloriesStats.min | number: '1.0-0' }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value"
+                                >{{ basalCaloriesStats.total | number: '1.0-0'
+                                }}{{ ' kcal' }}</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="stat-card steps-card"
+                (mouseenter)="onCardHover('steps')"
+                (mouseleave)="onCardLeave('steps')"
+            >
+                <div class="card-header">
+                    <div class="icon-section">
+                        <div class="icon-container steps-icon">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Steps</h3>
+                    </div>
+                    <div class="trend-badge steps-trend">
+                        {{ getTrendIndicator('steps') }}{{ getTrendPercentage('steps') }}%
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="main-value">
+                        <span class="value-number">{{ stepsStats.current | number }}</span>
+                    </div>
+
+                    <div class="stats-details">
+                        <div class="stat-row">
+                            <span class="stat-label">Avg:</span>
+                            <span class="stat-value">{{
+                                stepsStats.average | number: '1.0-0'
+                            }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Max:</span>
+                            <span class="stat-value">{{ stepsStats.max | number: '1.0-0' }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Med:</span>
+                            <span class="stat-value">{{
+                                stepsStats.median | number: '1.0-0'
+                            }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Min:</span>
+                            <span class="stat-value">{{ stepsStats.min | number: '1.0-0' }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">{{ stepsStats.total | number: '1.0-0' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="stat-card distance-card"
+                (mouseenter)="onCardHover('distance')"
+                (mouseleave)="onCardLeave('distance')"
+            >
                 <div class="card-header">
                     <div class="icon-section">
                         <div class="icon-container distance-icon">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <circle cx="12" cy="10" r="3">
-
-                                </circle>
-                                <path d="m12 21.7-.4-.8a13.5 13.5 0 0 1-2.9-8.9c0-7.4 6-13.4 13.4-13.4S35.5 4.6 35.5 12c0 3.4-1.3 6.6-2.9 8.9l-.4.8Z">
-                                </path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                                <path
+                                    d="m12 21.7-.4-.8a13.5 13.5 0 0 1-2.9-8.9c0-7.4 6-13.4 13.4-13.4S35.5 4.6 35.5 12c0 3.4-1.3 6.6-2.9 8.9l-.4.8Z"
+                                ></path>
                             </svg>
                         </div>
                         <h3 class="card-title">Distance</h3>
                     </div>
                     <div class="trend-badge distance-trend">
-                        {{ getTrendIndicator('distance') }}{{
-                        getTrendPercentage('distance') }}%
+                        {{ getTrendIndicator('distance') }}{{ getTrendPercentage('distance') }}%
                     </div>
                 </div>
 
                 <div class="card-content">
                     <div class="main-value">
-                        <span class="value-number">{{ distanceStats.current |
-                            number:'1.1-1' }}</span>
-                        <span class="unit">{{' km'}}</span>
+                        <span class="value-number">{{
+                            distanceStats.current | number: '1.1-1'
+                        }}</span>
+                        <span class="unit">{{ ' km' }}</span>
                     </div>
 
                     <div class="stats-details">
                         <div class="stat-row">
                             <span class="stat-label">Avg:</span>
-                            <span class="stat-value">{{ distanceStats.average
-                                }}{{' km'}}</span>
+                            <span class="stat-value">{{ distanceStats.average }}{{ ' km' }}</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Max:</span>
-                            <span class="stat-value">{{ distanceStats.max
-                                }}{{' km'}}</span>
+                            <span class="stat-value">{{ distanceStats.max }}{{ ' km' }}</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Med:</span>
-                            <span class="stat-value">{{ distanceStats.median
-                                }}{{' km'}}</span>
+                            <span class="stat-value">{{ distanceStats.median }}{{ ' km' }}</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Min:</span>
-                            <span class="stat-value">{{ distanceStats.min
-                                }}{{' km'}}</span>
+                            <span class="stat-value">{{ distanceStats.min }}{{ ' km' }}</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Total:</span>
-                            <span class="stat-value">{{ distanceStats.total
-                                }}{{' km'}}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stat-card weight-card" (mouseenter)="onCardHover('weight')" (mouseleave)="onCardLeave('weight')">
-                <div class="card-header">
-                    <div class="icon-section">
-                        <div class="icon-container weight-icon">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
-                                </polyline>
-                            </svg>
-                        </div>
-                        <h3 class="card-title">Weight</h3>
-                    </div>
-                    <div class="trend-badge weight-trend">
-                        -{{ getWeightLossPct() }}%
-                    </div>
-                </div>
-
-                <div class="card-content">
-                    <div class="main-value">
-                        <span class="value-number">{{ weightStats.current |
-                            number:'1.1-1' }}</span>
-                        <span class="unit">{{' kg'}}</span>
-                    </div>
-
-                    <div class="stats-details">
-                        <div class="stat-row">
-                            <span class="stat-label">Initial:</span>
-                            <span class="stat-value">{{ getInitialWeight() }}{{' kg'}}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Loss:</span>
-                            <span class="stat-value">{{ getWeightLossKg() }}{{' kg' }} </span>
+                            <span class="stat-value">{{ distanceStats.total }}{{ ' km' }}</span>
                         </div>
                     </div>
                 </div>
@@ -351,41 +551,61 @@
             <!-- Steps Chart -->
             <div class="chart-container">
                 <div class="chart-header">
-                    <h3 class="chart-title" (mouseenter)="onChartHover('steps', 'title')" (mouseleave)="onCardLeave('chart')">
+                    <h3
+                        class="chart-title"
+                        (mouseenter)="onChartHover('steps', 'title')"
+                        (mouseleave)="onCardLeave('chart')"
+                    >
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
-
-                            </polyline>
+                            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
                         </svg>
                         {{ getChartTitle('steps') }}
                     </h3>
                     <div class="chart-type-toggle">
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="stepsChartType === 'bar'"
                             (click)="toggleStepsChartType('bar')"
-                            aria-label="Bar chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Bar chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <rect x="3" y="10" width="4" height="11"></rect>
                                 <rect x="10" y="6" width="4" height="15"></rect>
                                 <rect x="17" y="3" width="4" height="18"></rect>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="stepsChartType === 'line'"
                             (click)="toggleStepsChartType('line')"
-                            aria-label="Line chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Line chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="stepsChartType === 'area'"
                             (click)="toggleStepsChartType('area')"
-                            aria-label="Area chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Area chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
                                 <line x1="3" y1="18" x2="21" y2="18"></line>
                             </svg>
@@ -393,13 +613,28 @@
                     </div>
                     <div class="chart-info">
                         <ng-container [ngSwitch]="selectedView">
-                            <span *ngSwitchCase="'weekly'">Total: {{ stepsStats.total | number:'1.0-0' }}</span>
-                            <span *ngSwitchCase="'trends'">Avg: {{ stepsStats.average | number:'1.0-0' }}</span>
-                            <span *ngSwitchDefault>Total: {{ stepsStats.total | number:'1.0-0' }}</span>
+                            <span *ngSwitchCase="'weekly'"
+                                >Total: {{ stepsStats.total | number: '1.0-0' }}</span
+                            >
+                            <span *ngSwitchCase="'trends'"
+                                >Avg: {{ stepsStats.average | number: '1.0-0' }}</span
+                            >
+                            <span *ngSwitchDefault
+                                >Total: {{ stepsStats.total | number: '1.0-0' }}</span
+                            >
                         </ng-container>
                     </div>
                 </div>
-                <div class="chart-wrapper" *ngIf="stepsChartOptions.series && stepsChartOptions.series.length > 0 && stepsChartOptions.series[0] && stepsChartOptions.series[0].data && stepsChartOptions.series[0].data.length > 0">
+                <div
+                    class="chart-wrapper"
+                    *ngIf="
+                        stepsChartOptions.series &&
+                        stepsChartOptions.series.length > 0 &&
+                        stepsChartOptions.series[0] &&
+                        stepsChartOptions.series[0].data &&
+                        stepsChartOptions.series[0].data.length > 0
+                    "
+                >
                     <apx-chart
                         [series]="stepsChartOptions.series!"
                         [chart]="stepsChartOptions.chart!"
@@ -410,7 +645,8 @@
                         [yaxis]="stepsChartOptions.yaxis!"
                         [grid]="stepsChartOptions.grid!"
                         [tooltip]="stepsChartOptions.tooltip!"
-                        [fill]="stepsChartOptions.fill!">
+                        [fill]="stepsChartOptions.fill!"
+                    >
                     </apx-chart>
                 </div>
             </div>
@@ -418,41 +654,61 @@
             <!-- Calories Chart -->
             <div class="chart-container">
                 <div class="chart-header">
-                    <h3 class="chart-title" (mouseenter)="onChartHover('calories', 'title')" (mouseleave)="onCardLeave('chart')">
+                    <h3
+                        class="chart-title"
+                        (mouseenter)="onChartHover('calories', 'title')"
+                        (mouseleave)="onCardLeave('chart')"
+                    >
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
-
-                            </polygon>
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
                         </svg>
                         {{ getChartTitle('calories') }}
                     </h3>
                     <div class="chart-type-toggle">
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="caloriesChartType === 'bar'"
                             (click)="toggleCaloriesChartType('bar')"
-                            aria-label="Bar chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Bar chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <rect x="3" y="10" width="4" height="11"></rect>
                                 <rect x="10" y="6" width="4" height="15"></rect>
                                 <rect x="17" y="3" width="4" height="18"></rect>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="caloriesChartType === 'line'"
                             (click)="toggleCaloriesChartType('line')"
-                            aria-label="Line chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Line chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="caloriesChartType === 'area'"
                             (click)="toggleCaloriesChartType('area')"
-                            aria-label="Area chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Area chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
                                 <line x1="3" y1="18" x2="21" y2="18"></line>
                             </svg>
@@ -460,13 +716,31 @@
                     </div>
                     <div class="chart-info">
                         <ng-container [ngSwitch]="selectedView">
-                            <span *ngSwitchCase="'weekly'">Total: {{ caloriesStats.total | number:'1.0-0' }} {{' kcal'}}</span>
-                            <span *ngSwitchCase="'trends'">Avg: {{ caloriesStats.average | number:'1.0-0' }} {{' kcal'}}/day</span>
-                            <span *ngSwitchDefault>Avg: {{ caloriesStats.average | number:'1.0-0' }} {{' kcal'}}/day</span>
+                            <span *ngSwitchCase="'weekly'"
+                                >Total: {{ caloriesStats.total | number: '1.0-0' }}
+                                {{ ' kcal' }}</span
+                            >
+                            <span *ngSwitchCase="'trends'"
+                                >Avg: {{ caloriesStats.average | number: '1.0-0' }}
+                                {{ ' kcal' }}/day</span
+                            >
+                            <span *ngSwitchDefault
+                                >Avg: {{ caloriesStats.average | number: '1.0-0' }}
+                                {{ ' kcal' }}/day</span
+                            >
                         </ng-container>
                     </div>
                 </div>
-                <div class="chart-wrapper" *ngIf="caloriesChartOptions.series && caloriesChartOptions.series.length > 0 && caloriesChartOptions.series[0] && caloriesChartOptions.series[0].data && caloriesChartOptions.series[0].data.length > 0">
+                <div
+                    class="chart-wrapper"
+                    *ngIf="
+                        caloriesChartOptions.series &&
+                        caloriesChartOptions.series.length > 0 &&
+                        caloriesChartOptions.series[0] &&
+                        caloriesChartOptions.series[0].data &&
+                        caloriesChartOptions.series[0].data.length > 0
+                    "
+                >
                     <apx-chart
                         [series]="caloriesChartOptions.series!"
                         [chart]="caloriesChartOptions.chart!"
@@ -477,7 +751,8 @@
                         [yaxis]="caloriesChartOptions.yaxis!"
                         [grid]="caloriesChartOptions.grid!"
                         [tooltip]="caloriesChartOptions.tooltip!"
-                        [fill]="caloriesChartOptions.fill!">
+                        [fill]="caloriesChartOptions.fill!"
+                    >
                     </apx-chart>
                 </div>
             </div>
@@ -495,89 +770,149 @@
                         </ng-container>
                     </h3>
                     <div class="chart-type-toggle" *ngIf="mergedChartView === 'activeBasal'">
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="activeBasalChartType === 'bar'"
                             (click)="toggleActiveBasalChartType('bar')"
-                            aria-label="Bar chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Bar chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <rect x="3" y="10" width="4" height="11"></rect>
                                 <rect x="10" y="6" width="4" height="15"></rect>
                                 <rect x="17" y="3" width="4" height="18"></rect>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="activeBasalChartType === 'line'"
                             (click)="toggleActiveBasalChartType('line')"
-                            aria-label="Line chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Line chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="activeBasalChartType === 'area'"
                             (click)="toggleActiveBasalChartType('area')"
-                            aria-label="Area chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Area chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
                                 <line x1="3" y1="18" x2="21" y2="18"></line>
                             </svg>
                         </button>
                     </div>
                     <div class="chart-type-toggle" *ngIf="mergedChartView === 'metricGoal'">
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="metricGoalChartType === 'bar'"
                             (click)="toggleMetricGoalChartType('bar')"
-                            aria-label="Bar chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Bar chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <rect x="3" y="10" width="4" height="11"></rect>
                                 <rect x="10" y="6" width="4" height="15"></rect>
                                 <rect x="17" y="3" width="4" height="18"></rect>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="metricGoalChartType === 'line'"
                             (click)="toggleMetricGoalChartType('line')"
-                            aria-label="Line chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Line chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
                             </svg>
                         </button>
-                        <button 
-                            class="toggle-btn" 
+                        <button
+                            class="toggle-btn"
                             [class.active]="metricGoalChartType === 'area'"
                             (click)="toggleMetricGoalChartType('area')"
-                            aria-label="Area chart">
-                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            aria-label="Area chart"
+                        >
+                            <svg
+                                class="icon-sm"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                            >
                                 <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
                                 <line x1="3" y1="18" x2="21" y2="18"></line>
                             </svg>
                         </button>
                     </div>
                     <div class="view-toggle chart-type-toggle">
-                        <button class="view-btn" [class.active]="mergedChartView === 'activeBasal'" (click)="setMergedChartView('activeBasal')">Active/Basal</button>
-                        <button class="view-btn" [class.active]="mergedChartView === 'metricGoal'" (click)="setMergedChartView('metricGoal')">Achieved/Goal</button>
+                        <button
+                            class="view-btn"
+                            [class.active]="mergedChartView === 'activeBasal'"
+                            (click)="setMergedChartView('activeBasal')"
+                        >
+                            Active/Basal
+                        </button>
+                        <button
+                            class="view-btn"
+                            [class.active]="mergedChartView === 'metricGoal'"
+                            (click)="setMergedChartView('metricGoal')"
+                        >
+                            Achieved/Goal
+                        </button>
                     </div>
                 </div>
                 <div class="chart-info">
                     <ng-container [ngSwitch]="mergedChartView">
                         <ng-container *ngSwitchCase="'activeBasal'">
                             <ng-container *ngIf="getCaloriesSplitTotals() as split">
-                                Active: {{ split.active | number:'1.0-0' }} kcal • Basal: {{ split.basal | number:'1.0-0' }} kcal
+                                Active: {{ split.active | number: '1.0-0' }} kcal • Basal:
+                                {{ split.basal | number: '1.0-0' }} kcal
                             </ng-container>
                         </ng-container>
                         <ng-container *ngSwitchCase="'metricGoal'">
-                            Metric: {{ selectedActivityMetric }} • Unit: {{ getMetricUnit(selectedActivityMetric) }}
+                            Metric: {{ selectedActivityMetric }} • Unit:
+                            {{ getMetricUnit(selectedActivityMetric) }}
                         </ng-container>
                     </ng-container>
                 </div>
 
                 <!-- Active vs Basal content -->
-                <div class="chart-wrapper" *ngIf="mergedChartView === 'activeBasal' && activeBasalChartOptions.series && activeBasalChartOptions.series.length > 0 && activeBasalChartOptions.series[0] && activeBasalChartOptions.series[0].data && activeBasalChartOptions.series[0].data.length > 0">
+                <div
+                    class="chart-wrapper"
+                    *ngIf="
+                        mergedChartView === 'activeBasal' &&
+                        activeBasalChartOptions.series &&
+                        activeBasalChartOptions.series.length > 0 &&
+                        activeBasalChartOptions.series[0] &&
+                        activeBasalChartOptions.series[0].data &&
+                        activeBasalChartOptions.series[0].data.length > 0
+                    "
+                >
                     <apx-chart
                         [series]="activeBasalChartOptions.series!"
                         [chart]="activeBasalChartOptions.chart!"
@@ -589,20 +924,59 @@
                         [grid]="activeBasalChartOptions.grid!"
                         [tooltip]="activeBasalChartOptions.tooltip!"
                         [legend]="activeBasalChartOptions.legend!"
-                        [fill]="activeBasalChartOptions.fill!">
+                        [fill]="activeBasalChartOptions.fill!"
+                    >
                     </apx-chart>
                 </div>
 
                 <!-- Achieved vs Goal content -->
                 <div class="chart-wrapper" *ngIf="mergedChartView === 'metricGoal'">
-                    <div class="view-toggle chart-type-toggle" style="margin-bottom: 0.5rem;">
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'activeEnergyBurned'" (click)="setSelectedActivityMetric('activeEnergyBurned')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Energy</button>
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleMoveTime'" (click)="setSelectedActivityMetric('appleMoveTime')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Move</button>
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleExerciseTime'" (click)="setSelectedActivityMetric('appleExerciseTime')" (mouseenter)="onActivityRingHover('exercise')" (mouseleave)="onCardLeave('activity')">Exercise</button>
-                        <button class="view-btn" [class.active]="selectedActivityMetric === 'appleStandHours'" (click)="setSelectedActivityMetric('appleStandHours')" (mouseenter)="onActivityRingHover('stand')" (mouseleave)="onCardLeave('activity')">Stand</button>
+                    <div class="view-toggle chart-type-toggle" style="margin-bottom: 0.5rem">
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedActivityMetric === 'activeEnergyBurned'"
+                            (click)="setSelectedActivityMetric('activeEnergyBurned')"
+                            (mouseenter)="onActivityRingHover('move')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Energy
+                        </button>
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedActivityMetric === 'appleMoveTime'"
+                            (click)="setSelectedActivityMetric('appleMoveTime')"
+                            (mouseenter)="onActivityRingHover('move')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Move
+                        </button>
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedActivityMetric === 'appleExerciseTime'"
+                            (click)="setSelectedActivityMetric('appleExerciseTime')"
+                            (mouseenter)="onActivityRingHover('exercise')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Exercise
+                        </button>
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedActivityMetric === 'appleStandHours'"
+                            (click)="setSelectedActivityMetric('appleStandHours')"
+                            (mouseenter)="onActivityRingHover('stand')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Stand
+                        </button>
                     </div>
                     <apx-chart
-                        *ngIf="metricGoalChartOptions.series && metricGoalChartOptions.series.length > 0 && metricGoalChartOptions.series[0] && metricGoalChartOptions.series[0].data && metricGoalChartOptions.series[0].data.length > 0"
+                        *ngIf="
+                            metricGoalChartOptions.series &&
+                            metricGoalChartOptions.series.length > 0 &&
+                            metricGoalChartOptions.series[0] &&
+                            metricGoalChartOptions.series[0].data &&
+                            metricGoalChartOptions.series[0].data.length > 0
+                        "
                         [series]="metricGoalChartOptions.series!"
                         [chart]="metricGoalChartOptions.chart!"
                         [colors]="metricGoalChartOptions.colors!"
@@ -613,7 +987,8 @@
                         [grid]="metricGoalChartOptions.grid!"
                         [tooltip]="metricGoalChartOptions.tooltip!"
                         [legend]="metricGoalChartOptions.legend!"
-                        [fill]="metricGoalChartOptions.fill!">
+                        [fill]="metricGoalChartOptions.fill!"
+                    >
                     </apx-chart>
                 </div>
             </div>
@@ -621,30 +996,73 @@
             <!-- Weekly Rings Achievements (7 rows per week) -->
             <div class="chart-container span-2">
                 <div class="chart-header">
-                    <h3 class="chart-title" (mouseenter)="onChartHover('activity', 'title')" (mouseleave)="onCardLeave('chart')">
+                    <h3
+                        class="chart-title"
+                        (mouseenter)="onChartHover('activity', 'title')"
+                        (mouseleave)="onCardLeave('chart')"
+                    >
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <circle cx="12" cy="12" r="10"></circle>
                         </svg>
                         Weekly Rings Achievements
                     </h3>
-                    <div class="view-toggle chart-type-toggle" style="margin-bottom: 0;">
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'activeEnergyBurned'" (click)="setSelectedRingMetric('activeEnergyBurned')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Energy</button>
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleMoveTime'" (click)="setSelectedRingMetric('appleMoveTime')" (mouseenter)="onActivityRingHover('move')" (mouseleave)="onCardLeave('activity')">Move</button>
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleExerciseTime'" (click)="setSelectedRingMetric('appleExerciseTime')" (mouseenter)="onActivityRingHover('exercise')" (mouseleave)="onCardLeave('activity')">Exercise</button>
-                        <button class="view-btn" [class.active]="selectedRingMetric === 'appleStandHours'" (click)="setSelectedRingMetric('appleStandHours')" (mouseenter)="onActivityRingHover('stand')" (mouseleave)="onCardLeave('activity')">Stand</button>
+                    <div class="view-toggle chart-type-toggle" style="margin-bottom: 0">
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedRingMetric === 'activeEnergyBurned'"
+                            (click)="setSelectedRingMetric('activeEnergyBurned')"
+                            (mouseenter)="onActivityRingHover('move')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Energy
+                        </button>
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedRingMetric === 'appleMoveTime'"
+                            (click)="setSelectedRingMetric('appleMoveTime')"
+                            (mouseenter)="onActivityRingHover('move')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Move
+                        </button>
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedRingMetric === 'appleExerciseTime'"
+                            (click)="setSelectedRingMetric('appleExerciseTime')"
+                            (mouseenter)="onActivityRingHover('exercise')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Exercise
+                        </button>
+                        <button
+                            class="view-btn"
+                            [class.active]="selectedRingMetric === 'appleStandHours'"
+                            (click)="setSelectedRingMetric('appleStandHours')"
+                            (mouseenter)="onActivityRingHover('stand')"
+                            (mouseleave)="onCardLeave('activity')"
+                        >
+                            Stand
+                        </button>
                     </div>
                 </div>
                 <div class="rings-weekly">
                     <div class="weeks">
-                        <div class="week-column" *ngFor="let week of getWeeklyRingColumns(selectedRingMetric); let wi = index">
-                               <div class="ring-cell"
-                                   *ngFor="let day of week; let di = index"
-                                   [style.--p]="day.pct"
-                                 [class.energy]="selectedRingMetric === 'activeEnergyBurned'"
-                                 [class.move]="selectedRingMetric === 'appleMoveTime'"
-                                 [class.exercise]="selectedRingMetric === 'appleExerciseTime'"
-                                 [class.stand]="selectedRingMetric === 'appleStandHours'">
-                            </div>
+                        <div
+                            class="week-column"
+                            *ngFor="
+                                let week of getWeeklyRingColumns(selectedRingMetric);
+                                let wi = index
+                            "
+                        >
+                            <div
+                                class="ring-cell"
+                                *ngFor="let day of week; let di = index"
+                                [style.--p]="day.pct"
+                                [class.energy]="selectedRingMetric === 'activeEnergyBurned'"
+                                [class.move]="selectedRingMetric === 'appleMoveTime'"
+                                [class.exercise]="selectedRingMetric === 'appleExerciseTime'"
+                                [class.stand]="selectedRingMetric === 'appleStandHours'"
+                            ></div>
                         </div>
                     </div>
                     <div class="rings-legend">
@@ -662,9 +1080,7 @@
             <div class="analytics-card">
                 <h3 class="analytics-title">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2">
-
-                        </polygon>
+                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
                     </svg>
                     Active Energy Goal
                 </h3>
@@ -672,20 +1088,18 @@
                     <div class="calories-split">
                         <div class="calories-donut" [style.--p]="goal.pct + '%'">
                             <div class="donut-center">
-                                <div class="donut-value">{{ goal.pct | number:'1.0-0' }}%</div>
+                                <div class="donut-value">{{ goal.pct | number: '1.0-0' }}%</div>
                                 <div class="donut-sub">of Goal</div>
                             </div>
                         </div>
                         <div class="split-stats">
                             <div class="split-row">
-                                <span class="dot active">
-
-                                </span> Burned: {{ goal.burned | number:'1.0-0' }} kcal
+                                <span class="dot active"> </span> Burned:
+                                {{ goal.burned | number: '1.0-0' }} kcal
                             </div>
                             <div class="split-row">
-                                <span class="dot goal">
-
-                                </span> Goal: {{ goal.goal | number:'1.0-0' }} kcal
+                                <span class="dot goal"> </span> Goal:
+                                {{ goal.goal | number: '1.0-0' }} kcal
                             </div>
                         </div>
                     </div>
@@ -696,27 +1110,38 @@
             <div class="analytics-card">
                 <h3 class="analytics-title">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12">
-                        </polyline>
+                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
                     </svg>
                     Weight Tracking
                 </h3>
                 <div class="weight-chart">
                     <div class="weight-line">
-                        <div *ngFor="let data of getRecentData(); let i = index" class="weight-point" [style.left.%]="(i / (getRecentData().length - 1)) * 100" [style.bottom.%]="((data.weight - getMinWeight()) / (getMaxWeight() - getMinWeight())) * 100">
-                        </div>
+                        <div
+                            *ngFor="let data of getRecentData(); let i = index"
+                            class="weight-point"
+                            [style.left.%]="(i / (getRecentData().length - 1)) * 100"
+                            [style.bottom.%]="
+                                ((data.weight - getMinWeight()) /
+                                    (getMaxWeight() - getMinWeight())) *
+                                100
+                            "
+                        ></div>
                     </div>
                 </div>
                 <div class="weight-stats">
                     <div class="weight-stat">
                         <span class="stat-label">Current</span>
-                        <span class="stat-value">{{ weightStats.current
-                            }}{{' kg '}}</span>
+                        <span class="stat-value">{{ weightStats.current }}{{ ' kg ' }}</span>
                     </div>
-                    {{' \t'}}
+                    {{ ' \t' }}
                     <div class="weight-stat">
                         <span class="stat-label">Change</span>
-                        <span class="stat-value" [class.success]="getWeightLossKg() > 0" [class.error]="getWeightLossKg() < 0">{{ getWeightLossKg() }}{{' kg'}}</span>
+                        <span
+                            class="stat-value"
+                            [class.success]="getWeightLossKg() > 0"
+                            [class.error]="getWeightLossKg() < 0"
+                            >{{ getWeightLossKg() }}{{ ' kg' }}</span
+                        >
                     </div>
                 </div>
             </div>
@@ -725,29 +1150,24 @@
             <div class="analytics-card">
                 <h3 class="analytics-title">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <line x1="12" y1="20" x2="12" y2="10">
-
-                        </line>
-                        <line x1="18" y1="20" x2="18" y2="4">
-
-                        </line>
-                        <line x1="6" y1="20" x2="6" y2="16">
-
-                        </line>
+                        <line x1="12" y1="20" x2="12" y2="10"></line>
+                        <line x1="18" y1="20" x2="18" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="16"></line>
                     </svg>
                     Activity Summary
                 </h3>
                 <div class="activity-bars">
                     <div *ngFor="let activity of activityLevels" class="activity-row">
                         <div class="activity-info">
-                            <span class="activity-label">{{ activity.label
-                                }}</span>
-                            <span class="activity-value">{{ activity.value
-                                }}%</span>
+                            <span class="activity-label">{{ activity.label }}</span>
+                            <span class="activity-value">{{ activity.value }}%</span>
                         </div>
                         <div class="activity-bar-container">
-                            <div class="activity-bar" [style.width.%]="activity.value" [style.background-color]="activity.color">
-                            </div>
+                            <div
+                                class="activity-bar"
+                                [style.width.%]="activity.value"
+                                [style.background-color]="activity.color"
+                            ></div>
                         </div>
                     </div>
                 </div>
@@ -756,38 +1176,76 @@
 
         <!-- Footer Stats -->
         <div class="footer-stats">
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('daysTracked')" (mouseleave)="onCardLeave('footer')">
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('daysTracked')"
+                (mouseleave)="onCardLeave('footer')"
+            >
                 <div class="footer-value cyan">{{ globalStats.daysTracked }}</div>
                 <div class="footer-label">Days Tracked</div>
             </div>
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('goalAchievement')" (mouseleave)="onCardLeave('footer')">
-                <div class="footer-value green">{{ getGoalAchievement()
-                    }}%</div>
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('goalAchievement')"
+                (mouseleave)="onCardLeave('footer')"
+            >
+                <div class="footer-value green">{{ getGoalAchievement() }}%</div>
                 <div class="footer-label">Goal Achievement</div>
             </div>
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('totalDistance')" (mouseleave)="onCardLeave('footer')">
-                <div class="footer-value orange">{{ getTotalDistance()
-                    }}km</div>
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('totalDistance')"
+                (mouseleave)="onCardLeave('footer')"
+            >
+                <div class="footer-value orange">{{ getTotalDistance() }}km</div>
                 <div class="footer-label">Total Distance</div>
             </div>
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('healthGrade')" (mouseleave)="onCardLeave('footer')">
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('healthGrade')"
+                (mouseleave)="onCardLeave('footer')"
+            >
                 <div class="footer-value purple">{{ globalStats.healthGrade }}</div>
                 <div class="footer-label">Health Grade</div>
             </div>
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('healthScore')" (mouseleave)="onCardLeave('footer')">
-                <div class="footer-value purple">{{ globalStats.healthScore | number:'1.0-0' }}</div>
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('healthScore')"
+                (mouseleave)="onCardLeave('footer')"
+            >
+                <div class="footer-value purple">
+                    {{ globalStats.healthScore | number: '1.0-0' }}
+                </div>
                 <div class="footer-label">Health Score</div>
             </div>
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('activityScore')" (mouseleave)="onCardLeave('footer')">
-                <div class="footer-value green">{{ globalStats.components.activityScore | number:'1.0-0' }}</div>
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('activityScore')"
+                (mouseleave)="onCardLeave('footer')"
+            >
+                <div class="footer-value green">
+                    {{ globalStats.components.activityScore | number: '1.0-0' }}
+                </div>
                 <div class="footer-label">Activity Score</div>
             </div>
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('stepsScore')" (mouseleave)="onCardLeave('footer')">
-                <div class="footer-value cyan">{{ globalStats.components.stepsScore | number:'1.0-0' }}</div>
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('stepsScore')"
+                (mouseleave)="onCardLeave('footer')"
+            >
+                <div class="footer-value cyan">
+                    {{ globalStats.components.stepsScore | number: '1.0-0' }}
+                </div>
                 <div class="footer-label">Steps Score</div>
             </div>
-            <div class="footer-stat" (mouseenter)="onFooterStatHover('streakScore')" (mouseleave)="onCardLeave('footer')">
-                <div class="footer-value orange">{{ globalStats.components.streakScore | number:'1.0-0' }}</div>
+            <div
+                class="footer-stat"
+                (mouseenter)="onFooterStatHover('streakScore')"
+                (mouseleave)="onCardLeave('footer')"
+            >
+                <div class="footer-value orange">
+                    {{ globalStats.components.streakScore | number: '1.0-0' }}
+                </div>
                 <div class="footer-label">Streak Score</div>
             </div>
         </div>

@@ -614,7 +614,7 @@
     }
 
     @media (min-width: 1024px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -639,6 +639,16 @@
     }
 
     &.calories-card:hover {
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.2);
+    }
+
+    &.active-calories-card:hover {
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.2);
+    }
+
+    &.basal-calories-card:hover {
         border-color: rgba(245, 158, 11, 0.5);
         box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.2);
     }
@@ -686,6 +696,22 @@
     }
 
     &.calories-icon {
+        background: rgba(245, 158, 11, 0.2);
+
+        .icon {
+            color: #f59e0b;
+        }
+    }
+
+    &.active-calories-icon {
+        background: rgba(245, 158, 11, 0.2);
+
+        .icon {
+            color: #f59e0b;
+        }
+    }
+
+    &.basal-calories-icon {
         background: rgba(245, 158, 11, 0.2);
 
         .icon {
